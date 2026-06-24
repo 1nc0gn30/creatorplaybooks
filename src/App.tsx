@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Sparkles, TrendingUp, Users, RefreshCw, UserCircle, LogIn, LogOut, Menu, X, Zap, Wand2, Highlighter, Underline, Italic, Bold, BookOpen, Search, SlidersHorizontal, Tag } from 'lucide-react';
+import { Sparkles, TrendingUp, Users, UserCircle, LogIn, LogOut, Menu, Zap, Wand2, Highlighter, Underline, Italic, Bold, BookOpen } from 'lucide-react';
 import type { BuilderProfile, ContentIdea, CreatorProfile, ScheduledPost, UserProgress, Tab } from './types';
 import { defaultBuilder, defaultProgress, levelFromXp, scoreProgress } from './lib/maya';
 import { CREATORS } from './lib/creators';
@@ -9,8 +9,8 @@ import { generateIdeasForCreator } from './lib/ideas';
 import { buildExportBundle } from './lib/exportBundle';
 import { MembersView } from './components/MembersView';
 import { TabButton } from './components/TabButton';
-import { CreatorCard } from './components/CreatorCard';
 import { CreatorModal } from './components/CreatorModal';
+import { HomePage } from './components/HomePage';
 import { OriginStoryModal } from './components/OriginStoryModal';
 import { OnboardingModal } from './components/OnboardingModal';
 import { DashboardView } from './components/DashboardView';
@@ -40,17 +40,15 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [categoryOpen, setCategoryOpen] = useState(false);
-  const [tagOpen, setTagOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { setCategoryOpen(false); setTagOpen(false); }
+      if (e.key === 'Escape') { }
     };
     const onClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('.filter-dropdown')) { setCategoryOpen(false); setTagOpen(false); }
+      if (!target.closest('.home-dropdown')) { }
     };
     document.addEventListener('keydown', onKey);
     document.addEventListener('mousedown', onClick);
@@ -158,7 +156,9 @@ function App() {
     <div className={`app-shell ${showRemix ? 'remix-visible' : ''}`}>
       <nav className={`nav ${menuOpen ? 'nav-open' : ''}`}>
         <a href="/" className="brand" title="CreatorPlaybooks home">
-          <span className="brand-mark">✦</span>
+          <div className="brand-mark" style={{ overflow: 'hidden' }}>
+            <img src="/brand_logo.png" alt="CreatorPlaybooks logo" className="origin-brand-img" />
+          </div>
           <span className="brand-text">
             <span className="brand-name">CreatorPlaybooks</span>
             <span className="brand-tag">by Maya + Neal</span>
@@ -190,80 +190,20 @@ function App() {
 
       <main className="main">
         {tab === 'creators' && (
-          <>
-            <section className="hero-section hero-clean">
-              <div className="hero-kicker">✨ Adopt Growth Frameworks</div>
-              <h1 className="hero-headline">Grow on X like the <span className="text-gradient text-underline">best creators</span>.</h1>
-              <p className="lead hero-lead">Real playbooks from indie hackers and Netlify shippers. Pick a mentor, copy their plays, and start shipping.</p>
-              <div className="hero-actions">
-                <button className="btn btn-hot btn-lg" onClick={() => document.getElementById('creators')?.scrollIntoView({ behavior: 'smooth' })}><Sparkles size={18} /> Browse mentors</button>
-                <button className="btn btn-secondary btn-lg" onClick={() => setTab('dashboard')}><TrendingUp size={18} /> Open dashboard</button>
-              </div>
-              <div className="hero-meta">
-                <span className="hero-stat"><strong>{CREATORS.length}</strong> creators</span>
-                <span className="hero-stat"><strong>{CREATORS.reduce((a, c) => a + c.plays.length, 0)}</strong> growth plays</span>
-                <span className="hero-stat"><strong>1</strong> AI-ready API</span>
-              </div>
-            </section>
-
-            <section id="creators" className="creators-index">
-              <div className="section-header">
-                <h2 className="section-title">Pick your mentor</h2>
-                <p className="section-subtitle">Click any card to open their full playbook, products, and agent-ready prompt.</p>
-              </div>
-
-              <div className="creators-filter-bar">
-                <div className="search-box">
-                  <Search size={16} className="search-icon" />
-                  <input type="text" placeholder="Search creators, handles, tags..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="search-input" />
-                  {searchQuery && <button className="search-clear" onClick={() => setSearchQuery('')} title="Clear"><X size={14} /></button>}
-                </div>
-                <div className="filter-chips">
-                  <div className="filter-dropdown">
-                    <button className={`filter-chip ${selectedCategory ? 'active' : ''}`} onClick={() => setCategoryOpen((v) => !v)} title="Filter by category"><SlidersHorizontal size={13} /> Category</button>
-                    {categoryOpen && (
-                      <div className="filter-menu">
-                        {categories.map(([cat, count]) => <button key={cat} className="filter-menu-item" onClick={() => { setSelectedCategory(cat); setCategoryOpen(false); }}>{cat} <span className="filter-menu-count">{count}</span></button>)}
-                      </div>
-                    )}
-                  </div>
-                  <div className="filter-dropdown">
-                    <button className={`filter-chip ${selectedTag ? 'active' : ''}`} onClick={() => setTagOpen((v) => !v)} title="Filter by tag"><Tag size={13} /> Tag</button>
-                    {tagOpen && (
-                      <div className="filter-menu">
-                        {allTags.slice(0, 12).map((t) => <button key={t} className="filter-menu-item" onClick={() => { setSelectedTag(t); setTagOpen(false); }}>{t} <span className="filter-menu-count">{CREATORS.filter((c) => c.tags.includes(t)).length}</span></button>)}
-                      </div>
-                    )}
-                  </div>
-                  {(selectedCategory || selectedTag || searchQuery) && (
-                    <button className="filter-chip reset" onClick={() => { setSearchQuery(''); setSelectedCategory(null); setSelectedTag(null); }}>Reset</button>
-                  )}
-                </div>
-              </div>
-
-              {(selectedCategory || selectedTag) && (
-                <div className="active-filters">
-                  {selectedCategory && <span className="active-filter">Category: {selectedCategory} <button onClick={() => setSelectedCategory(null)}><X size={12} /></button></span>}
-                  {selectedTag && <span className="active-filter">Tag: {selectedTag} <button onClick={() => setSelectedTag(null)}><X size={12} /></button></span>}
-                </div>
-              )}
-
-              {filteredCreators.length === 0 ? (
-                <div className="creators-empty">
-                  <div className="creators-empty-icon">🔭</div>
-                  <h3>No creators match your filters</h3>
-                  <p>Try clearing your search or filters to see the full directory.</p>
-                  <button className="btn btn-secondary" onClick={() => { setSearchQuery(''); setSelectedCategory(null); setSelectedTag(null); }}><RefreshCw size={14} /> Clear all filters</button>
-                </div>
-              ) : (
-                <div className="creators-grid-clean">
-                  {filteredCreators.map((creator) => (
-                    <CreatorCard key={creator.id} creator={creator} active={activeCreator.id === creator.id} onClick={() => openCreatorModal(creator)} />
-                  ))}
-                </div>
-              )}
-            </section>
-          </>
+          <HomePage
+            filteredCreators={filteredCreators}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedTag={selectedTag}
+            setSelectedTag={setSelectedTag}
+            categories={categories}
+            allTags={allTags}
+            openCreatorModal={openCreatorModal}
+            activeCreator={activeCreator}
+            totalPlays={CREATORS.reduce((a, c) => a + c.plays.length, 0)}
+          />
         )}
         {tab === 'dashboard' && (user ? (
           <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
@@ -279,7 +219,12 @@ function App() {
       <footer className="footer">
         <div className="footer-grid">
           <div className="footer-brand">
-            <a href="/" className="footer-brand-link" title="CreatorPlaybooks home"><span className="brand-mark">✦</span><span className="footer-brand-name">CreatorPlaybooks</span></a>
+            <a href="/" className="footer-brand-link" title="CreatorPlaybooks home">
+              <div className="brand-mark" style={{ overflow: 'hidden' }}>
+                <img src="/brand_logo.png" alt="CreatorPlaybooks logo" className="origin-brand-img" />
+              </div>
+              <span className="footer-brand-name">CreatorPlaybooks</span>
+            </a>
             <p className="footer-desc">Real growth playbooks from indie hackers and Netlify shippers. Built for builders who want to grow on X without guessing.</p>
             <div className="footer-social">
               <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer">@NealFrazierTech</a>
