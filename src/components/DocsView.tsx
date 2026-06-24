@@ -1,5 +1,5 @@
 import type { CreatorProfile } from '../types';
-const CANONICAL_URL = 'https://hotappsummer-mayagrowth.netlify.app';
+const CANONICAL_URL = 'https://creatorplaybooks.netlify.app';
 export function DocsView({ activeCreator }: { activeCreator: CreatorProfile }) {
   const endpoints = [
     { method: 'GET', path: '/api/creators', desc: 'All creators with full playbooks' },

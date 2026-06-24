@@ -27,11 +27,11 @@ export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, on
   };
 
   const apiFetchSnippet = `// Fetch ${creator.name}'s playbook JSON
-fetch('https://hotappsummer-mayagrowth.netlify.app/api/creator?id=${creator.id}')
+fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
   .then(res => res.json())
   .then(playbook => console.log(playbook));`;
 
-  const apiCurlSnippet = `curl https://hotappsummer-mayagrowth.netlify.app/api/creator?id=${creator.id}`;
+  const apiCurlSnippet = `curl https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}`;
 
   return (
     <div 

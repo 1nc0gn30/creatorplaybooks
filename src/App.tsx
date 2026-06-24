@@ -18,7 +18,7 @@ import { MeView } from './components/MeView';
 import { DocsView } from './components/DocsView';
 import { LoginGate } from './components/LoginGate';
 
-const CANONICAL_URL = 'https://hotappsummer-mayagrowth.netlify.app';
+const CANONICAL_URL = 'https://creatorplaybooks.netlify.app';
 
 function App() {
   const { user, profile, login, logout } = useAuth();

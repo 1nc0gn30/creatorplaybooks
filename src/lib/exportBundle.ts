@@ -1,6 +1,6 @@
 import type { CreatorProfile, BuilderProfile, UserProgress, GrowthScore, ScheduledPost } from '../types';
 export function buildExportBundle(creator: CreatorProfile, me: BuilderProfile, progress: UserProgress, score: GrowthScore, schedule: ScheduledPost[]) {
-  const playbookMd = [`# ${creator.name} Growth Playbook`, '', `Source: ${'https://hotappsummer-mayagrowth.netlify.app'}/api/creator?id=${creator.id}`, '', ...creator.plays.map((p) => [`## ${p.emoji} ${p.title}`, p.description, '', `**Action:** ${p.action}`, `**Frequency:** ${p.frequency}`, ''].join('\n'))].join('\n');
+  const playbookMd = [`# ${creator.name} Growth Playbook`, '', `Source: ${'https://creatorplaybooks.netlify.app'}/api/creator?id=${creator.id}`, '', ...creator.plays.map((p) => [`## ${p.emoji} ${p.title}`, p.description, '', `**Action:** ${p.action}`, `**Frequency:** ${p.frequency}`, ''].join('\n'))].join('\n');
   return {
     'concept.json': JSON.stringify({ name: me.project, handle: me.handle, goal: me.goal, url: me.url, mentor: creator.id }, null, 2),
     'schedule.json': JSON.stringify(schedule, null, 2),
