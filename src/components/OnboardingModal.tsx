@@ -29,7 +29,7 @@ export function OnboardingModal({ step, setStep, close, setTab }: { step: number
 
         {/* Title & Body */}
         <h2>{s.title}</h2>
-        <p className="text-muted" style={{ minHeight: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p className="text-muted" style={{ minHeight: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.92rem', margin: '10px 0 20px' }}>
           {s.body}
         </p>
 

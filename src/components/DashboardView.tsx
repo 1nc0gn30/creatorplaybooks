@@ -34,10 +34,12 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
           <h3 className="section-title-small">Ideas from {activeCreator.name}</h3>
           <button className="btn btn-sm btn-secondary" onClick={refreshIdeas}><RefreshCw size={14} /> Refresh</button>
         </div>
-        <div className="idea-cards">
+        <div className="ideas-grid">
           {ideas.map((idea: ContentIdea) => (
-            <div key={idea.id} className="idea-card">
-              <span className="idea-format">{idea.format}</span>
+            <div key={idea.id} className="idea-card-v2">
+              <div className="idea-card-header">
+                <span className="idea-format badge" style={{ background: `${activeCreator.theme.primary}15`, color: activeCreator.theme.primary, borderColor: `${activeCreator.theme.primary}30` }}>{idea.format}</span>
+              </div>
               <p className="idea-hook">{idea.hook}</p>
               <p className="idea-angle">{idea.angle}</p>
               <div className="idea-tags">{idea.tags.map((t) => <span key={t} className="tag-chip">{t}</span>)}</div>
@@ -47,21 +49,26 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
       </div>
       <div className="dashboard-scheduler">
         <h3 className="section-title-small">Content schedule</h3>
-        <div className="schedule-inputs">
+        <div className="schedule-input">
           <select value={newDay} onChange={(e) => setNewDay(e.target.value)}>{days.map((d) => <option key={d} value={d}>{d}</option>)}</select>
           <input type="text" placeholder="Draft your post..." value={newPost} onChange={(e) => setNewPost(e.target.value)} />
           <button className="btn btn-hot" onClick={addScheduled}><Plus size={14} /> Add</button>
         </div>
         <div className="schedule-board">
           {days.map((d) => (
-            <div key={d} className="schedule-column">
-              <strong>{d}</strong>
-              {schedule.filter((s: ScheduledPost) => s.day === d).map((s: ScheduledPost) => (
-                <div key={s.id} className="schedule-post">
-                  <span>{s.content}</span>
-                  <button onClick={() => removeScheduled(s.id)} title="Remove"><Trash2 size={12} /></button>
-                </div>
-              ))}
+            <div key={d} className="day-column">
+              <div className="day-title">{d}</div>
+              <div className="day-posts-v2">
+                {schedule.filter((s: ScheduledPost) => s.day === d).map((s: ScheduledPost) => (
+                  <div key={s.id} className="scheduled-post-v2">
+                    <span>{s.content}</span>
+                    <button onClick={() => removeScheduled(s.id)} title="Remove" style={{ opacity: 0.7, background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={12} /></button>
+                  </div>
+                ))}
+                {schedule.filter((s: ScheduledPost) => s.day === d).length === 0 && (
+                  <div className="empty-day">Empty</div>
+                )}
+              </div>
             </div>
           ))}
         </div>

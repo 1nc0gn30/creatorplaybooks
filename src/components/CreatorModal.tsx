@@ -202,7 +202,7 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
                       onClick={() => copyText(hook, `hook-${i}`)}
                       title="Click to copy hook example"
                     >
-                      <span style={{ fontSize: '0.92rem', color: 'var(--ink-muted)' }}>"{hook}"</span>
+                      <span style={{ fontSize: '0.92rem', color: 'var(--ink-muted)', wordBreak: 'break-word', textAlign: 'left' }}>"{hook}"</span>
                       <span className="badge" style={{ color: copiedKey === `hook-${i}` ? 'var(--success)' : undefined, borderColor: copiedKey === `hook-${i}` ? 'var(--success)' : undefined, fontSize: '0.72rem', flexShrink: 0 }}>
                         {copiedKey === `hook-${i}` ? 'Copied!' : 'Copy'}
                       </span>
@@ -219,7 +219,7 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
                       onClick={() => copyText(angle, `angle-${i}`)}
                       title="Click to copy angle strategy"
                     >
-                      <span style={{ fontSize: '0.92rem', color: 'var(--ink-muted)' }}>{angle}</span>
+                      <span style={{ fontSize: '0.92rem', color: 'var(--ink-muted)', wordBreak: 'break-word', textAlign: 'left' }}>{angle}</span>
                       <span className="badge" style={{ color: copiedKey === `angle-${i}` ? 'var(--success)' : undefined, borderColor: copiedKey === `angle-${i}` ? 'var(--success)' : undefined, fontSize: '0.72rem', flexShrink: 0 }}>
                         {copiedKey === `angle-${i}` ? 'Copied!' : 'Copy'}
                       </span>
@@ -281,7 +281,7 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
               </button>
             </div>
             <div style={{ position: 'relative' }}>
-              <pre className="code-block" style={{ fontSize: '0.8rem', background: 'var(--surface-3)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <pre className="code-block" style={{ fontSize: '0.8rem', background: 'var(--surface-3)', border: '1px solid rgba(255,255,255,0.08)', paddingRight: '85px', overflowX: 'auto' }}>
                 <code>{apiSnippetTab === 'js' ? apiFetchSnippet : apiCurlSnippet}</code>
               </pre>
               <button 
