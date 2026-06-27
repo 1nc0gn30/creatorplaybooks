@@ -1126,6 +1126,43 @@ async function mergeWithBlob(store, creator) {
   }
 }
 
+function getActiveCreators(creatorsList) {
+  // Launch date: June 27, 2026 UTC
+  const LAUNCH_TIME = Date.UTC(2026, 5, 27, 0, 0, 0); // Month is 0-indexed, so 5 is June!
+  const now = Date.now();
+  
+  // Calculate elapsed days
+  const elapsedMs = now - LAUNCH_TIME;
+  const elapsedDays = Math.max(0, Math.floor(elapsedMs / (1000 * 60 * 60 * 24)));
+  
+  // Initially we want: maya, kp, jaibhagat
+  const initialIds = ['maya', 'kp', 'jaibhagat'];
+  
+  const initialCreators = [];
+  const otherCreators = [];
+  
+  const creatorsMap = new Map();
+  creatorsList.forEach(c => creatorsMap.set(c.id, c));
+  
+  initialIds.forEach(id => {
+    const creator = creatorsMap.get(id);
+    if (creator) {
+      initialCreators.push(creator);
+    }
+  });
+  
+  creatorsList.forEach(c => {
+    if (!initialIds.includes(c.id)) {
+      otherCreators.push(c);
+    }
+  });
+  
+  const releasedOthersCount = Math.min(elapsedDays, otherCreators.length);
+  const releasedOthers = otherCreators.slice(0, releasedOthersCount);
+  
+  return [...initialCreators, ...releasedOthers];
+}
+
 export default async (req, context) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
 
@@ -1139,7 +1176,8 @@ export default async (req, context) => {
 
   if (path === 'health') return json({ ok: true, service: 'CreatorPlaybooks', agentApi: true, time: new Date().toISOString() });
 
-  const mergedCreators = await Promise.all(BASE_CREATORS.map(c => mergeWithBlob(store, c)));
+  const activeBaseCreators = getActiveCreators(BASE_CREATORS);
+  const mergedCreators = await Promise.all(activeBaseCreators.map(c => mergeWithBlob(store, c)));
 
   if (path === 'creators') {
     return json({
