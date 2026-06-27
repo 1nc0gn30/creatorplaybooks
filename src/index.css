@@ -183,13 +183,14 @@
 
 /* Homepage Origin Story Section styling */
 .home-origin-story {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 50px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  gap: 30px;
   margin: 85px auto;
-  max-width: 1100px;
-  width: 100%;
+  max-width: 800px;
+  width: 90%;
   padding: 60px 48px;
   background: linear-gradient(135deg, rgba(236, 72, 153, 0.04) 0%, rgba(34, 211, 238, 0.04) 100%);
   border-radius: 28px;
@@ -221,6 +222,7 @@
   justify-content: center;
   position: relative;
   z-index: 1;
+  margin-bottom: 20px;
 }
 
 /* Growth Playbook Stack */
@@ -450,13 +452,15 @@
 .home-origin-right {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   position: relative;
   z-index: 1;
 }
 
 .home-origin-right .origin-badge {
   display: inline-flex;
-  align-self: flex-start;
+  align-self: center;
   padding: 4px 10px;
   background: rgba(236, 72, 153, 0.12);
   color: var(--primary);
@@ -476,9 +480,11 @@
   font-size: clamp(1.4rem, 3.2vw, 1.85rem);
   line-height: 1.4;
   color: var(--ink);
-  margin: 0 0 20px;
-  padding-left: 20px;
-  border-left: 3px solid var(--primary);
+  margin: 0 auto 24px;
+  padding: 0;
+  border-left: none;
+  text-align: center;
+  max-width: 680px;
   letter-spacing: -0.01em;
 }
 
@@ -486,9 +492,10 @@
 .origin-authors {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   font-size: 0.8rem;
 }
 
@@ -570,6 +577,7 @@
 .formula-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   font-family: var(--ui);
   font-size: 0.72rem;
@@ -640,7 +648,7 @@
 
 @media (max-width: 900px) {
   .home-origin-story {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 40px;
     padding: 40px 24px;
     margin: 40px auto;
@@ -680,19 +688,19 @@
   
   .formula-steps-row {
     flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
+    gap: 16px;
+    align-items: center;
   }
   
   .formula-step-item {
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    text-align: left;
+    gap: 6px;
+    text-align: center;
   }
   
   .formula-step-item .num {
-    margin-bottom: 0;
+    margin-bottom: 6px;
   }
   
   .formula-arrow {
