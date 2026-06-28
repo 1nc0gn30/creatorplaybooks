@@ -41,6 +41,11 @@ export interface BuilderProfile {
   streak: number;
   xp: number;
   avatar: string;
+  accessibilityPreferences?: {
+    largeText?: boolean;
+    highContrast?: boolean;
+    reducedMotion?: boolean;
+  };
 }
 
 export interface GrowthPlay {

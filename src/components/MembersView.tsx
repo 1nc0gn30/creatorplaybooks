@@ -169,13 +169,24 @@ export function MembersView() {
                   <strong>{c.name}</strong>
                   <span className="vote-handle">{c.handle}</span>
                 </div>
-                <div className="vote-score">{summary.score} pts</div>
+                <div className="vote-bar-wrap">
+                  <span className="vote-score">{summary.score} pts</span>
+                  {summary.up + summary.down > 0 ? (
+                    <div className="vote-ratio-bar" title={`${Math.round((summary.up / (summary.up + summary.down)) * 100)}% positive feedback`}>
+                      <div className="fill" style={{ width: `${(summary.up / (summary.up + summary.down)) * 100}%` }} />
+                    </div>
+                  ) : (
+                    <div className="vote-ratio-bar empty" title="No feedback yet">
+                      <div className="fill" style={{ width: '0%' }} />
+                    </div>
+                  )}
+                </div>
                 <div className="vote-actions">
                   <button className={mine === 'up' ? 'active' : ''} onClick={() => toggleVote(c.id, 'up')} title="Helpful playbook">
-                    <ThumbsUp size={16} /> {summary.up}
+                    <ThumbsUp size={14} /> <span>{summary.up}</span>
                   </button>
                   <button className={mine === 'down' ? 'active down' : 'down'} onClick={() => toggleVote(c.id, 'down')} title="Inaccurate profile">
-                    <ThumbsDown size={16} /> {summary.down}
+                    <ThumbsDown size={14} /> <span>{summary.down}</span>
                   </button>
                 </div>
               </div>

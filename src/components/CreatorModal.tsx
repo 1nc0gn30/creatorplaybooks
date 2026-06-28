@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Copy, Bot, FolderOpen, Share2, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Copy, Check, Bot, FolderOpen, Share2, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import type { CreatorProfile } from '../types';
 
 export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, onInstallAgent }: { creator: CreatorProfile; onClose: () => void; onCopyPlaybook: () => void; onCopyAgent: () => void; onInstallAgent: () => void }) {
@@ -297,15 +297,15 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
           {/* Modal Actions */}
           <div className="creator-modal-actions" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px', marginTop: '24px' }}>
             <button className="btn btn-hot" onClick={() => triggerCopy(onCopyPlaybook, 'playbook')} style={{ background: creator.theme.primary }}>
-              <Copy size={14} /> 
+              {copiedKey === 'playbook' ? <Check size={14} /> : <Copy size={14} />} 
               {copiedKey === 'playbook' ? 'Copied!' : 'Copy Playbook MD'}
             </button>
             <button className="btn btn-secondary" onClick={() => triggerCopy(onCopyAgent, 'agent')}>
-              <Bot size={14} style={{ color: creator.theme.accent }} /> 
+              {copiedKey === 'agent' ? <Check size={14} style={{ color: 'var(--success)' }} /> : <Bot size={14} style={{ color: creator.theme.accent }} />} 
               {copiedKey === 'agent' ? 'Copied!' : 'Copy Agent Prompt'}
             </button>
             <button className="btn btn-secondary" onClick={() => triggerCopy(onInstallAgent, 'install')}>
-              <FolderOpen size={14} style={{ color: creator.theme.secondary }} /> 
+              {copiedKey === 'install' ? <Check size={14} style={{ color: 'var(--success)' }} /> : <FolderOpen size={14} style={{ color: creator.theme.secondary }} />} 
               {copiedKey === 'install' ? 'Downloaded!' : 'Agent Kit (.zip)'}
             </button>
             <a href={xUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">

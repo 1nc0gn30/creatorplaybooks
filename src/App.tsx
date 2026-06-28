@@ -31,8 +31,17 @@ function App() {
   const [schedule, setSchedule] = useState<ScheduledPost[]>([]);
   const [newPost, setNewPost] = useState('');
   const [newDay, setNewDay] = useState('Monday');
-  const [me, setMe] = useState<BuilderProfile>(defaultBuilder());
+  const [me, setMe] = useState<BuilderProfile>(() => {
+    const saved = localStorage.getItem('creatorplaybooks_me');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return defaultBuilder();
+  });
   const [remix, setRemix] = useState<Set<string>>(new Set());
+  const [scrolled, setScrolled] = useState(false);
 
   const [showOriginStory, setShowOriginStory] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -94,7 +103,20 @@ function App() {
   }, []);
 
   useEffect(() => {
-    document.body.className = ['app-shell', ...Array.from(remix).map((k) => 'remix-' + k)].join(' ');
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const classes = ['app-shell', ...Array.from(remix).map((k) => 'remix-' + k)];
+    if (me.accessibilityPreferences?.largeText) classes.push('remix-big');
+    if (me.accessibilityPreferences?.highContrast) classes.push('remix-highlight');
+    if (me.accessibilityPreferences?.reducedMotion) classes.push('reduced-motion');
+    document.body.className = classes.join(' ');
+    
     const t = activeCreator.theme;
     document.body.style.setProperty('--primary', t.primary);
     document.body.style.setProperty('--secondary', t.secondary);
@@ -105,13 +127,16 @@ function App() {
     else document.body.style.removeProperty('--surface');
     if (t.surface2) document.body.style.setProperty('--surface-2', t.surface2);
     else document.body.style.removeProperty('--surface-2');
-  }, [remix, activeCreator]);
+  }, [remix, activeCreator, me]);
 
   useEffect(() => {
     setIdeas(generateIdeasForCreator(activeCreator, 6));
   }, [activeCreator]);
 
-  const updateMe = (next: BuilderProfile) => setMe(next);
+  const updateMe = (next: BuilderProfile) => {
+    setMe(next);
+    localStorage.setItem('creatorplaybooks_me', JSON.stringify(next));
+  };
 
   const toggleRemix = (key: string) => {
     const next = new Set(remix);
@@ -154,7 +179,7 @@ function App() {
 
   return (
     <div className={`app-shell ${showRemix ? 'remix-visible' : ''}`}>
-      <nav className={`nav ${menuOpen ? 'nav-open' : ''}`}>
+      <nav className={`nav ${menuOpen ? 'nav-open' : ''} ${scrolled ? 'nav-scrolled' : ''}`}>
         <a href="/" className="brand" title="CreatorPlaybooks home">
           <div className="brand-mark" style={{ overflow: 'hidden' }}>
             <img src="/brand_logo.png" alt="CreatorPlaybooks logo" className="origin-brand-img" />
@@ -168,11 +193,11 @@ function App() {
           <Menu size={22} />
         </button>
         <div className="links">
-          <TabButton active={tab === 'creators'} onClick={() => { setTab('creators'); setMenuOpen(false); }} icon={<Sparkles size={14} />} label="Mentors" />
-          <TabButton active={tab === 'dashboard'} onClick={() => { setTab('dashboard'); setMenuOpen(false); }} icon={<TrendingUp size={14} />} label="Dashboard" />
-          <TabButton active={tab === 'members'} onClick={() => { setTab('members'); setMenuOpen(false); }} icon={<Users size={14} />} label="Members" />
-          <TabButton active={tab === 'me'} onClick={() => { setTab('me'); setMenuOpen(false); }} icon={<UserCircle size={14} />} label="Me" />
-          <TabButton active={tab === 'docs'} onClick={() => { setTab('docs'); setMenuOpen(false); }} icon={<BookOpen size={14} />} label="Docs" />
+          <TabButton active={tab === 'creators'} onClick={() => { setTab('creators'); setMenuOpen(false); }} icon={<Sparkles size={14} />} label="Mentors" tooltip="Browse verified creator playbooks" />
+          <TabButton active={tab === 'dashboard'} onClick={() => { setTab('dashboard'); setMenuOpen(false); }} icon={<TrendingUp size={14} />} label="Dashboard" tooltip="Track consistency & XP" />
+          <TabButton active={tab === 'members'} onClick={() => { setTab('members'); setMenuOpen(false); }} icon={<Users size={14} />} label="Members" tooltip="See leaderboard & vote" />
+          <TabButton active={tab === 'me'} onClick={() => { setTab('me'); setMenuOpen(false); }} icon={<UserCircle size={14} />} label="Me" tooltip="Customize details & layouts" />
+          <TabButton active={tab === 'docs'} onClick={() => { setTab('docs'); setMenuOpen(false); }} icon={<BookOpen size={14} />} label="Docs" tooltip="API & developer reference" />
         </div>
         <div className="nav-actions">
           {user ? (
@@ -252,15 +277,15 @@ function App() {
         <div className="footer-bottom"><span>© {new Date().getFullYear()} CreatorPlaybooks — grow in public.</span></div>
       </footer>
       <div className="remix-pad" title="Creative remix controls">
-        <button className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text"><Bold size={16} /></button>
-        <button className={remix.has('italic') ? 'active' : ''} onClick={() => toggleRemix('italic')} title="Italic text"><Italic size={16} /></button>
-        <button className={remix.has('underline') ? 'active' : ''} onClick={() => toggleRemix('underline')} title="Underline headings"><Underline size={16} /></button>
-        <button className={remix.has('highlight') ? 'active' : ''} onClick={() => toggleRemix('highlight')} title="Highlight paragraphs"><Highlighter size={16} /></button>
-        <button className={remix.has('big') ? 'active' : ''} onClick={() => toggleRemix('big')} title="Bigger typography"><Zap size={16} /></button>
-        <button className={remix.has('spacy') ? 'active' : ''} onClick={() => toggleRemix('spacy')} title="More breathing room"><Wand2 size={16} /></button>
-        <button className={remix.has('neon') ? 'active' : ''} onClick={() => toggleRemix('neon')} title="Neon glow"><Sparkles size={16} /></button>
+        <button className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text" data-tooltip="Bold Text"><Bold size={16} /></button>
+        <button className={remix.has('italic') ? 'active' : ''} onClick={() => toggleRemix('italic')} title="Italic text" data-tooltip="Italic Serif Style"><Italic size={16} /></button>
+        <button className={remix.has('underline') ? 'active' : ''} onClick={() => toggleRemix('underline')} title="Underline headings" data-tooltip="Underline Titles"><Underline size={16} /></button>
+        <button className={remix.has('highlight') ? 'active' : ''} onClick={() => toggleRemix('highlight')} title="Highlight paragraphs" data-tooltip="High Contrast Blocks"><Highlighter size={16} /></button>
+        <button className={remix.has('big') ? 'active' : ''} onClick={() => toggleRemix('big')} title="Bigger typography" data-tooltip="Large Text Sizes"><Zap size={16} /></button>
+        <button className={remix.has('spacy') ? 'active' : ''} onClick={() => toggleRemix('spacy')} title="More breathing room" data-tooltip="Relaxed Spacing"><Wand2 size={16} /></button>
+        <button className={remix.has('neon') ? 'active' : ''} onClick={() => toggleRemix('neon')} title="Neon glow" data-tooltip="Neon Glow Borders"><Sparkles size={16} /></button>
       </div>
-      <button className={`remix-toggle ${showRemix ? 'active' : ''}`} onClick={() => setShowRemix(!showRemix)} title={showRemix ? 'Hide remix bar' : 'Show remix bar'}><Wand2 size={18} /></button>
+      <button className={`remix-toggle ${showRemix ? 'active' : ''}`} onClick={() => setShowRemix(!showRemix)} title={showRemix ? 'Hide remix bar' : 'Show remix bar'} data-tooltip={showRemix ? "Hide Panel" : "Remix & Accessibility Options"}><Wand2 size={18} /></button>
     </div>
   );
 }

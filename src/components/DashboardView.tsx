@@ -1,4 +1,4 @@
-import { TrendingUp, Calendar, MessageSquare, Zap, Plus, RefreshCw, Flame, Trash2 } from 'lucide-react';
+import { Calendar, MessageSquare, Zap, Plus, RefreshCw, Flame, Trash2 } from 'lucide-react';
 import type { ContentIdea, ScheduledPost } from '../types';
 export function DashboardView({ progress, setProgress, score, level, ideas, refreshIdeas, schedule, addScheduled, removeScheduled, newPost, setNewPost, newDay, setNewDay, activeCreator }: any) {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -10,24 +10,66 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
       </div>
       <div className="dashboard-metrics">
         <div className="metric-card metric-score">
-          <div className="score-ring-v2" data-value={score.overall}>
+          <div className="score-ring-v2" style={{ '--score': `${score.overall}%` } as React.CSSProperties}>
             <span className="score-number">{score.overall}</span>
             <span className="score-label">health</span>
           </div>
-          <div className="metric-info">
-            <strong>Level {level.level}: {level.title}</strong>
-            <span>{level.next - progress.xp} XP to next level</span>
+          <div className="score-details">
+            <div className="metric-info">
+              <strong className="level-title">Level {level.level}: {level.title}</strong>
+              <span className="level-xp">{level.next - progress.xp} XP to next level</span>
+            </div>
+            <div className="score-breakdown">
+              <div className="score-bar-row">
+                <div className="score-bar-label">
+                  <span>Consistency</span>
+                  <span className="value">{score.consistency}%</span>
+                </div>
+                <div className="progress-bar"><div className="fill" style={{ width: `${score.consistency}%`, background: 'var(--primary)' }} /></div>
+              </div>
+              <div className="score-bar-row">
+                <div className="score-bar-label">
+                  <span>Engagement</span>
+                  <span className="value">{score.engagement}%</span>
+                </div>
+                <div className="progress-bar"><div className="fill" style={{ width: `${score.engagement}%`, background: 'var(--accent)' }} /></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="metric-card"><TrendingUp size={20} className="metric-icon" /><strong>{progress.streak}</strong><span>day streak</span></div>
-        <div className="metric-card"><Calendar size={20} className="metric-icon" /><strong>{progress.postsThisWeek}</strong><span>posts this week</span></div>
-        <div className="metric-card"><MessageSquare size={20} className="metric-icon" /><strong>{progress.repliesToday}</strong><span>replies today</span></div>
-        <div className="metric-card"><Zap size={20} className="metric-icon" /><strong>{progress.xp}</strong><span>total XP</span></div>
+        <div className="metric-card metric-streak">
+          <Flame size={22} className="metric-icon" />
+          <div className="metric-num-wrap">
+            <strong>{progress.streak}</strong>
+            <span>day streak</span>
+          </div>
+        </div>
+        <div className="metric-card metric-posts">
+          <Calendar size={22} className="metric-icon" />
+          <div className="metric-num-wrap">
+            <strong>{progress.postsThisWeek}</strong>
+            <span>posts this week</span>
+          </div>
+        </div>
+        <div className="metric-card metric-replies">
+          <MessageSquare size={22} className="metric-icon" />
+          <div className="metric-num-wrap">
+            <strong>{progress.repliesToday}</strong>
+            <span>replies today</span>
+          </div>
+        </div>
+        <div className="metric-card metric-xp">
+          <Zap size={22} className="metric-icon" />
+          <div className="metric-num-wrap">
+            <strong>{progress.xp}</strong>
+            <span>total XP</span>
+          </div>
+        </div>
       </div>
       <div className="dashboard-actions">
-        <button className="btn btn-hot" onClick={() => setProgress({ ...progress, postsThisWeek: progress.postsThisWeek + 1, xp: progress.xp + 12, lastPostDate: new Date().toISOString().slice(0, 10) })}><Plus size={14} /> Log a post</button>
-        <button className="btn btn-secondary" onClick={() => setProgress({ ...progress, repliesToday: progress.repliesToday + 1, xp: progress.xp + 3 })}><MessageSquare size={14} /> Log reply</button>
-        <button className="btn btn-secondary" onClick={() => setProgress({ ...progress, streak: progress.streak + 1, xp: progress.xp + 5 })}><Flame size={14} /> Extend streak</button>
+        <button className="btn btn-hot log-post-btn" onClick={() => setProgress({ ...progress, postsThisWeek: progress.postsThisWeek + 1, xp: progress.xp + 12, lastPostDate: new Date().toISOString().slice(0, 10) })} data-tooltip="Gain +12 XP!"><Plus size={14} /> Log a post</button>
+        <button className="btn btn-secondary log-reply-btn" onClick={() => setProgress({ ...progress, repliesToday: progress.repliesToday + 1, xp: progress.xp + 3 })} data-tooltip="Gain +3 XP!"><MessageSquare size={14} /> Log reply</button>
+        <button className="btn btn-secondary extend-streak-btn" onClick={() => setProgress({ ...progress, streak: progress.streak + 1, xp: progress.xp + 5 })} data-tooltip="Gain +5 XP!"><Flame size={14} /> Extend streak</button>
       </div>
       <div className="dashboard-ideas">
         <div className="section-header-inline">

@@ -66,7 +66,7 @@ export function HomePage({
               Browse mentors
               <ChevronRight size={16} />
             </button>
-            <button className="home-btn home-btn-secondary">
+            <button className="home-btn home-btn-secondary" onClick={() => document.getElementById('api-section')?.scrollIntoView({ behavior: 'smooth' })}>
               <Code2 size={18} />
               Try the API
             </button>
@@ -321,7 +321,7 @@ export function HomePage({
       </section>
 
       {/* API teaser */}
-      <section className="home-section home-api">
+      <section className="home-section home-api" id="api-section">
         <div className="home-api-card">
           <div className="home-api-left">
             <span className="home-section-eyebrow">Agent-ready API</span>

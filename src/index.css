@@ -1143,13 +1143,42 @@
 
 .vote-score {
   font-family: var(--heading);
-  font-size: 1rem;
+  font-size: 1.02rem;
   color: var(--accent);
   font-weight: 800;
-  background: rgba(34, 211, 238, 0.1);
+  background: rgba(34, 211, 238, 0.08);
   padding: 4px 10px;
   border-radius: 8px;
   border: 1px solid rgba(34, 211, 238, 0.15);
+  display: inline-block;
+}
+
+.vote-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  min-width: 100px;
+}
+
+.vote-ratio-bar {
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+.vote-ratio-bar .fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--success) 100%);
+  transition: width 0.3s ease;
+}
+
+.vote-ratio-bar.empty .fill {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .vote-actions {
@@ -1639,5 +1668,572 @@
     flex-direction: row !important;
     flex-wrap: wrap !important;
     gap: 8px !important;
+  }
+}
+
+/* ==========================================
+   DASHBOARD PREMIUM OVERHAUL STYLES
+   ========================================== */
+
+/* Metric Cards Layout */
+.dashboard-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 20px !important;
+  margin-bottom: 32px !important;
+}
+
+.metric-card {
+  position: relative;
+  background: rgba(18, 18, 26, 0.45) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 20px !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 16px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+.metric-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.metric-icon {
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.metric-card:hover .metric-icon {
+  transform: scale(1.1);
+}
+
+.metric-num-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.metric-num-wrap strong {
+  font-family: var(--heading);
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.metric-num-wrap span {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Individual card hover effects */
+.metric-streak .metric-icon {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+.metric-streak:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+              0 0 25px rgba(245, 158, 11, 0.08) !important;
+}
+
+.metric-posts .metric-icon {
+  background: rgba(34, 211, 238, 0.1);
+  color: var(--accent);
+}
+.metric-posts:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+              0 0 25px rgba(34, 211, 238, 0.08) !important;
+}
+
+.metric-replies .metric-icon {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--secondary);
+}
+.metric-replies:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+              0 0 25px rgba(139, 92, 246, 0.08) !important;
+}
+
+.metric-xp .metric-icon {
+  background: rgba(236, 72, 153, 0.1);
+  color: var(--primary);
+}
+.metric-xp:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 
+              inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+              0 0 25px rgba(236, 72, 153, 0.08) !important;
+}
+
+/* Score card specific styling */
+.metric-score {
+  grid-column: span 2 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 28px !important;
+  padding: 24px 32px !important;
+}
+
+.score-ring-v2 {
+  width: 96px !important;
+  height: 96px !important;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(var(--accent) var(--score, 0%), rgba(255, 255, 255, 0.05) 0%);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.3s ease;
+}
+
+.score-ring-v2::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  bottom: 6px;
+  left: 6px;
+  border-radius: 50%;
+  background: #12121a; /* matches surface background */
+}
+
+.score-number {
+  position: relative;
+  z-index: 2;
+  font-family: var(--heading);
+  font-size: 1.8rem !important;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.score-label {
+  position: relative;
+  z-index: 2;
+  font-size: 0.65rem !important;
+  color: var(--muted);
+  margin-top: -12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.score-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.level-title {
+  font-size: 1.15rem;
+  color: var(--ink);
+  font-weight: 800;
+  display: block;
+}
+
+.level-xp {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.score-breakdown {
+  display: grid;
+  gap: 10px;
+}
+
+.score-bar-row {
+  display: grid;
+  gap: 4px;
+}
+
+.score-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.score-bar-label .value {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.progress-bar {
+  height: 6px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-radius: 99px !important;
+  overflow: hidden;
+}
+
+.progress-bar .fill {
+  height: 100% !important;
+  border-radius: 99px !important;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Logging buttons */
+.dashboard-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.dashboard-actions .btn {
+  padding: 12px 20px;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.log-post-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+  color: white;
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--primary) 20%, transparent) !important;
+}
+.log-post-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px color-mix(in srgb, var(--primary) 35%, transparent) !important;
+}
+
+.log-reply-btn:hover {
+  border-color: color-mix(in srgb, var(--secondary) 30%, transparent) !important;
+  background: rgba(139, 92, 246, 0.06) !important;
+  color: var(--secondary) !important;
+}
+
+.extend-streak-btn:hover {
+  border-color: color-mix(in srgb, var(--warning) 30%, transparent) !important;
+  background: rgba(245, 158, 11, 0.06) !important;
+  color: var(--warning) !important;
+}
+
+/* Ideas section header refresh button */
+.section-header-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.section-title-small {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Ideas cards */
+.idea-card-v2 {
+  background: rgba(18, 18, 26, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 18px !important;
+  padding: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.idea-card-v2:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35) !important;
+}
+
+.idea-hook {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+.idea-angle {
+  font-size: 0.88rem !important;
+  color: var(--ink-muted) !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+/* Content Scheduler board redesign */
+.dashboard-scheduler {
+  background: rgba(18, 18, 26, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 22px !important;
+  padding: 28px !important;
+  margin-top: 36px;
+}
+
+.schedule-input {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  background: rgba(255,255,255,0.02);
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.schedule-input select,
+.schedule-input input {
+  background: rgba(10, 10, 15, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.schedule-input select:focus,
+.schedule-input input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15) !important;
+}
+
+.schedule-board {
+  gap: 12px !important;
+}
+
+.day-column {
+  background: rgba(18, 18, 26, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  border-radius: 16px !important;
+  padding: 14px !important;
+  min-height: 200px !important;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.day-column:hover {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.day-title {
+  font-family: var(--ui);
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--accent) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 8px;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.scheduled-post-v2 {
+  background: rgba(10, 10, 15, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  color: var(--ink-muted);
+  line-height: 1.4;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.scheduled-post-v2:hover {
+  background: rgba(18, 18, 26, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+}
+
+.scheduled-post-v2 button {
+  color: var(--muted);
+  padding: 2px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+.scheduled-post-v2 button:hover {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.empty-day {
+  color: var(--muted) !important;
+  font-size: 0.78rem !important;
+  border: 1px dashed rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px 0 !important;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* ==========================================
+   SCROLL TRACKING & ACCESSIBILITY STYLES
+   ========================================== */
+
+/* Compact scrolled navbar style */
+.nav.nav-scrolled {
+  top: 8px !important;
+  padding: 6px 14px !important;
+  background: rgba(10, 10, 15, 0.92) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05) !important;
+  width: min(96%, 1100px) !important;
+}
+
+/* Scroll Reveal fade-in animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.creator-card-clean {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Stagger card animations */
+.home-creator-grid > div:nth-child(1) { animation-delay: 0.03s; }
+.home-creator-grid > div:nth-child(2) { animation-delay: 0.06s; }
+.home-creator-grid > div:nth-child(3) { animation-delay: 0.09s; }
+.home-creator-grid > div:nth-child(4) { animation-delay: 0.12s; }
+.home-creator-grid > div:nth-child(5) { animation-delay: 0.15s; }
+.home-creator-grid > div:nth-child(6) { animation-delay: 0.18s; }
+
+/* Reduced Motion accessibility overrides */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body.reduced-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Custom Cute Tooltips */
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  background: rgba(18, 18, 26, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: 118%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(18, 18, 26, 0.96) transparent transparent transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 1000;
+}
+@media (hover: hover) {
+  [data-tooltip]:hover::after,
+  [data-tooltip]:focus-visible::after {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  [data-tooltip]:hover::before,
+  [data-tooltip]:focus-visible::before {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+/* ==========================================
+   NAVBAR ENHANCEMENTS & LIVELINESS
+   ========================================== */
+
+/* Add spring transition to tabs */
+.nav .links .tab {
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+/* Hover scales and slightly floats the tab */
+.nav .links .tab:hover {
+  color: var(--ink) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  transform: translateY(-1.5px) scale(1.03) !important;
+}
+
+.nav .links .tab:active {
+  transform: translateY(0) scale(0.97) !important;
+}
+
+/* Enhances active tab glow */
+.nav .links .tab.active {
+  color: var(--ink) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 0 24px rgba(236, 72, 153, 0.2), inset 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Mobile Nav Menu Animation Overhaul */
+@media (max-width: 640px) {
+  .nav .links {
+    display: flex !important; /* Override display: none */
+    opacity: 0 !important;
+    transform: translateY(-8px) scale(0.96) !important;
+    pointer-events: none !important;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  .nav-open .links {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+    pointer-events: auto !important;
+  }
+  
+  /* Keep mobile layout stable */
+  .nav .links .tab:hover {
+    transform: none !important;
   }
 }
