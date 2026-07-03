@@ -1,7 +1,7 @@
 import type { CreatorProfile } from '../types';
 import { Sparkles, Search, SlidersHorizontal, Tag, ArrowRight, Zap, Bot, Code2, Terminal, Globe, X, ChevronRight } from 'lucide-react';
 import { CATEGORIES } from '../lib/creators';
-import { CreatorCard } from './CreatorCard';
+import { HoneycombWebGLGrid } from './HoneycombWebGLGrid';
 import { useMemo } from 'react';
 
 export function HomePage({
@@ -17,6 +17,7 @@ export function HomePage({
   openCreatorModal,
   activeCreator,
   totalPlays,
+  modalCreatorId,
 }: {
   filteredCreators: CreatorProfile[];
   searchQuery: string;
@@ -30,7 +31,10 @@ export function HomePage({
   openCreatorModal: (c: CreatorProfile) => void;
   activeCreator: CreatorProfile;
   totalPlays: number;
+  modalCreatorId: string | null;
 }) {
+
+
   const categoryCounts = useMemo(() => {
     const map = new Map<string, number>();
     categories.forEach(([k, v]) => map.set(k, v));
@@ -312,11 +316,11 @@ export function HomePage({
             </button>
           </div>
         ) : (
-          <div className="home-creator-grid">
-            {filteredCreators.map((creator) => (
-              <CreatorCard key={creator.id} creator={creator} active={activeCreator.id === creator.id} onClick={() => openCreatorModal(creator)} />
-            ))}
-          </div>
+          <HoneycombWebGLGrid 
+            filteredCreators={filteredCreators}
+            openCreatorModal={openCreatorModal}
+            modalCreatorId={modalCreatorId}
+          />
         )}
       </section>
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Sparkles, TrendingUp, Users, UserCircle, LogIn, LogOut, Menu, Zap, Wand2, Highlighter, Underline, Italic, Bold, BookOpen } from 'lucide-react';
+import { Sparkles, TrendingUp, Users, UserCircle, LogIn, LogOut, Menu, Zap, Wand2, Highlighter, Underline, Italic, Bold, BookOpen, Workflow } from 'lucide-react';
 import type { BuilderProfile, ContentIdea, CreatorProfile, ScheduledPost, UserProgress, Tab } from './types';
+import { PlaybookFlow } from './components/PlaybookFlow';
 import { defaultBuilder, defaultProgress, levelFromXp, scoreProgress } from './lib/maya';
 import { CREATORS } from './lib/creators';
 import { downloadZip } from './lib/export';
@@ -17,12 +18,13 @@ import { DashboardView } from './components/DashboardView';
 import { MeView } from './components/MeView';
 import { DocsView } from './components/DocsView';
 import { LoginGate } from './components/LoginGate';
+import { fetchMemberMe, saveMemberMe } from './lib/member-api';
 
 const CANONICAL_URL = 'https://creatorplaybooks.netlify.app';
 
 function App() {
   const { user, profile, login, logout } = useAuth();
-  const [tab, setTab] = useState<Tab | 'members'>('creators');
+  const [tab, setTab] = useState<Tab | 'members' | 'flow'>('creators');
   const [activeCreator, setActiveCreator] = useState<CreatorProfile>(CREATORS[0]);
   const [modalCreator, setModalCreator] = useState<CreatorProfile | null>(null);
   const [showRemix, setShowRemix] = useState(false);
@@ -42,6 +44,26 @@ function App() {
   });
   const [remix, setRemix] = useState<Set<string>>(new Set());
   const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    fetchMemberMe()
+      .then((data) => {
+        if (cancelled) return;
+        if (data && typeof data === 'object') {
+          setMe((prev) => ({
+            ...prev,
+            name: data.name || prev.name,
+            handle: data.handle || prev.handle,
+            bio: data.bio || prev.bio,
+            url: data.website || data.url || prev.url,
+          }));
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [user]);
 
   const [showOriginStory, setShowOriginStory] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -136,6 +158,16 @@ function App() {
   const updateMe = (next: BuilderProfile) => {
     setMe(next);
     localStorage.setItem('creatorplaybooks_me', JSON.stringify(next));
+    if (user) {
+      const patch = {
+        name: next.name,
+        handle: next.handle,
+        bio: next.bio,
+        website: next.url,
+        xHandle: next.handle,
+      };
+      saveMemberMe(patch).catch((err) => console.error('saveMemberMe failed', err));
+    }
   };
 
   const toggleRemix = (key: string) => {
@@ -194,6 +226,7 @@ function App() {
         </button>
         <div className="links">
           <TabButton active={tab === 'creators'} onClick={() => { setTab('creators'); setMenuOpen(false); }} icon={<Sparkles size={14} />} label="Mentors" tooltip="Browse verified creator playbooks" />
+          <TabButton active={tab === 'flow'} onClick={() => { setTab('flow'); setMenuOpen(false); }} icon={<Workflow size={14} />} label="Flow" tooltip="Interactive creator playbook flow" />
           <TabButton active={tab === 'dashboard'} onClick={() => { setTab('dashboard'); setMenuOpen(false); }} icon={<TrendingUp size={14} />} label="Dashboard" tooltip="Track consistency & XP" />
           <TabButton active={tab === 'members'} onClick={() => { setTab('members'); setMenuOpen(false); }} icon={<Users size={14} />} label="Members" tooltip="See leaderboard & vote" />
           <TabButton active={tab === 'me'} onClick={() => { setTab('me'); setMenuOpen(false); }} icon={<UserCircle size={14} />} label="Me" tooltip="Customize details & layouts" />
@@ -228,7 +261,11 @@ function App() {
             openCreatorModal={openCreatorModal}
             activeCreator={activeCreator}
             totalPlays={CREATORS.reduce((a, c) => a + c.plays.length, 0)}
+            modalCreatorId={modalCreator?.id || null}
           />
+        )}
+        {tab === 'flow' && (
+          <PlaybookFlow creators={filteredCreators} onOpenCreator={openCreatorModal} />
         )}
         {tab === 'dashboard' && (user ? (
           <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
