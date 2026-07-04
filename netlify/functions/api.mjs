@@ -609,9 +609,13 @@ const BASE_CREATORS = [
     banner: '/creators/picsoung/cover.png',
     followers: 4100,
     followersStr: '4.1K+',
-    bio: 'AI Shipper building in public on X as @picsoung. Real playbook coming soon.',
+    bio: 'AI Shipper building in public on X as @picsoung. Developer Advocate, API enthusiast, and builder.',
     products: [],
-    pillars: [],
+    pillars: [
+      'Build in public as a developer advocate',
+      'API-first product thinking',
+      'Community-driven growth',
+    ],
     milestones: [{ label: 'Followers', value: '4.1K+' }],
     media: [],
     category: 'netlify-shippers',
@@ -619,7 +623,7 @@ const BASE_CREATORS = [
     plays: [],
     hooks: [],
     angles: [],
-    tags: [],
+    tags: ['ai-shipper', 'netlify', 'devrel', 'api'],
   },
 
   {
