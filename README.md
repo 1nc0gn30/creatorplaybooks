@@ -1,32 +1,60 @@
-# React + TypeScript + Vite
+# MayaGrowth - Creator Playbooks Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Live X API integration powered by X Developer API v2.
 
-Currently, two official plugins are available:
+## X API Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Go to https://developer.x.com/en/portal/dashboard
+2. Create a new app or use existing app
+3. Generate Bearer Token from "Keys and Tokens" section
+4. Add token to Netlify environment variables:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+netlify env:set X_BEARER_TOKEN "your_bearer_token_here"
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Or in the Netlify UI: Site settings > Environment variables > Add variable.
+
+**Do NOT commit the token to git.**
+
+## Local Development
+
+Create `.env` in project root (already ignored by `.gitignore`):
+
+```
+X_BEARER_TOKEN=your_bearer_token_here
+```
+
+Run local dev server:
+```bash
+npm run dev
+```
+
+## Features
+
+- **Creator Playbooks**: Proven growth strategies from top builders
+- **Live X Profiles**: Real-time avatar, bio, follower count, and latest posts
+- **Repeatable Plays**: Actionable tactics with frequency guidance
+- **Swipe Files**: Copy-ready hooks and writing angles
+- **Developer API**: `/api/creator?id={creatorId}` for agent consumption
+
+## Build
+
+```bash
+npm run build
+```
+
+## Deploy
+
+```bash
+netlify deploy --prod
+```
+
+## Netlify Functions
+
+- `api.mjs` - Creator data API
+- `x-data.mjs` - X API proxy (requires `X_BEARER_TOKEN` env var)
+- `members.mjs` - Member/auth API
+- `export.mjs` - Export bundle API
+- `profile.mjs` - Profile API
+- `sync.mjs` - Sync API

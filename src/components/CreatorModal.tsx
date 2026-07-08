@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Copy, Check, Bot, FolderOpen, Share2, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import type { CreatorProfile } from '../types';
+import { useXProfile, formatNumber } from '../lib/xData';
 
 export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, onInstallAgent }: { creator: CreatorProfile; onClose: () => void; onCopyPlaybook: () => void; onCopyAgent: () => void; onInstallAgent: () => void }) {
   const xUrl = `https://x.com/${creator.handle.replace('@', '')}`;
@@ -13,6 +14,14 @@ export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, on
   const [apiSnippetTab, setApiSnippetTab] = useState<'js' | 'curl'>('js');
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
+
+  // Live X data
+  const { profile: xProfile, loading: xLoading } = useXProfile(creator.xHandle, true);
+
+  // Use live avatar/banner when available
+  const liveAvatar = xProfile?.avatar || creator.avatar;
+  const liveBanner = xProfile?.banner || creator.banner;
+  const liveFollowers = xProfile?.followers ? formatNumber(xProfile.followers) : creator.followersStr;
 
   const triggerCopy = (fn: () => void, key: string) => {
     fn();
@@ -50,21 +59,21 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
         <div 
           className="creator-modal-hero" 
           style={{ 
-            backgroundImage: creator.banner ? `url(${creator.banner})` : undefined, 
+            backgroundImage: liveBanner ? `url(${liveBanner})` : `linear-gradient(135deg, ${creator.theme.primary}40, ${creator.theme.accent}40)`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            backgroundColor: !creator.banner ? `linear-gradient(135deg, ${creator.theme.primary}40, ${creator.theme.accent}40)` : undefined
+            backgroundColor: creator.theme.primary + '20'
           }}
         >
           {/* Avatar Rendering */}
-          {imgError || !creator.avatar ? (
+          {imgError || !liveAvatar ? (
             <div className="creator-modal-avatar" style={{ display: 'grid', placeItems: 'center', background: `linear-gradient(135deg, ${creator.theme.primary}, ${creator.theme.accent})`, color: '#fff', fontSize: '2.2rem', fontWeight: 800 }}>
               {initials}
             </div>
           ) : (
             <img 
-              src={creator.avatar} 
+              src={liveAvatar} 
               alt={creator.name} 
               className="creator-modal-avatar" 
               onError={() => setImgError(true)} 
@@ -73,16 +82,18 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
 
           <div className="creator-modal-hero-info">
             <div className="creator-modal-name-row">
-              <h2 style={{ color: '#fff', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>{creator.name}</h2>
+              <h2 style={{ color: '#fff', textShadow: '0 2px 16px rgba(0,0,0,0.85)' }}>{creator.name}</h2>
               <span className={`status-badge status-${creator.status}`}>{creator.status}</span>
+              {xProfile?.verified && <span className="badge" style={{ background: '#1da1f222', color: '#1da1f2', border: '1px solid #1da1f244' }}>✓ Verified</span>}
             </div>
-            <span className="creator-modal-handle" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.8)', fontWeight: 600 }}>{creator.handle}</span>
+            <span className="creator-modal-handle" style={{ textShadow: '0 1px 10px rgba(0,0,0,0.8)', fontWeight: 700 }}>{creator.handle}</span>
+            {xLoading && <span className="badge" style={{ marginLeft: '8px', fontSize: '0.7rem', background: '#ffffff15', color: '#aaa' }}>⟳ X live sync...</span>}
           </div>
         </div>
 
         <div className="creator-modal-body">
           {/* Bio */}
-          <p className="creator-modal-bio">{creator.bio}</p>
+          <p className="creator-modal-bio">{xProfile?.bio || creator.bio}</p>
 
           {/* Pillars */}
           <div className="creator-modal-tags" style={{ marginBottom: '24px' }}>
@@ -96,8 +107,8 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
           {/* Stats Grid */}
           <div className="creator-modal-stats">
             <div className="stat">
-              <span className="value" style={{ color: creator.theme.primary }}>{creator.followersStr}</span>
-              <span className="label">Followers</span>
+              <span className="value" style={{ color: creator.theme.primary }}>{liveFollowers}</span>
+              <span className="label">Followers{xLoading && ' ⟳'}</span>
             </div>
             <div className="stat">
               <span className="value" style={{ color: creator.theme.secondary }}>{creator.products.length}</span>
@@ -112,12 +123,12 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
           {/* Milestones Sub-stats */}
           {creator.milestones && creator.milestones.length > 0 && (
             <div className="creator-modal-section">
-              <h6 style={{ marginBottom: '10px' }}>Key Milestones</h6>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
+              <h6 style={{ marginBottom: '12px' }}>Key Milestones</h6>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '10px' }}>
                 {creator.milestones.map((m, i) => (
-                  <div key={i} style={{ background: 'var(--surface-2)', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--muted)', display: 'block' }}>{m.label}</span>
-                    <strong style={{ fontSize: '1rem', color: 'var(--ink)' }}>{m.value}</strong>
+                  <div key={i} style={{ background: 'var(--surface-3)', padding: '12px 16px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>{m.label}</span>
+                    <strong style={{ fontSize: '1.05rem', color: 'var(--ink)', letterSpacing: '-0.01em' }}>{m.value}</strong>
                   </div>
                 ))}
               </div>
@@ -126,10 +137,13 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
 
           {/* Products */}
           <div className="creator-modal-section">
-            <h3>Products</h3>
-            <div className="creator-modal-products" style={{ display: 'grid', gap: '10px', marginTop: '10px' }}>
+            <div className="creator-modal-section-header">
+              <h3>Products</h3>
+              <span className="creator-modal-section-sub">Ships and shows from this mentor</span>
+            </div>
+            <div className="creator-modal-products" style={{ display: 'grid', gap: '12px', marginTop: '12px' }}>
               {creator.products.map((p) => (
-                <a key={p.name} href={p.url} target="_blank" rel="noreferrer" className="creator-modal-product" style={{ transition: 'all 0.2s', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <a key={p.name} href={p.url} target="_blank" rel="noreferrer" className="creator-modal-product" style={{ transition: 'all 0.2s', border: '1px solid rgba(255,255,255,0.07)' }}>
                   <span className="creator-modal-product-name">{p.name}</span>
                   <span className="creator-modal-product-desc" style={{ flex: 1, paddingRight: '12px' }}>{p.description}</span>
                   <ExternalLink size={14} style={{ color: creator.theme.accent }} />
@@ -140,8 +154,11 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
 
           {/* Interactive Plays Accordion */}
           <div className="creator-modal-section">
-            <h3>Repeatable plays</h3>
-            <div className="creator-modal-plays" style={{ marginTop: '10px' }}>
+            <div className="creator-modal-section-header">
+              <h3>Repeatable plays</h3>
+              <span className="creator-modal-section-sub">Proven formats you can reuse</span>
+            </div>
+            <div className="creator-modal-plays" style={{ marginTop: '12px' }}>
               {creator.plays.map((p) => {
                 const isExpanded = expandedPlayId === p.id;
                 return (
@@ -153,16 +170,16 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
                   >
                     <div className="creator-modal-play-header">
                       <span className="play-emoji">{p.emoji}</span>
-                      <strong className="h4" style={{ flex: 1 }}>{p.title}</strong>
+                      <strong className="h4" style={{ flex: 1, letterSpacing: '-0.01em' }}>{p.title}</strong>
                       <span className="play-frequency" style={{ color: creator.theme.accent, background: `${creator.theme.accent}15` }}>{p.frequency}</span>
                       {isExpanded ? <ChevronUp size={16} style={{ color: 'var(--muted)' }} /> : <ChevronDown size={16} style={{ color: 'var(--muted)' }} />}
                     </div>
                     {isExpanded && (
                       <div className="creator-modal-play-body" style={{ animation: 'fadeIn 0.25s ease' }}>
-                        <p style={{ color: 'var(--ink-muted)', fontSize: '0.94rem', lineHeight: 1.6 }}>{p.description}</p>
+                        <p style={{ color: 'var(--ink-muted)', fontSize: '0.94rem', lineHeight: 1.65 }}>{p.description}</p>
                         <div className="play-action-box" style={{ borderLeftColor: creator.theme.primary }}>
-                          <span style={{ fontSize: '0.74rem', color: creator.theme.primary, textTransform: 'uppercase', fontWeight: 800, display: 'block', marginBottom: '4px', letterSpacing: '0.04em' }}>Daily Action Challenge</span>
-                          <span className="play-action" style={{ color: 'var(--ink)', fontWeight: 500, fontSize: '0.94rem' }}>{p.action}</span>
+                          <span style={{ fontSize: '0.74rem', color: creator.theme.primary, textTransform: 'uppercase', fontWeight: 800, display: 'block', marginBottom: '5px', letterSpacing: '0.06em' }}>Daily Action Challenge</span>
+                          <span className="play-action" style={{ color: 'var(--ink)', fontWeight: 550, fontSize: '0.94rem' }}>{p.action}</span>
                         </div>
                       </div>
                     )}
@@ -174,8 +191,11 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
 
           {/* Swipe File: Hook Book & Angles */}
           <div className="creator-modal-section">
-            <h3>Swipe File</h3>
-            <div className="api-tab-bar" style={{ marginTop: '10px' }}>
+            <div className="creator-modal-section-header">
+              <h3>Swipe File</h3>
+              <span className="creator-modal-section-sub">Click rows to copy directly</span>
+            </div>
+            <div className="api-tab-bar" style={{ marginTop: '12px' }}>
               <button 
                 className={`api-tab ${swipeTab === 'hooks' ? 'active' : ''}`} 
                 onClick={() => setSwipeTab('hooks')}
@@ -191,18 +211,18 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
                 Writing Angles ({creator.angles.length})
               </button>
             </div>
-            <div className="creator-modal-api" style={{ padding: '12px', background: 'var(--surface-2)' }}>
+            <div className="creator-modal-api swipe-file-panel" style={{ padding: '14px', background: 'var(--surface-2)', border: '1px solid rgba(255,255,255,0.05)' }}>
               {swipeTab === 'hooks' ? (
                 <div style={{ display: 'grid', gap: '8px' }}>
                   {creator.hooks.map((hook, i) => (
                     <div 
                       key={i} 
-                      className="api-endpoint-row" 
-                      style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}
+                      className="api-endpoint-row swipe-row" 
+                      style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '14px' }}
                       onClick={() => copyText(hook, `hook-${i}`)}
                       title="Click to copy hook example"
                     >
-                      <span style={{ fontSize: '0.92rem', color: 'var(--ink-muted)', wordBreak: 'break-word', textAlign: 'left' }}>"{hook}"</span>
+                      <span style={{ fontSize: '0.94rem', color: 'var(--ink-muted)', wordBreak: 'break-word', textAlign: 'left', lineHeight: 1.45 }}>"{hook}"</span>
                       <span className="badge" style={{ color: copiedKey === `hook-${i}` ? 'var(--success)' : undefined, borderColor: copiedKey === `hook-${i}` ? 'var(--success)' : undefined, fontSize: '0.72rem', flexShrink: 0 }}>
                         {copiedKey === `hook-${i}` ? 'Copied!' : 'Copy'}
                       </span>
@@ -214,12 +234,12 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
                   {creator.angles.map((angle, i) => (
                     <div 
                       key={i} 
-                      className="api-endpoint-row" 
-                      style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}
+                      className="api-endpoint-row swipe-row" 
+                      style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '14px' }}
                       onClick={() => copyText(angle, `angle-${i}`)}
                       title="Click to copy angle strategy"
                     >
-                      <span style={{ fontSize: '0.92rem', color: 'var(--ink-muted)', wordBreak: 'break-word', textAlign: 'left' }}>{angle}</span>
+                      <span style={{ fontSize: '0.94rem', color: 'var(--ink-muted)', wordBreak: 'break-word', textAlign: 'left', lineHeight: 1.45 }}>{angle}</span>
                       <span className="badge" style={{ color: copiedKey === `angle-${i}` ? 'var(--success)' : undefined, borderColor: copiedKey === `angle-${i}` ? 'var(--success)' : undefined, fontSize: '0.72rem', flexShrink: 0 }}>
                         {copiedKey === `angle-${i}` ? 'Copied!' : 'Copy'}
                       </span>
@@ -230,23 +250,72 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
             </div>
           </div>
 
+          {/* Live X Tweets */}
+          {xProfile?.tweets && xProfile.tweets.length > 0 && (
+            <div className="creator-modal-section">
+              <div className="creator-modal-section-header">
+                <h3>Latest Posts</h3>
+                <span className="creator-modal-section-sub">Live from X (10 most recent)</span>
+              </div>
+              <div style={{ display: 'grid', gap: '12px' }}>
+                {xProfile.tweets.slice(0, 5).map((t) => (
+                  <a
+                    key={t.id}
+                    href={`https://x.com/${creator.xHandle}/status/${t.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: 'block',
+                      padding: '14px 16px',
+                      borderRadius: '14px',
+                      background: 'var(--surface-3)',
+                      border: '1px solid rgba(255,255,255,0.05)',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      transition: 'all 0.2s',
+                    }}
+                    className="hover-zoom"
+                  >
+                    <p style={{ fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--ink-muted)', marginBottom: '10px' }}>{t.text}</p>
+                    {t.media.length > 0 && (
+                      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(t.media.length, 2)}, 1fr)`, gap: '8px', marginBottom: '10px' }}>
+                        {t.media.map((m, mi) => (
+                          <img key={mi} src={m.url} alt="" style={{ width: '100%', borderRadius: '10px', objectFit: 'cover', aspectRatio: '16/10' }} />
+                        ))}
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', gap: '14px', fontSize: '0.78rem', color: 'var(--muted)' }}>
+                      {t.metrics.impression_count != null && <span>👁 {t.metrics.impression_count.toLocaleString()}</span>}
+                      {t.metrics.like_count != null && <span>♥ {t.metrics.like_count.toLocaleString()}</span>}
+                      {t.metrics.retweet_count != null && <span>🔄 {t.metrics.retweet_count.toLocaleString()}</span>}
+                      <span style={{ marginLeft: 'auto' }}>{new Date(t.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Proof of Work: Media Manifest Images */}
           {creator.media && creator.media.length > 0 && (
             <div className="creator-modal-section">
-              <h3>Proof of Work</h3>
-              <p style={{ fontSize: '0.86rem', color: 'var(--muted)', marginBottom: '10px' }}>Real screenshot artifacts from high-performing posts. Click to enlarge.</p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '12px' }}>
+              <div className="creator-modal-section-header">
+                <h3>Proof of Work</h3>
+                <span className="creator-modal-section-sub">Tap an artifact to inspect</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: '14px' }}>
                 {creator.media.map((imgUrl, i) => (
                   <div 
                     key={i} 
-                    className="hover-zoom"
+                    className="hover-zoom proof-tile"
                     style={{ 
-                      borderRadius: '12px', 
+                      borderRadius: '14px', 
                       overflow: 'hidden', 
-                      border: '1px solid rgba(255,255,255,0.06)', 
+                      border: '1px solid rgba(255,255,255,0.07)', 
                       cursor: 'pointer', 
                       aspectRatio: '16/10',
-                      background: 'var(--surface-2)'
+                      background: 'var(--surface-3)',
+                      boxShadow: '0 8px 18px rgba(0,0,0,0.25)'
                     }}
                     onClick={() => setLightboxImg(imgUrl)}
                   >
@@ -263,8 +332,11 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
 
           {/* Developer API Reference Tab */}
           <div className="creator-modal-section">
-            <h3>Developer API Playbook</h3>
-            <div className="api-tab-bar" style={{ marginTop: '10px' }}>
+            <div className="creator-modal-section-header">
+              <h3>Developer API Playbook</h3>
+              <span className="creator-modal-section-sub">Connect agents and datasets</span>
+            </div>
+            <div className="api-tab-bar" style={{ marginTop: '12px' }}>
               <button 
                 className={`api-tab ${apiSnippetTab === 'js' ? 'active' : ''}`} 
                 onClick={() => setApiSnippetTab('js')}
@@ -280,13 +352,13 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
                 cURL Command
               </button>
             </div>
-            <div style={{ position: 'relative' }}>
-              <pre className="code-block" style={{ fontSize: '0.8rem', background: 'var(--surface-3)', border: '1px solid rgba(255,255,255,0.08)', paddingRight: '85px', overflowX: 'auto' }}>
+            <div style={{ position: 'relative', borderRadius: '14px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 14px 34px rgba(0,0,0,0.45)' }}>
+              <pre className="code-block api-code-block" style={{ fontSize: '0.82rem', background: 'var(--surface-3)', paddingRight: '100px', overflowX: 'auto' }}>
                 <code>{apiSnippetTab === 'js' ? apiFetchSnippet : apiCurlSnippet}</code>
               </pre>
               <button 
-                className="badge badge-accent" 
-                style={{ position: 'absolute', top: '10px', right: '10px', cursor: 'pointer', fontSize: '0.74rem' }}
+                className="badge badge-accent api-copy-btn" 
+                style={{ position: 'absolute', top: '12px', right: '12px', cursor: 'pointer', fontSize: '0.74rem', boxShadow: '0 10px 22px rgba(0,0,0,0.45)' }}
                 onClick={() => copyText(apiSnippetTab === 'js' ? apiFetchSnippet : apiCurlSnippet, 'api-code')}
               >
                 {copiedKey === 'api-code' ? 'Copied!' : 'Copy Code'}
@@ -295,7 +367,7 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
           </div>
 
           {/* Modal Actions */}
-          <div className="creator-modal-actions" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '20px', marginTop: '24px' }}>
+          <div className="creator-modal-actions">
             <button className="btn btn-hot" onClick={() => triggerCopy(onCopyPlaybook, 'playbook')} style={{ background: creator.theme.primary }}>
               {copiedKey === 'playbook' ? <Check size={14} /> : <Copy size={14} />} 
               {copiedKey === 'playbook' ? 'Copied!' : 'Copy Playbook MD'}
@@ -308,7 +380,7 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
               {copiedKey === 'install' ? <Check size={14} style={{ color: 'var(--success)' }} /> : <FolderOpen size={14} style={{ color: creator.theme.secondary }} />} 
               {copiedKey === 'install' ? 'Downloaded!' : 'Agent Kit (.zip)'}
             </button>
-            <a href={xUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">
+            <a href={xUrl} target="_blank" rel="noreferrer" className="btn btn-secondary x-action">
               <Share2 size={14} style={{ color: '#1da1f2' }} /> 
               Follow on X
             </a>

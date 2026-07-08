@@ -3,7 +3,7 @@ export interface CreatorProfile {
   handle: string;
   xHandle: string;
   name: string;
-  status: 'verified' | 'draft';
+  status: 'verified' | 'active' | 'draft';
   emoji: string;
   avatar: string;
   banner: string;

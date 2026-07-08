@@ -1,6 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import type { CreatorProfile } from '../types';
 import { HologramCanvas } from './HologramCanvas';
+import { useXProfile } from '../lib/xData';
+
+function formatFollowers(n: number): string {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+  return String(n);
+}
 
 function hexToRgb(hex: string): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -9,96 +16,17 @@ function hexToRgb(hex: string): string {
     : '236, 72, 153';
 }
 
-function renderLivePreview(creatorId: string) {
-  switch (creatorId) {
-    case 'maya':
-      return (
-        <div className="mini-preview-ideapanda">
-          <div className="mini-search-bar">🐼 search startup ideas...</div>
-          <div className="mini-tag-row">
-            <span className="mini-tag active">#SaaS</span>
-            <span className="mini-tag">#AI</span>
-            <span className="mini-tag">#NoCode</span>
-          </div>
-        </div>
-      );
-    case 'kp':
-      return (
-        <div className="mini-preview-aishippers">
-          <div className="mini-badge-row">
-            <span className="mini-cohort-badge">AI SHIPPERS</span>
-            <span className="mini-live-pulse" />
-          </div>
-          <div className="mini-member-avatars">
-            <div className="mini-avatar-c" style={{ background: '#ec4899' }}>M</div>
-            <div className="mini-avatar-c" style={{ background: '#22d3ee' }}>K</div>
-            <div className="mini-avatar-c" style={{ background: '#8b5cf6' }}>J</div>
-            <span className="mini-cohort-count">+48 shippin'</span>
-          </div>
-        </div>
-      );
-    case 'gerrit':
-      return (
-        <div className="mini-preview-icons">
-          <div className="mini-icon-grid">
-            <div className="mini-icon-box">✦</div>
-            <div className="mini-icon-box">⚡</div>
-            <div className="mini-icon-box">📦</div>
-            <div className="mini-icon-box">⚙️</div>
-          </div>
-          <span className="mini-preview-sub">Majesticons v2.4</span>
-        </div>
-      );
-    case 'lynnzeng':
-      return (
-        <div className="mini-preview-picaisso">
-          <div className="mini-prompt-box">/imagine cyberpunk panda...</div>
-          <div className="mini-generate-btn">Render 3D</div>
-        </div>
-      );
-    case 'jaibhagat':
-      return (
-        <div className="mini-preview-workshop">
-          <div className="mini-console-line">$ run devrel-stream --live</div>
-          <div className="mini-sound-wave">
-            <span className="wave-bar" />
-            <span className="wave-bar" />
-            <span className="wave-bar" />
-            <span className="wave-bar" />
-            <span className="wave-bar" />
-          </div>
-        </div>
-      );
-    case 'nealfrazier':
-      return (
-        <div className="mini-preview-booking">
-          <div className="mini-booking-btn">Book 90s Sprint ⏱️</div>
-          <span className="mini-booking-desc">1 slot left this week</span>
-        </div>
-      );
-    case 'ash_wesley_':
-      return (
-        <div className="mini-preview-aishippers">
-          <div className="mini-cohort-badge">AI AMPLIFIED</div>
-          <span className="mini-preview-sub">3 meetups organized</span>
-        </div>
-      );
-    default:
-      return (
-        <div className="mini-preview-default">
-          <div className="mini-code-line">npm run build</div>
-          <div className="mini-code-line text-success">✓ template ready</div>
-        </div>
-      );
-  }
-}
-
 export function CreatorCard({ creator, active, onClick, style, onHoverChange }: { creator: CreatorProfile; active: boolean; onClick: () => void; style?: React.CSSProperties; onHoverChange?: (hovered: boolean) => void }) {
   const initials = creator.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
   const [imgError, setImgError] = useState(false);
   const [glitchActive, setGlitchActive] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Live X data (lightweight - no tweets)
+  const { profile: xProfile, fromFallback } = useXProfile(creator.xHandle, false);
+  const liveAvatar = xProfile?.avatar || creator.avatar;
+  const liveFollowers = xProfile?.followers != null ? formatFollowers(xProfile.followers) : creator.followersStr;
 
   // Periodic random holographic glitch scheduler
   useEffect(() => {
@@ -157,10 +85,6 @@ export function CreatorCard({ creator, active, onClick, style, onHoverChange }: 
     card.style.setProperty('--py', '50%');
   };
 
-  const previewUrl = creator.products[0]?.url
-    ? creator.products[0].url.replace('https://', '').replace('www.', '')
-    : 'template.dev';
-
   return (
     <div 
       ref={cardRef}
@@ -206,12 +130,12 @@ export function CreatorCard({ creator, active, onClick, style, onHoverChange }: 
           )}
         </div>
 
-        {imgError || !creator.avatar ? (
+        {imgError || !liveAvatar ? (
           <div className="creator-card-clean-avatar avatar-fallback" style={{ background: `linear-gradient(135deg, var(--card-primary), var(--card-accent))` }}>
             {initials}
           </div>
         ) : (
-          <img src={creator.avatar} alt={creator.name} className="creator-card-clean-avatar" loading="lazy" onError={() => setImgError(true)} />
+          <img src={liveAvatar} alt={creator.name} className="creator-card-clean-avatar" loading="lazy" onError={() => setImgError(true)} />
         )}
         
         <div className="creator-card-clean-body">
@@ -219,36 +143,25 @@ export function CreatorCard({ creator, active, onClick, style, onHoverChange }: 
             <div className="creator-card-clean-title">
               <h3 className="creator-card-clean-name">{creator.name}</h3>
               <span className="creator-card-clean-handle">{creator.handle}</span>
+              {xProfile?.verified && <span style={{ fontSize: '0.65rem', color: '#1da1f2', marginLeft: '4px' }}>✓</span>}
+              <span style={{ fontSize: '0.72rem', color: 'var(--muted)', marginLeft: '6px', fontWeight: 600 }}>{liveFollowers}</span>
+              {fromFallback && <span title="Using cached X data" style={{ fontSize: '0.6rem', color: 'var(--warning)', marginLeft: '4px', opacity: 0.7 }}>📦</span>}
             </div>
-          </div>
-          
-          <p className="creator-card-clean-bio">{creator.bio.split('\n')[0]}</p>
-
-          {/* Secondary Live Preview Window */}
-          <div className="creator-card-preview-window">
-            <div className="preview-window-header">
-              <span className="preview-dot red" />
-              <span className="preview-dot yellow" />
-              <span className="preview-dot green" />
-              <span className="preview-window-url">{previewUrl}</span>
-            </div>
-            <div className="preview-window-body">
-              {renderLivePreview(creator.id)}
-            </div>
-          </div>
-
-          <div className="creator-card-clean-tags">
-            {creator.tags.slice(0, 2).map((t) => <span key={t} className="tag-chip">{t}</span>)}
-            {creator.tags.length > 2 && <span className="tag-chip tag-more" style={{ background: `rgba(236,72,153,0.1)`, borderColor: `rgba(236,72,153,0.25)`, color: `var(--primary)` }}>+{creator.tags.length - 2}</span>}
-          </div>
-
-          <div className="creator-card-clean-stats">
-            <span><strong>{creator.followersStr}</strong> followers</span>
-            <span><strong>{creator.products.length}</strong> products</span>
+            <a
+              href={`https://x.com/${creator.handle.replace('@', '')}`}
+              target="_blank"
+              rel="noreferrer"
+              className="creator-card-x-link"
+              onClick={(e) => e.stopPropagation()}
+              title="Open on X"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
