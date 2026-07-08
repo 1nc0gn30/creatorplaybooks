@@ -2773,7 +2773,6 @@ const ALL_CREATORS: CreatorProfile[] = [
       "Congrats!! I was impressed to learn about some of the engineering wizardry...",
       "The basic idea is easy and v0 is a hackathon project. The product here is a lot closer to *it actually works*...",
       "This is a new paradigm for interacting with Claude that is significantly more \"inline\" with all the other human activity org-wide."
-    ], you understand 80% of [advanced topic]"
     ],
     angles: [
       "Calling out tiny, specific delightful details that prove genuine model understanding",
