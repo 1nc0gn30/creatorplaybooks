@@ -1246,7 +1246,12 @@ export default async (req, context) => {
   if (path === 'creator') {
     const id = url.searchParams.get('id') || 'maya';
     const creator = mergedCreators.find(c => c.id === id) || mergedCreators[0];
-    return json({
+    const expand = new Set((url.searchParams.get('expand') || '').split(',').map(s => s.trim()).filter(Boolean));
+    const expandAll = expand.has('all') || expand.has('playbook');
+
+    const include = (key) => expandAll || expand.has(key);
+
+    const response = {
       profile: {
         id: creator.id,
         handle: creator.handle,
@@ -1266,8 +1271,43 @@ export default async (req, context) => {
         xUrl: `https://x.com/${creator.xHandle}`,
         avatar: creator.avatar,
         banner: creator.banner,
-      }
-    });
+      },
+    };
+
+    if (include('category') || include('theme') || expandAll) {
+      response.category = creator.category;
+      response.theme = creator.theme;
+    }
+
+    if (include('tags') || expandAll) {
+      response.tags = creator.tags || [];
+    }
+
+    if (include('plays') || expandAll) {
+      response.playbook = { count: creator.plays.length, plays: creator.plays };
+    }
+
+    if (include('hooks') || expandAll) {
+      response.hooks = creator.hooks || [];
+    }
+
+    if (include('angles') || expandAll) {
+      response.angles = creator.angles || [];
+    }
+
+    if (include('resources') || expandAll) {
+      const base = 'https://creatorplaybooks.netlify.app';
+      response.resources = {
+        self: `${base}/api/creator?id=${creator.id}`,
+        expanded: `${base}/api/creator?id=${creator.id}&expand=all`,
+        playbook: `${base}/api/playbook?creator=${creator.id}`,
+        ideas: `${base}/api/ideas?creator=${creator.id}&count=6`,
+        export: `${base}/api/export?creator=${creator.id}`,
+        x: `https://x.com/${creator.xHandle}`,
+      };
+    }
+
+    return json(response);
   }
 
   if (path === 'playbook') {

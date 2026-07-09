@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Sparkles, TrendingUp, Users, UserCircle, LogIn, LogOut, Menu, Zap, Wand2, Highlighter, Underline, Italic, Bold, BookOpen, Workflow } from 'lucide-react';
+import { Sparkles, Zap, Wand2, Highlighter, Underline, Italic, Bold } from 'lucide-react';
 import type { BuilderProfile, ContentIdea, CreatorProfile, ScheduledPost, UserProgress, Tab } from './types';
 import { PlaybookFlow } from './components/PlaybookFlow';
 import { defaultBuilder, defaultProgress, levelFromXp, scoreProgress } from './lib/maya';
@@ -9,9 +9,10 @@ import { useAuth } from './lib/auth';
 import { generateIdeasForCreator } from './lib/ideas';
 import { buildExportBundle } from './lib/exportBundle';
 import { MembersView } from './components/MembersView';
-import { TabButton } from './components/TabButton';
+import { Navbar } from './components/Navbar';
 import { CreatorModal } from './components/CreatorModal';
 import { HomePage } from './components/HomePage';
+import './styles/navbar.css';
 import { OriginStoryModal } from './components/OriginStoryModal';
 import { OnboardingModal } from './components/OnboardingModal';
 import { DashboardView } from './components/DashboardView';
@@ -133,7 +134,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const classes = ['app-shell', ...Array.from(remix).map((k) => 'remix-' + k)];
+    const classes = ['app-shell', ...(menuOpen ? ['nav-menu-locked'] : []), ...Array.from(remix).map((k) => 'remix-' + k)];
     if (me.accessibilityPreferences?.largeText) classes.push('remix-big');
     if (me.accessibilityPreferences?.highContrast) classes.push('remix-highlight');
     if (me.accessibilityPreferences?.reducedMotion) classes.push('reduced-motion');
@@ -149,7 +150,7 @@ function App() {
     else document.body.style.removeProperty('--surface');
     if (t.surface2) document.body.style.setProperty('--surface-2', t.surface2);
     else document.body.style.removeProperty('--surface-2');
-  }, [remix, activeCreator, me]);
+  }, [remix, activeCreator, me, menuOpen]);
 
   useEffect(() => {
     setIdeas(generateIdeasForCreator(activeCreator, 6));
@@ -211,40 +212,17 @@ function App() {
 
   return (
     <div className={`app-shell ${showRemix ? 'remix-visible' : ''}`}>
-      <nav className={`nav ${menuOpen ? 'nav-open' : ''} ${scrolled ? 'nav-scrolled' : ''}`}>
-        <a href="/" className="brand" title="CreatorPlaybooks home">
-          <div className="brand-mark" style={{ overflow: 'hidden' }}>
-            <img src="/brand_logo.png" alt="CreatorPlaybooks logo" className="origin-brand-img" />
-          </div>
-          <span className="brand-text">
-            <span className="brand-name">CreatorPlaybooks</span>
-            <span className="brand-tag">by Maya + Neal</span>
-          </span>
-        </a>
-        <button className="nav-menu-toggle" onClick={() => setMenuOpen((v) => !v)} aria-label="Toggle menu">
-          <Menu size={22} />
-        </button>
-        <div className="links">
-          <TabButton active={tab === 'creators'} onClick={() => { setTab('creators'); setMenuOpen(false); }} icon={<Sparkles size={14} />} label="Mentors" tooltip="Browse verified creator playbooks" />
-          <TabButton active={tab === 'flow'} onClick={() => { setTab('flow'); setMenuOpen(false); }} icon={<Workflow size={14} />} label="Flow" tooltip="Interactive creator playbook flow" />
-          <TabButton active={tab === 'dashboard'} onClick={() => { setTab('dashboard'); setMenuOpen(false); }} icon={<TrendingUp size={14} />} label="Dashboard" tooltip="Track consistency & XP" />
-          <TabButton active={tab === 'members'} onClick={() => { setTab('members'); setMenuOpen(false); }} icon={<Users size={14} />} label="Members" tooltip="See leaderboard & vote" />
-          <TabButton active={tab === 'me'} onClick={() => { setTab('me'); setMenuOpen(false); }} icon={<UserCircle size={14} />} label="Me" tooltip="Customize details & layouts" />
-          <TabButton active={tab === 'docs'} onClick={() => { setTab('docs'); setMenuOpen(false); }} icon={<BookOpen size={14} />} label="Docs" tooltip="API & developer reference" />
-        </div>
-        <div className="nav-actions">
-          {user ? (
-            <>
-              <button className="nav-avatar" onClick={() => { setTab('members'); setMenuOpen(false); }} title="Open member profile">
-                {profile?.avatar ? <img src={profile.avatar} alt={profile.name} /> : <div className="nav-avatar-fallback">{profile?.name?.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()}</div>}
-              </button>
-              <button className="nav-logout" onClick={logout} title="Log out"><LogOut size={16} /></button>
-            </>
-          ) : (
-            <button className="btn btn-hot btn-sm" onClick={login}><LogIn size={14} /> Sign in</button>
-          )}
-        </div>
-      </nav>
+      <Navbar
+        tab={tab}
+        setTab={setTab}
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        scrolled={scrolled}
+        user={user}
+        profile={profile}
+        login={login}
+        logout={logout}
+      />
 
       <main className="main">
         {tab === 'creators' && (

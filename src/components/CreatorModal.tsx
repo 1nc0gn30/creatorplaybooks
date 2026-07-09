@@ -11,7 +11,7 @@ export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, on
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [expandedPlayId, setExpandedPlayId] = useState<string | null>(creator.plays[0]?.id || null);
   const [swipeTab, setSwipeTab] = useState<'hooks' | 'angles'>('hooks');
-  const [apiSnippetTab, setApiSnippetTab] = useState<'js' | 'curl'>('js');
+  const [apiSnippetTab, setApiSnippetTab] = useState<'js' | 'curl' | 'curl-select'>('js');
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
 
@@ -35,12 +35,31 @@ export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, on
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  const apiFetchSnippet = `// Fetch ${creator.name}'s playbook JSON
-fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
+  const apiFetchSnippet = `// Fetch ${creator.name}'s complete playbook bundle
+fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expand=all')
   .then(res => res.json())
-  .then(playbook => console.log(playbook));`;
+  .then(({ profile, category, playbook, hooks, angles, theme, tags, resources }) => {
+    console.log('\u2705', profile.name, '—', profile.followersStr, 'followers');
+    console.log('Category:', category);
+    console.log('Theme colors:', theme);
+    console.log('Tags:', tags);
+    console.log('Repeatable plays:', (playbook?.plays || []).map(p => p.title));
+    console.log('Hook templates:', hooks);
+    console.log('Writing angles:', angles);
+    console.log('Products:', profile.products.map(p => p.name));
+    console.log('Media assets:', profile.media.length);
+    console.log('Recent tweets:', profile.recentTweets.length);
+    console.log('Resources:', resources);
+  });`;
 
-  const apiCurlSnippet = `curl https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}`;
+  const apiCurlSnippet = `# Get ${creator.name}'s full mentor bundle
+# Includes profile, plays, hooks, angles, theme, tags, media, and related endpoints
+curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expand=all' \
+  -H 'Accept: application/json' | jq '.'`;
+
+  const apiCurlSelectSnippet = `# Select only the fields you need
+curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expand=plays,hooks,angles' \
+  -H 'Accept: application/json' | jq '{ name: .profile.name, plays: .playbook.plays, hooks: .hooks, angles: .angles }'`;
 
   return (
     <div 
@@ -349,17 +368,24 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}')
                 onClick={() => setApiSnippetTab('curl')}
                 style={{ background: apiSnippetTab === 'curl' ? creator.theme.secondary : undefined }}
               >
-                cURL Command
+                cURL Full Bundle
+              </button>
+              <button 
+                className={`api-tab ${apiSnippetTab === 'curl-select' ? 'active' : ''}`} 
+                onClick={() => setApiSnippetTab('curl-select')}
+                style={{ background: apiSnippetTab === 'curl-select' ? creator.theme.secondary : undefined }}
+              >
+                cURL Select Fields
               </button>
             </div>
             <div style={{ position: 'relative', borderRadius: '14px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 14px 34px rgba(0,0,0,0.45)' }}>
               <pre className="code-block api-code-block" style={{ fontSize: '0.82rem', background: 'var(--surface-3)', paddingRight: '100px', overflowX: 'auto' }}>
-                <code>{apiSnippetTab === 'js' ? apiFetchSnippet : apiCurlSnippet}</code>
+                <code>{apiSnippetTab === 'js' ? apiFetchSnippet : apiSnippetTab === 'curl' ? apiCurlSnippet : apiCurlSelectSnippet}</code>
               </pre>
               <button 
                 className="badge badge-accent api-copy-btn" 
                 style={{ position: 'absolute', top: '12px', right: '12px', cursor: 'pointer', fontSize: '0.74rem', boxShadow: '0 10px 22px rgba(0,0,0,0.45)' }}
-                onClick={() => copyText(apiSnippetTab === 'js' ? apiFetchSnippet : apiCurlSnippet, 'api-code')}
+                onClick={() => copyText(apiSnippetTab === 'js' ? apiFetchSnippet : apiSnippetTab === 'curl' ? apiCurlSnippet : apiCurlSelectSnippet, 'api-code')}
               >
                 {copiedKey === 'api-code' ? 'Copied!' : 'Copy Code'}
               </button>

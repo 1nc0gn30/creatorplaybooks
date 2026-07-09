@@ -9,7 +9,14 @@ interface HoneycombWebGLGridProps {
   modalCreatorId: string | null;
 }
 
-function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxW: number, lh: number) {
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : '236, 72, 153';
+}
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxW: number, lh: number, maxLines = 2) {
   const words = text.split(' ');
   let line = '', cy = y, lc = 0;
   for (let n = 0; n < words.length; n++) {
@@ -19,10 +26,27 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: num
       line = words[n] + ' ';
       cy += lh;
       lc++;
-      if (lc >= 2) { ctx.fillText(words[n] + '…', x, cy); return; }
-    } else { line = test; }
+      if (lc >= maxLines - 1) {
+        const rest = words.slice(n + 1).join(' ');
+        ctx.fillText((rest ? line.trim() + ' ' + rest : line.trim()).slice(0, 38) + '…', x, cy);
+        return;
+      }
+    } else {
+      line = test;
+    }
   }
   ctx.fillText(line.trim(), x, cy);
+}
+
+function drawHexPath(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const a = Math.PI / 2 + i * (Math.PI * 2 / 6);
+    const px = cx + r * Math.cos(a);
+    const py = cy - r * Math.sin(a);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
 }
 
 export function HoneycombWebGLGrid({ filteredCreators, openCreatorModal, modalCreatorId }: HoneycombWebGLGridProps) {
@@ -134,120 +158,305 @@ export function HoneycombWebGLGrid({ filteredCreators, openCreatorModal, modalCr
 
     // ── CARD TEXTURE ─────────────────────────────────────────────
     const TEX = 1024;
+    const PADDING = 78;
     const renderCardCanvas = (cr: CreatorProfile) => {
       let cv = canvasesRef.current[cr.id];
       if (!cv) { cv = document.createElement('canvas'); cv.width = TEX; cv.height = TEX; canvasesRef.current[cr.id] = cv; }
       const ctx = cv.getContext('2d')!;
       const cx = TEX / 2;
+      const primaryRgb = hexToRgb(cr.theme.primary);
+      const secondaryRgb = hexToRgb(cr.theme.secondary || cr.theme.primary);
+      const accentRgb = hexToRgb(cr.theme.accent || cr.theme.primary);
 
       ctx.clearRect(0, 0, TEX, TEX);
       ctx.save();
-      ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const a = Math.PI / 2 + i * (Math.PI * 2 / 6);
-        const px = cx + (TEX / 2) * Math.cos(a);
-        const py = cx - (TEX / 2) * Math.sin(a);
-        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.closePath();
+
+      // Clip to hex shape for all background painting
+      drawHexPath(ctx, cx, cx, TEX / 2 - 4);
       ctx.clip();
 
-      ctx.fillStyle = '#08080e';
+      // === BACKDROP ===
+      const bg = ctx.createRadialGradient(cx, cx * 0.75, 0, cx, cx, TEX * 0.65);
+      bg.addColorStop(0, '#0d0d18');
+      bg.addColorStop(0.45, '#06060d');
+      bg.addColorStop(0.85, '#030306');
+      bg.addColorStop(1, '#000000');
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, TEX, TEX);
 
-      const grad = ctx.createRadialGradient(cx, cx * 0.7, 40, cx, cx * 0.7, TEX * 0.55);
-      grad.addColorStop(0, `${cr.theme.primary}25`);
-      grad.addColorStop(1, 'transparent');
-      ctx.fillStyle = grad;
+      // Primary ambient bloom from top
+      const topGlow = ctx.createRadialGradient(cx, 180, 0, cx, 180, TEX * 0.55);
+      topGlow.addColorStop(0, `rgba(${primaryRgb}, 0.28)`);
+      topGlow.addColorStop(0.55, `rgba(${accentRgb}, 0.09)`);
+      topGlow.addColorStop(1, 'transparent');
+      ctx.fillStyle = topGlow;
       ctx.fillRect(0, 0, TEX, TEX);
 
-      ctx.strokeStyle = `${cr.theme.primary}18`;
-      ctx.lineWidth = 16;
-      ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const a = Math.PI / 2 + i * (Math.PI * 2 / 6);
-        const px = cx + (TEX / 2 - 8) * Math.cos(a);
-        const py = cx - (TEX / 2 - 8) * Math.sin(a);
-        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      // Bottom accent rim light
+      const botGlow = ctx.createRadialGradient(cx, TEX - 120, 0, cx, TEX - 120, TEX * 0.45);
+      botGlow.addColorStop(0, `rgba(${accentRgb}, 0.16)`);
+      botGlow.addColorStop(1, 'transparent');
+      ctx.fillStyle = botGlow;
+      ctx.fillRect(0, 0, TEX, TEX);
+
+      // Subtle hex grid
+      ctx.lineWidth = 1;
+      for (let i = 1; i <= 8; i++) {
+        const r = (TEX / 2 - PADDING) * (i / 8);
+        drawHexPath(ctx, cx, cx, r);
+        ctx.strokeStyle = `rgba(${secondaryRgb}, ${0.06 + i * 0.004})`;
+        ctx.stroke();
       }
-      ctx.closePath();
+
+      // Diagonal holographic sheen
+      const sheen = ctx.createLinearGradient(0, 0, TEX, TEX);
+      sheen.addColorStop(0, `rgba(${accentRgb}, 0.0)`);
+      sheen.addColorStop(0.45, `rgba(${accentRgb}, 0.045)`);
+      sheen.addColorStop(0.5, `rgba(${primaryRgb}, 0.07)`);
+      sheen.addColorStop(0.55, `rgba(${secondaryRgb}, 0.045)`);
+      sheen.addColorStop(1, `rgba(${primaryRgb}, 0.0)`);
+      ctx.fillStyle = sheen;
+      ctx.fillRect(0, 0, TEX, TEX);
+
+      // Vignette
+      const vig = ctx.createRadialGradient(cx, cx, TEX * 0.32, cx, cx, TEX * 0.55);
+      vig.addColorStop(0, 'transparent');
+      vig.addColorStop(1, 'rgba(0,0,0,0.55)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, TEX, TEX);
+
+      ctx.restore();
+
+      // === BORDER GLOW ===
+      ctx.save();
+      ctx.shadowColor = cr.theme.primary;
+      ctx.shadowBlur = 70;
+      ctx.lineWidth = 12;
+      ctx.strokeStyle = `rgba(${primaryRgb}, 0.9)`;
+      drawHexPath(ctx, cx, cx, TEX / 2 - 6);
       ctx.stroke();
+      ctx.restore();
 
+      // Inner accent rim
+      ctx.save();
+      ctx.shadowColor = cr.theme.accent || cr.theme.primary;
+      ctx.shadowBlur = 25;
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = `rgba(${accentRgb}, 0.85)`;
+      drawHexPath(ctx, cx, cx, TEX / 2 - 22);
+      ctx.stroke();
+      ctx.restore();
+
+      // === TOP TECH HEADER ===
+      const headerY = 64;
+      ctx.font = '600 17px "SF Mono", "Fira Code", ui-monospace, monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = `rgba(${primaryRgb}, 0.9)`;
+      ctx.beginPath();
+      ctx.arc(PADDING + 8, headerY, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.fillText('CREATOR PLAYBOOK', PADDING + 22, headerY);
+
+      const catLabel = (() => {
+        if (cr.category === 'netlify-shippers') return '🚀 Netlify AI Shippers';
+        if (cr.category === 'indie-hackers') return '🛠️ Indie Hackers';
+        if (cr.category === 'big-players') return '📡 Big Players';
+        return cr.category;
+      })();
+      ctx.font = '600 15px "SF Mono", "Fira Code", ui-monospace, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.fillText(catLabel, TEX - PADDING, headerY);
+
+      // === AVATAR ===
+      const avatarY = 230;
+      const avatarR = 96;
       const avatarImg = imageCacheRef.current[cr.id];
-      const avY = 350, avR = 76;
 
+      // Outer glow ring
+      ctx.save();
+      ctx.shadowColor = cr.theme.primary;
+      ctx.shadowBlur = 45;
+      ctx.beginPath();
+      ctx.arc(cx, avatarY, avatarR + 10, 0, Math.PI * 2);
+      const ringGrad = ctx.createLinearGradient(cx - avatarR, avatarY - avatarR, cx + avatarR, avatarY + avatarR);
+      ringGrad.addColorStop(0, cr.theme.primary);
+      ringGrad.addColorStop(0.5, cr.theme.accent || cr.theme.primary);
+      ringGrad.addColorStop(1, cr.theme.secondary || cr.theme.primary);
+      ctx.strokeStyle = ringGrad;
+      ctx.lineWidth = 10;
+      ctx.stroke();
+      ctx.restore();
+
+      // Avatar image / fallback
       ctx.save();
       ctx.beginPath();
-      ctx.arc(cx, avY, avR, 0, Math.PI * 2);
+      ctx.arc(cx, avatarY, avatarR, 0, Math.PI * 2);
       ctx.clip();
       if (avatarImg) {
-        ctx.drawImage(avatarImg, cx - avR, avY - avR, avR * 2, avR * 2);
+        ctx.drawImage(avatarImg, cx - avatarR, avatarY - avatarR, avatarR * 2, avatarR * 2);
       } else {
-        const ig = ctx.createLinearGradient(cx - avR, avY - avR, cx + avR, avY + avR);
-        ig.addColorStop(0, cr.theme.primary); ig.addColorStop(1, cr.theme.secondary || cr.theme.primary);
-        ctx.fillStyle = ig; ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 56px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(cr.name.split(' ').map(n => n[0]).slice(0, 2).join(''), cx, avY);
+        const fallbackGrad = ctx.createLinearGradient(cx - avatarR, avatarY - avatarR, cx + avatarR, avatarY + avatarR);
+        fallbackGrad.addColorStop(0, cr.theme.primary);
+        fallbackGrad.addColorStop(1, cr.theme.secondary || cr.theme.primary);
+        ctx.fillStyle = fallbackGrad;
+        ctx.fill();
+        ctx.font = 'bold 58px Inter, system-ui, sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(cr.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase(), cx, avatarY);
       }
       ctx.restore();
 
-      ctx.strokeStyle = cr.theme.primary; ctx.lineWidth = 5;
-      ctx.beginPath(); ctx.arc(cx, avY, avR + 4, 0, Math.PI * 2); ctx.stroke();
-
+      // Verified badge
       if (cr.status === 'verified') {
-        const bx = cx + avR - 4, by = avY - avR + 12;
+        const bx = cx + avatarR * 0.68;
+        const by = avatarY + avatarR * 0.68;
+        ctx.save();
+        ctx.shadowColor = cr.theme.primary;
+        ctx.shadowBlur = 18;
         ctx.fillStyle = cr.theme.primary;
-        ctx.beginPath(); ctx.arc(bx, by, 18, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 3.6; ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.moveTo(bx - 8, by); ctx.lineTo(bx - 2, by + 6); ctx.lineTo(bx + 8, by - 6); ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(bx, by, 22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 4.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(bx - 9, by);
+        ctx.lineTo(bx - 3, by + 6);
+        ctx.lineTo(bx + 10, by - 7);
+        ctx.stroke();
       }
 
-      ctx.fillStyle = '#fff'; ctx.font = 'bold 44px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(cr.name, cx, 456);
+      // === NAME ===
+      ctx.save();
+      ctx.font = '700 48px Inter, "SF Pro Display", system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.shadowColor = `rgba(${primaryRgb}, 0.45)`;
+      ctx.shadowBlur = 24;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(cr.name, cx, 365);
+      ctx.restore();
 
-      ctx.fillStyle = '#777'; ctx.font = '28px sans-serif';
+      // === HANDLE + FOLLOWERS ===
+      ctx.font = '500 24px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
       const formattedHandle = cr.handle.startsWith('@') ? cr.handle : `@${cr.handle}`;
-      ctx.fillText(formattedHandle, cx, 512);
+      ctx.fillText(formattedHandle, cx, 428);
 
-      ctx.fillStyle = '#999'; ctx.font = '24px sans-serif';
-      wrapText(ctx, cr.bio, cx, 560, 520, 32);
+      ctx.font = '600 22px Inter, system-ui, sans-serif';
+      ctx.fillStyle = `rgba(${accentRgb}, 0.95)`;
+      ctx.fillText(`✦ ${cr.followersStr} followers`, cx, 462);
 
-      const getCategoryLabel = (id: string) => {
-        if (id === 'netlify-shippers') return 'Netlify Shippers';
-        if (id === 'indie-hackers') return 'Indie Hackers';
-        if (id === 'big-players') return 'Big Players';
-        return id;
-      };
-      const tags = [getCategoryLabel(cr.category), ...(cr.tags || []).slice(0, 1).map(String)];
-      ctx.font = '20px sans-serif'; ctx.textAlign = 'left';
-      let tw = 0; tags.forEach(t => { tw += ctx.measureText(t).width + 36; });
-      let tx = (TEX - tw) / 2;
-      tags.forEach((tag, i) => {
-        const w = ctx.measureText(tag).width + 24;
-        ctx.fillStyle = i === 0 ? 'rgba(236,72,153,0.12)' : 'rgba(255,255,255,0.05)';
-        ctx.strokeStyle = i === 0 ? 'rgba(236,72,153,0.3)' : 'rgba(255,255,255,0.08)';
-        ctx.lineWidth = 2;
-        const ry = 648, rh = 40, rad = 20;
-        ctx.beginPath();
-        ctx.moveTo(tx + rad, ry); ctx.lineTo(tx + w - rad, ry); ctx.quadraticCurveTo(tx + w, ry, tx + w, ry + rad);
-        ctx.lineTo(tx + w, ry + rh - rad); ctx.quadraticCurveTo(tx + w, ry + rh, tx + w - rad, ry + rh);
-        ctx.lineTo(tx + rad, ry + rh); ctx.quadraticCurveTo(tx, ry + rh, tx, ry + rh - rad);
-        ctx.lineTo(tx, ry + rad); ctx.quadraticCurveTo(tx, ry, tx + rad, ry);
-        ctx.closePath(); ctx.fill(); ctx.stroke();
-        ctx.fillStyle = i === 0 ? '#ec4899' : '#999';
-        ctx.fillText(tag, tx + 12, ry + 28);
-        tx += w + 10;
-      });
+      // === BIO ===
+      ctx.font = '500 19px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.78)';
+      wrapText(ctx, cr.bio, cx, 500, 600, 26, 2);
 
-      ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(320, 710); ctx.lineTo(TEX - 320, 710); ctx.stroke();
+      // === CATEGORY PILL ===
+      const pillY = 600;
+      const pillPadX = 20;
+      const pillText = `${cr.emoji || '◆'} ${(() => {
+        if (cr.category === 'netlify-shippers') return 'Netlify Shipper';
+        if (cr.category === 'indie-hackers') return 'Indie Hacker';
+        if (cr.category === 'big-players') return 'Big Player';
+        return cr.category;
+      })()}`;
+      ctx.font = '700 18px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      const pillW = ctx.measureText(pillText).width + pillPadX * 2;
+      const pillH = 38;
+      const pillX = cx - pillW / 2;
+      const r = pillH / 2;
+      ctx.save();
+      ctx.shadowColor = `rgba(${primaryRgb}, 0.35)`;
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.moveTo(pillX + r, pillY);
+      ctx.lineTo(pillX + pillW - r, pillY);
+      ctx.quadraticCurveTo(pillX + pillW, pillY, pillX + pillW, pillY + r);
+      ctx.lineTo(pillX + pillW, pillY + pillH - r);
+      ctx.quadraticCurveTo(pillX + pillW, pillY + pillH, pillX + pillW - r, pillY + pillH);
+      ctx.lineTo(pillX + r, pillY + pillH);
+      ctx.quadraticCurveTo(pillX, pillY + pillH, pillX, pillY + pillH - r);
+      ctx.lineTo(pillX, pillY + r);
+      ctx.quadraticCurveTo(pillX, pillY, pillX + r, pillY);
+      ctx.closePath();
+      ctx.fillStyle = `rgba(${primaryRgb}, 0.12)`;
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = `rgba(${primaryRgb}, 0.45)`;
+      ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(pillText, pillX + pillPadX, pillY + pillH / 2);
+      ctx.restore();
+
+      // === STATS STRIP ===
+      const stripY = 700;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(PADDING + 40, stripY - 36);
+      ctx.lineTo(TEX - PADDING - 40, stripY - 36);
+      ctx.stroke();
 
       const plays = Array.isArray(cr.plays) ? cr.plays.length : 0;
-      ctx.fillStyle = '#fff'; ctx.font = 'bold 36px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText(plays.toLocaleString(), cx, 752);
-      ctx.fillStyle = '#555'; ctx.font = '18px sans-serif';
-      ctx.fillText('GROWTH PLAYS', cx, 788);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
 
+      ctx.font = 'bold 42px Inter, system-ui, sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(plays.toLocaleString(), cx - 130, stripY - 6);
+      ctx.font = '600 14px "SF Mono", "Fira Code", ui-monospace, monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillText('GROWTH PLAYS', cx - 130, stripY + 42);
+
+      ctx.font = 'bold 42px Inter, system-ui, sans-serif';
+      ctx.fillStyle = `rgba(${accentRgb}, 1)`;
+      ctx.fillText(cr.followersStr, cx + 130, stripY - 6);
+      ctx.font = '600 14px "SF Mono", "Fira Code", ui-monospace, monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillText('FOLLOWERS', cx + 130, stripY + 42);
+      ctx.restore();
+
+      // === BOTTOM ID HASH ===
+      ctx.save();
+      ctx.font = '600 16px "SF Mono", "Fira Code", ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillText(`ID: ${cr.id.toUpperCase().padEnd(8, '0')} // ${plays} PLAYS`, cx, TEX - 58);
+      ctx.restore();
+
+      // === GLASS CORNER BRACKETS ===
+      const cornerSize = 36;
+      const corners = [
+        { x: PADDING - 14, y: PADDING - 10, dx: 1, dy: 1 },
+        { x: TEX - PADDING + 14, y: PADDING - 10, dx: -1, dy: 1 },
+        { x: TEX - PADDING + 14, y: TEX - PADDING + 10, dx: -1, dy: -1 },
+        { x: PADDING - 14, y: TEX - PADDING + 10, dx: 1, dy: -1 },
+      ];
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 3;
+      corners.forEach((c, i) => {
+        ctx.strokeStyle = `rgba(${i % 2 === 0 ? accentRgb : primaryRgb}, 0.55)`;
+        ctx.beginPath();
+        ctx.moveTo(c.x, c.y + cornerSize * c.dy);
+        ctx.lineTo(c.x, c.y);
+        ctx.lineTo(c.x + cornerSize * c.dx, c.y);
+        ctx.stroke();
+      });
       ctx.restore();
     };
 
@@ -291,8 +500,29 @@ export function HoneycombWebGLGrid({ filteredCreators, openCreatorModal, modalCr
       tex.colorSpace = THREE.SRGBColorSpace;
       texturesRef.current[cr.id] = tex;
 
-      const matFront = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide });
-      const matSides = new THREE.MeshStandardMaterial({ color: 0x14141e, roughness: 0.3, metalness: 0.9, flatShading: true });
+      const matFront = new THREE.MeshPhysicalMaterial({
+        map: tex,
+        color: 0xffffff,
+        roughness: 0.22,
+        metalness: 0.8,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.06,
+        emissive: new THREE.Color(cr.theme.primary),
+        emissiveIntensity: 0.06,
+        emissiveMap: tex,
+        ior: 1.7,
+        iridescence: 0.6,
+        iridescenceIOR: 1.5,
+        iridescenceThicknessRange: [120, 380],
+        side: THREE.DoubleSide,
+      });
+      const matSides = new THREE.MeshPhysicalMaterial({
+        color: 0x0b0b14,
+        roughness: 0.35,
+        metalness: 0.9,
+        clearcoat: 0.8,
+        clearcoatRoughness: 0.1,
+      });
 
       const fMesh = new THREE.Mesh(frontGeo, matFront);
       fMesh.userData = { index: idx, creator: cr };
@@ -300,7 +530,7 @@ export function HoneycombWebGLGrid({ filteredCreators, openCreatorModal, modalCr
       const sMesh = new THREE.Mesh(sidesGeo, matSides);
 
       const edgeGeo = new THREE.EdgesGeometry(frontGeo, 1);
-      const edgeMat = new THREE.LineBasicMaterial({ color: new THREE.Color(cr.theme.primary), transparent: true, opacity: 0.5 });
+      const edgeMat = new THREE.LineBasicMaterial({ color: new THREE.Color(cr.theme.accent || cr.theme.primary), transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending });
       const edgeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
 
       const grp = new THREE.Group();
