@@ -57,7 +57,7 @@ function computeBezier(from: { x: number; y: number }, to: { x: number; y: numbe
   };
 }
 
-function buildExplanation(a: CreatorProfile, b: CreatorProfile, sameCat: boolean, sharedTags: string[]): string {
+function buildExplanation(a: CreatorProfile, sameCat: boolean, sharedTags: string[]): string {
   const parts: string[] = [];
   if (sameCat) {
     const catInfo = CATEGORIES.find(c => c.id === a.category);
@@ -123,7 +123,7 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
     });
 
     // Within-category ring + cross-links
-    for (const [cat, indices] of Object.entries(byCat)) {
+    for (const [, indices] of Object.entries(byCat)) {
       const n = indices.length;
       // Ring connections (skip if only 1 member - would self-loop)
       for (let i = 0; i < n; i++) {
@@ -142,7 +142,7 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
           ...bez, color: a.theme.primary,
           gradientId: `g-${a.id}__${b.id}`,
           sameCategory: true, sharedTags, strength: 2 + sharedTags.length,
-          explanation: buildExplanation(a, b, true, sharedTags),
+          explanation: buildExplanation(a, true, sharedTags),
         });
       }
       // Cross-links (3+ shared tags, need at least 3 members to be meaningful)
@@ -163,7 +163,7 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
               ...bez, color: a.theme.accent || a.theme.primary,
               gradientId: `g-${a.id}__${b.id}`,
               sameCategory: true, sharedTags, strength: 1 + sharedTags.length,
-              explanation: buildExplanation(a, b, true, sharedTags),
+              explanation: buildExplanation(a, true, sharedTags),
             });
           }
         }
@@ -188,7 +188,7 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
             ...bez, color: a.theme.secondary,
             gradientId: `g-${a.id}__${b.id}`,
             sameCategory: false, sharedTags, strength: sharedTags.length,
-            explanation: buildExplanation(a, b, false, sharedTags),
+            explanation: buildExplanation(a, false, sharedTags),
           });
         }
       }
