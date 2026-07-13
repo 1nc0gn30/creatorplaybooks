@@ -13,6 +13,7 @@ import { Navbar } from './components/Navbar';
 import { CreatorModal } from './components/CreatorModal';
 import { HomePage } from './components/HomePage';
 import './styles/navbar.css';
+import './styles/auth-pages.css';
 import { OriginStoryModal } from './components/OriginStoryModal';
 import { OnboardingModal } from './components/OnboardingModal';
 import { DashboardView } from './components/DashboardView';

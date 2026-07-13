@@ -2873,40 +2873,8 @@ const ALL_CREATORS: CreatorProfile[] = [
 ];
 
 export function getActiveCreators<T extends { id: string }>(creatorsList: T[]): T[] {
-  // Launch date: June 27, 2026 UTC
-  const LAUNCH_TIME = Date.UTC(2026, 5, 27, 0, 0, 0); // Month is 0-indexed, so 5 is June!
-  const now = Date.now();
-  
-  // Calculate elapsed days
-  const elapsedMs = now - LAUNCH_TIME;
-  const elapsedDays = Math.max(0, Math.floor(elapsedMs / (1000 * 60 * 60 * 24)));
-  
-  // Initially we want: maya, kp, jaibhagat
-  const initialIds = ['maya', 'kp', 'jaibhagat'];
-  
-  const initialCreators: T[] = [];
-  const otherCreators: T[] = [];
-  
-  const creatorsMap = new Map<string, T>();
-  creatorsList.forEach(c => creatorsMap.set(c.id, c));
-  
-  initialIds.forEach(id => {
-    const creator = creatorsMap.get(id);
-    if (creator) {
-      initialCreators.push(creator);
-    }
-  });
-  
-  creatorsList.forEach(c => {
-    if (!initialIds.includes(c.id)) {
-      otherCreators.push(c);
-    }
-  });
-  
-  const releasedOthersCount = Math.min(elapsedDays, otherCreators.length);
-  const releasedOthers = otherCreators.slice(0, releasedOthersCount);
-  
-  return [...initialCreators, ...releasedOthers];
+  // All creators are now released - time gating removed
+  return creatorsList;
 }
 
 export const CREATORS = getActiveCreators(ALL_CREATORS);

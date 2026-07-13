@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { CreatorProfile } from '../types';
-import { Copy, Check, Terminal, ExternalLink } from 'lucide-react';
+import { Copy, Check, Terminal, ExternalLink, Rocket, Bot, Code2 } from 'lucide-react';
 
 const CANONICAL_URL = 'https://creatorplaybooks.netlify.app';
 
@@ -23,82 +23,82 @@ export function DocsView({ activeCreator }: { activeCreator: CreatorProfile }) {
 
   return (
     <div className="page docs-page">
-      <div className="docs-header" style={{ marginBottom: '24px' }}>
+      <div className="docs-header">
+        <div className="docs-header-badge">
+          <Code2 size={12} />
+          API Reference
+        </div>
         <h2 className="page-title">Docs & API</h2>
         <p className="page-subtitle">Every creator playbook is fully exposed as structured JSON for AI agents, Cursor prompts, or custom automation workflows.</p>
       </div>
 
-      {/* Digestible cute Overview Section */}
-      <div className="docs-overview-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '28px' }}>
-        <div style={{ background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.06) 0%, rgba(139, 92, 246, 0.06) 100%)', border: '1px solid rgba(236, 72, 153, 0.15)', borderRadius: '20px', padding: '24px', textAlign: 'left' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-            <span style={{ fontSize: '1.4rem' }}>🚀</span>
-            <h3 style={{ fontSize: '1.15rem', margin: 0, color: 'var(--primary)', fontWeight: 800 }}>For Shippers (Users)</h3>
+      <div className="docs-overview-grid">
+        <div className="docs-overview-card shippers">
+          <div className="docs-overview-card-icon">
+            <span><Rocket size={20} style={{ color: 'var(--primary)' }} /></span>
+            <h3 style={{ color: 'var(--primary)' }}>For Shippers</h3>
           </div>
-          <p style={{ fontSize: '0.9rem', color: 'var(--ink-muted)', lineHeight: 1.6, margin: 0 }}>
+          <p>
             Study verified growth plays from top creators. Keep consistent by drafting your weekly posts in the scheduler, track your daily streak, and level up your creator rank as you log your progress!
           </p>
         </div>
 
-        <div style={{ background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.06) 0%, rgba(139, 92, 246, 0.06) 100%)', border: '1px solid rgba(34, 211, 238, 0.15)', borderRadius: '20px', padding: '24px', textAlign: 'left' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-            <span style={{ fontSize: '1.4rem' }}>🤖</span>
-            <h3 style={{ fontSize: '1.15rem', margin: 0, color: 'var(--accent)', fontWeight: 800 }}>For Builders (Developers & Agents)</h3>
+        <div className="docs-overview-card builders">
+          <div className="docs-overview-card-icon">
+            <span><Bot size={20} style={{ color: 'var(--accent)' }} /></span>
+            <h3 style={{ color: 'var(--accent)' }}>For Builders</h3>
           </div>
-          <p style={{ fontSize: '0.9rem', color: 'var(--ink-muted)', lineHeight: 1.6, margin: 0 }}>
+          <p>
             Integrate playbook knowledge directly into your local IDE or AI agents. Copy pre-built agent prompts, download complete config folders, or fetch playbooks programmatically from our endpoints.
           </p>
         </div>
       </div>
 
-      {/* Base URL Banner */}
-      <div className="docs-base-banner" style={{ background: 'var(--surface)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', gap: '16px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="docs-base-banner">
+        <div className="docs-base-banner-inner">
           <Terminal size={18} style={{ color: 'var(--accent)' }} />
-          <span style={{ fontSize: '0.9rem', color: 'var(--muted)', fontWeight: 600 }}>API Base URL:</span>
-          <code style={{ fontFamily: 'var(--mono)', color: 'var(--ink)', fontSize: '0.95rem', background: 'rgba(255,255,255,0.03)', padding: '4px 10px', borderRadius: '6px' }}>{CANONICAL_URL}</code>
+          <span style={{ fontSize: '0.88rem', color: 'var(--muted)', fontWeight: 600 }}>API Base URL:</span>
+          <code>{CANONICAL_URL}</code>
         </div>
-        <button 
-          className="btn btn-secondary btn-sm" 
+        <button
+          className="btn btn-secondary btn-sm"
           onClick={() => handleCopy(CANONICAL_URL, 'base')}
-          style={{ padding: '6px 12px', fontSize: '0.8rem', borderRadius: '8px' }}
+          style={{ padding: '7px 14px', fontSize: '0.8rem', borderRadius: '10px' }}
         >
           {copiedPath === 'base' ? <><Check size={12} style={{ color: 'var(--success)' }} /> Copied</> : <><Copy size={12} /> Copy Base</>}
         </button>
       </div>
 
-      <div className="docs-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '18px' }}>
+      <div className="docs-grid">
         {endpoints.map((ep) => {
           const fullUrl = `${CANONICAL_URL}${ep.path}`;
           const isCopied = copiedPath === ep.path;
           return (
-            <div key={ep.path} className="docs-card" style={{ background: 'var(--surface)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '18px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px', transition: 'all 0.2s ease', position: 'relative' }}>
+            <div key={ep.path} className="docs-card">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-                <span className="docs-method" style={{ background: 'rgba(34, 197, 94, 0.15)', color: '#4ade80', fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: '6px', border: '1px solid rgba(74, 222, 128, 0.2)' }}>{ep.method}</span>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <button 
+                <span className="docs-method">{ep.method}</span>
+                <div className="docs-card-actions">
+                  <button
                     onClick={() => handleCopy(fullUrl, ep.path)}
-                    className="icon-only" 
+                    className="docs-card-action"
                     title="Copy full endpoint URL"
-                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '6px', color: isCopied ? 'var(--success)' : 'var(--muted)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                   >
-                    {isCopied ? <Check size={14} /> : <Copy size={14} />}
+                    {isCopied ? <Check size={14} style={{ color: 'var(--success)' }} /> : <Copy size={14} />}
                   </button>
-                  <a 
-                    href={fullUrl} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="icon-only"
+                  <a
+                    href={fullUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="docs-card-action"
                     title="Open API endpoint"
-                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', padding: '6px', color: 'var(--muted)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     <ExternalLink size={14} />
                   </a>
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <code style={{ fontFamily: 'var(--mono)', fontSize: '0.86rem', color: 'var(--accent)', wordBreak: 'break-all', background: 'rgba(34, 211, 238, 0.04)', padding: '6px 10px', borderRadius: '8px', border: '1px solid rgba(34, 211, 238, 0.08)' }}>{ep.path}</code>
-                <p style={{ fontSize: '0.9rem', color: 'var(--ink-muted)', margin: '4px 0 0' }}>{ep.desc}</p>
+                <code className="docs-card-code">{ep.path}</code>
+                <p className="docs-card-desc">{ep.desc}</p>
               </div>
             </div>
           );

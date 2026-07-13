@@ -526,6 +526,15 @@ const html = `<!DOCTYPE html>
       setTimeout(() => t.classList.remove('show'), 2200);
     }
 
+    function copyPost(id, key) {
+      const textarea = document.getElementById('post-' + id + '-' + key);
+      if (textarea) {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          showToast('Post copied to clipboard');
+        });
+      }
+    }
+
     function filterCards() {
       const q = document.getElementById('search').value.toLowerCase().trim();
       const cat = document.getElementById('category').value;
@@ -539,6 +548,15 @@ const html = `<!DOCTYPE html>
       });
       document.getElementById('stats').textContent = visible + ' mentor' + (visible === 1 ? '' : 's') + ' visible';
     }
+
+    // Bind all interactive handlers to window scope
+    window.switchTab = switchTab;
+    window.previewDesign = previewDesign;
+    window.copyPost = copyPost;
+    window.copyCardImage = copyCardImage;
+    window.downloadCard = downloadCard;
+    window.copyAllMainPosts = copyAllMainPosts;
+    window.filterCards = filterCards;
 
     filterCards();
   </script>

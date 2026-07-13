@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Edit3, Save, ExternalLink, ThumbsUp, ThumbsDown, Plus, X, Loader2, CheckCircle } from 'lucide-react';
+import { Users, Edit3, Save, ExternalLink, ThumbsUp, ThumbsDown, Plus, X, Loader2, CheckCircle, Globe, Github, Sparkles } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 import type { MemberProfile } from '../lib/member-types';
 import { voteCreator, fetchVotes, submitCreator } from '../lib/member-api';
@@ -28,7 +28,7 @@ export function MembersView() {
       <div className="page">
         <section className="hero-section compact center">
           <div className="hero-badge"><Users size={14} /> Members</div>
-          <h1>Loading member area…</h1>
+          <h1>Loading member area...</h1>
         </section>
       </div>
     );
@@ -89,6 +89,15 @@ export function MembersView() {
 
   return (
     <div className="page members-page">
+      <div className="members-header">
+        <div className="members-header-badge">
+          <span className="pulse-dot" />
+          Member Hub
+        </div>
+        <h2 className="page-title">Your member profile</h2>
+        <p className="page-subtitle">Manage your identity, vote on creators, and contribute to the directory.</p>
+      </div>
+
       <section className="member-hero">
         <div className="member-banner" />
         <div className="member-avatar" style={{ background: 'linear-gradient(135deg, var(--primary), var(--secondary))' }}>
@@ -97,7 +106,9 @@ export function MembersView() {
         <div className="member-title">
           <h1>{form.name || 'Builder'}</h1>
           <span className="member-handle">@{form.handle}</span>
-          <span className="member-role">{form.role}</span>
+          <span className="member-role">
+            <Sparkles size={10} style={{ display: 'inline' }} /> {form.role}
+          </span>
         </div>
         <button className="btn btn-secondary btn-sm" onClick={() => setEdit((x) => !x)}>
           {edit ? <><X size={14} /> Cancel</> : <><Edit3 size={14} /> Edit profile</>}
@@ -147,9 +158,9 @@ export function MembersView() {
             </div>
           )}
           <div className="member-links">
-            {form.website && <a href={form.website} target="_blank" rel="noreferrer"><ExternalLink size={14} /> Website</a>}
+            {form.website && <a href={form.website} target="_blank" rel="noreferrer"><Globe size={14} /> Website</a>}
             {form.xHandle && <a href={`https://x.com/${form.xHandle.replace('@', '')}`} target="_blank" rel="noreferrer"><ExternalLink size={14} /> X / Twitter</a>}
-            {form.github && <a href={form.github} target="_blank" rel="noreferrer"><ExternalLink size={14} /> GitHub</a>}
+            {form.github && <a href={form.github} target="_blank" rel="noreferrer"><Github size={14} /> GitHub</a>}
           </div>
         </section>
       )}
@@ -224,7 +235,7 @@ export function MembersView() {
                   <div className="field-group">
                     <label>Category</label>
                     <select name="category" required>
-                      <option value="">Pick one…</option>
+                      <option value="">Pick one...</option>
                       <option value="indie-hackers">Indie hackers</option>
                       <option value="netlify-shippers">Netlify shippers</option>
                       <option value="big-players">Big players</option>
@@ -233,7 +244,7 @@ export function MembersView() {
                 </div>
                 <div className="field-group">
                   <label>Why should they be listed?</label>
-                  <textarea name="reason" rows={3} placeholder="Share their playbook, product, or influence…" required />
+                  <textarea name="reason" rows={3} placeholder="Share their playbook, product, or influence..." required />
                 </div>
                 <div className="field-actions">
                   <button type="button" className="btn btn-ghost" onClick={() => setSubmitOpen(false)}>Cancel</button>
