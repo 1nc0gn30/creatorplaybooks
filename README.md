@@ -1,16 +1,28 @@
-# creatorplaybooks
+<!-- xonettn -->
+<div align="center">
+
+# ⚛️ Creatorplaybooks
 
 Agentic Access to become knowledgable upon real people and real playboooks that work.
 
-## Overview
+
+![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Three.js](https://img.shields.io/badge/Three.js-000000?logo=three.js&logoColor=white) ![Netlify](https://img.shields.io/badge/Netlify-00C7B7?logo=netlify&logoColor=white)
+
+![Deploy](https://img.shields.io/badge/Deployed-Netlify-00C7B7?logo=netlify&logoColor=white)
+
+</div>
+
+---
+
+## 📋 Overview
 Agentic Access to become knowledgable upon real people and real playboooks that work.
 
-## Tech Stack
+## 📦 Tech Stack
 - React
 - Vite
 - Netlify (deployed)
 
-## Project Structure
+## 🗂️ Project Structure
 ```
 creatorplaybooks/
   - creators
@@ -22,36 +34,36 @@ creatorplaybooks/
   (522 files total)
 ```
 
-## Getting Started
+## 🚀 Getting Started
 
-### Prerequisites
+### 📋 Prerequisites
 - Node.js (v18+)
 - npm or yarn
 
-### Installation
+### 📦 Installation
 ```bash
 git clone https://github.com/1nc0gn30/creatorplaybooks.git
 cd creatorplaybooks
 npm install
 ```
 
-### Development
+### 💻 Development
 ```bash
 npm run dev
 ```
 
-### Build
+### 🔨 Build
 ```bash
 npm run build
 ```
 
-### Available Scripts
+### ⚙️ Available Scripts
   npm run dev - vite
   npm run build - tsc -b && vite build
   npm run lint - eslint .
   npm run preview - vite preview
 
-## Original README
+## 📂 Original README
 <details>
 <summary>Click to expand original README</summary>
 
@@ -59,7 +71,7 @@ npm run build
 
 Live X API integration powered by X Developer API v2.
 
-## X API Setup
+## ⚙️ X API Setup
 
 1. Go to https://developer.x.com/en/portal/dashboard
 2. Create a new app or use existing app
@@ -74,7 +86,7 @@ Or in the Netlify UI: Site settings > Environment variables > Add variable.
 
 **Do NOT commit the token to git.**
 
-## Local Development
+## 💻 Local Development
 
 Create `.env` in project root (already ignored by `.gitignore`):
 
@@ -87,7 +99,7 @@ Run local dev server:
 npm run dev
 ```
 
-## Features
+## ✨ Features
 
 - **Creator Playbooks**: Proven growth strategies from top builders
 - **Live X Profiles**: Real-time avatar, bio, follower count, and latest posts
@@ -95,13 +107,13 @@ npm run dev
 - **Swipe Files**: Copy-ready hooks and writing angles
 - **Developer API**: `/api/creator?id={creatorId}` for agent consumption
 
-## Build
+## 🔨 Build
 
 ```bash
 npm run build
 ```
 
-## Deploy
+## 🚀 Deploy
 
 ```bash
 netlify deploy --prod
@@ -118,7 +130,7 @@ netlify deploy --prod
 
 </details>
 
-## TODO / Roadmap
+## 📝 TODO / Roadmap
 - [ ] Add unit tests
 - [ ] Add LICENSE file
 - [ ] Add Dockerfile for containerized deployment
@@ -130,14 +142,22 @@ netlify deploy --prod
 - [ ] Update dependencies to latest versions
 - [ ] Add code comments and inline documentation
 
-## Deployment
+## 🚀 Deployment
 This project is deployed on Netlify. See netlify.toml for configuration.
 
-## Author
+## 👤 Author
 **Neal Frazier** - [@AshAmplifies](https://github.com/1nc0gn30)
 
-## Links
+## 🔗 Links
 - GitHub: https://github.com/1nc0gn30/creatorplaybooks
 
 ---
 *This README was enhanced as part of the neals-projects-2026 batch update.*
+
+---
+
+<div align="center">
+
+**[xonettn]** · Built by [Neal Frazier](https://github.com/1nc0gn30) · [@AshAmplifies](https://twitter.com/AshAmplifies)
+
+</div>
