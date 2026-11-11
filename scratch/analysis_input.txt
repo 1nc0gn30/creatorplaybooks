@@ -1,4 +1,4 @@
-=========================================
+-----------------------------------------
 MENTOR: arvidkahl (@arvidkahl)
 Name: Arvid Kahl
 Bio: Building podscan.fm and podline.fm in Public. Raising all the boats with kindness. 🎙️ tbf.fm · ✍️ tbf.link/blog
@@ -28,7 +28,7 @@ Recent Tweets:
      
      What a ridiculous time to be alive."
 
-=========================================
+-----------------------------------------
 MENTOR: ash_wesley_ (@AshAmplifies)
 Name: Ash 🔊
 Bio: 4x Top 5 product launches @ProductHunt Hackathon winner & 10x organizer @Stripe Community Builder Always shipping - creating delightful products for humans
@@ -61,7 +61,7 @@ Recent Tweets:
      Create your own mini town, one title at a time. Customise it the way you want or randomise it! 
      Export, share and connect 'em up!"
 
-=========================================
+-----------------------------------------
 MENTOR: ayushtweetshere (@ayushtweetshere)
 Name: Ayush 🙏
 Bio: Father, Husband, Son, Friend Independent Entrepreneur getvoibe.com outlierkit.com
@@ -135,7 +135,7 @@ Recent Tweets:
   5. [Likes: 46, RTs: 5, Views: 1401]
      Text: "Good day for Voibe yesterday🤩"
 
-=========================================
+-----------------------------------------
 MENTOR: biilmann (@biilmann)
 Name: Matt Biilmann
 Bio: CEO and Co-founder of Netlify. Builder of things, coiner of terms.
@@ -170,7 +170,7 @@ Recent Tweets:
   5. [Likes: 27, RTs: 0, Views: 4100]
      Text: "If Netlify built GitHub"
 
-=========================================
+-----------------------------------------
 MENTOR: clarklab (@clarklab)
 Name: Clark Wimberly
 Bio: I try to make things that are awesome. One half of Superfun. Design engineer. BBQ, games, AI wonk. SXSW, Microsoft, NASDAQ, Blockchain, and other folks you know
@@ -188,7 +188,7 @@ Recent Tweets:
   5. [Likes: 1, RTs: 0, Views: 44]
      Text: "It also has other classic system palettes, plus settings for scanlines and CRT vignette."
 
-=========================================
+-----------------------------------------
 MENTOR: conormartin_ (@conormartin_)
 Name: Conor Martin
 Bio: Looking for a full-time role as a growth Marketer (I have millions of views on YouTube and through SEO)
@@ -215,7 +215,7 @@ Recent Tweets:
      
      here's another one!"
 
-=========================================
+-----------------------------------------
 MENTOR: damengchen (@damengchen)
 Name: Damon Chen
 Bio: 💜 https://t.co/yyLfH8mOar
@@ -245,7 +245,7 @@ Recent Tweets:
      
      👉 https://pdfgen.com/mcp"
 
-=========================================
+-----------------------------------------
 MENTOR: dannypostma (@dannypostma)
 Name: Danny Postma
 Bio: Laying low
@@ -321,7 +321,7 @@ Recent Tweets:
   5. [Likes: 151, RTs: 2, Views: 38325]
      Text: "i think i finally did it"
 
-=========================================
+-----------------------------------------
 MENTOR: demishassabis (@demishassabis)
 Name: Demis Hassabis
 Bio: Nobel Laureate. Co-Founder & CEO @GoogleDeepMind - working on AGI. Solving disease @IsomorphicLabs. Trying to understand the fundamental nature of reality.
@@ -354,7 +354,7 @@ Recent Tweets:
      
      We are turbocharging that goal with $2.1B in new funding."
 
-=========================================
+-----------------------------------------
 MENTOR: dhruvalgolakiya (@DhruvalGolakiya)
 Name: Dhruval
 Bio: Running an agency, building products, and sharing the journey and trying to make it Building - appgrowkit.com ( grow your IOS app correct way )
@@ -380,7 +380,7 @@ Recent Tweets:
      
      you can now generate one of the best quality level screenshots in AppGrowKit with just one click"
 
-=========================================
+-----------------------------------------
 MENTOR: flaviocopes (@flaviocopes)
 Name: flavio
 Bio: flaviocopes.com bootcamp.dev
@@ -398,7 +398,7 @@ Recent Tweets:
   5. [Likes: 31, RTs: 0, Views: 4887]
      Text: "vlog #9 a ton of new features"
 
-=========================================
+-----------------------------------------
 MENTOR: gerrit (@halfmage)
 Name: halfmage
 Bio: you wanna be right or you wanna be rich?
@@ -423,7 +423,7 @@ Recent Tweets:
   5. [Likes: 5, RTs: 0, Views: 68]
      Text: "#pixelart icons colored mode is coming this YEAR"
 
-=========================================
+-----------------------------------------
 MENTOR: hacksultan (@hacksultan)
 Name: Name cannot be blank
 Bio: Building a learning institution with a better experience at @altschoolafrica 
@@ -448,7 +448,7 @@ Recent Tweets:
      "age 18-45."
      "Nigerian Citizens in Nigeria only.""
 
-=========================================
+-----------------------------------------
 MENTOR: hnshah (@hnshah)
 Name: Hiten Shah
 Bio: Founder & CEO building SaaS for 20+ yrs. Sharing what endures in business, growth & people. Built Crazy Egg (2005), KISSmetrics (2008) & Nira (2020). https://t.co/ReDmcjaSGW
@@ -580,7 +580,7 @@ Recent Tweets:
   5. [Likes: 393, RTs: 7, Views: 47971]
      Text: "Om made his friends feel like worlds worth visiting. Rest in peace, my friend. I’ll see you again."
 
-=========================================
+-----------------------------------------
 MENTOR: idohodl (@idohodl)
 Name: Vamshi
 Bio: I help turn “someone should build this” into a working AI product. Zero-to-one builder across agents, SaaS, fintech, taxtech & enterprise.
@@ -598,7 +598,7 @@ Recent Tweets:
   5. [Likes: 1, RTs: 0, Views: 124]
      Text: "Did some digging on common questions so you don't have to. Enjoy the infographic! #SpiritAirlines #FrontierAirlines"
 
-=========================================
+-----------------------------------------
 MENTOR: jaibhagat (@ChaiWithJai)
 Name: Jai Bhagat
 Bio: Product Engineer | Breathwork Facilitator
@@ -636,7 +636,7 @@ Recent Tweets:
   5. [Likes: 2, RTs: 0, Views: 271]
      Text: "I made a 3D brain using threejs over the weekend:  https://adhd-pattern-map.netlify.app/atlas"
 
-=========================================
+-----------------------------------------
 MENTOR: karpathy (@karpathy)
 Name: Andrej Karpathy
 Bio: I like training large deep neural nets.
@@ -657,7 +657,7 @@ Recent Tweets:
      
      Imo this is the 3rd major redesign of LLM UIUX. The first paradigm was that the LLM is a website you go to, the second was that it is an app you download to your computer. This third one is that it is a self-contained, persistent, asynchronous entity with org-wide tools and context, working alongside teams of humans. It really takes a while to wrap your head around it, but it works and it is awesome."
 
-=========================================
+-----------------------------------------
 MENTOR: kp (@thisiskp_)
 Name: KP
 Bio: The "Build In Public" Guy. Head of Community at @Netlify. Vibe Coder. Prev: @PaddleHQ @joinODF
@@ -729,7 +729,7 @@ Recent Tweets:
      
      https://250america.netlify.app/"
 
-=========================================
+-----------------------------------------
 MENTOR: levelsio (@levelsio)
 Name: Pieter Levels
 Bio: 💸levels.vc $803K/m 📸PhotoAI.com $88K/m 🎮Vibej.am $44K/m 🏡InteriorAI.com $31K/m 👙levelsio.com + @X $17K/m 🌍Nomads.com $15K/m 🏩Hotelist.com 💾Pieter.com
@@ -773,7 +773,7 @@ Recent Tweets:
      
      My work now is about 50-50 on my iPhone or MacBook Pro, both via Termius SSH to VPS! It's lovely! 🥰"
 
-=========================================
+-----------------------------------------
 MENTOR: lynnzeng (@zeng_wt)
 Name: 𝐙𝐞𝐧𝐠 💜
 Bio: AI Creative, Film Maker, AI Artist | picaisso.xyz | picaisso.substack.com | newmom.help | DM for projects and partnerships 💜☕
@@ -828,7 +828,7 @@ Recent Tweets:
      
      #AdobeFireflyAmbassadors #Ad #FireflyAIAssistant"
 
-=========================================
+-----------------------------------------
 MENTOR: maddiedreese (@maddiedreese)
 Name: Maddie D. Reese
 Bio: Building strange AI things in public. Helping non-traditional builders get technical! maddie@maddiedreese.com. Check my website & send a message to my printer ↓
@@ -864,7 +864,7 @@ Recent Tweets:
      
      More info and full leaderboard at the link below :)"
 
-=========================================
+-----------------------------------------
 MENTOR: markbowley (@markbowley)
 Name: Mark Bowley
 Bio: Making the Internet simpler one bit at a time ✋ @hndmark 🏆 @usewinnny ✨ sparkstation.live 🧩 fullyfed.crd.co (3K+ WAU) 🧩 subnoted.crd.co
@@ -901,7 +901,7 @@ Recent Tweets:
      
      https://boxgallery.pages.dev/"
 
-=========================================
+-----------------------------------------
 MENTOR: maya (@buildwithmaya)
 Name: Maya
 Bio: just me, my laptop, and ideas building + 9 to 5 Sharing lessons to help you build faster getideapanda.com, newbiemarketer.to (newsletter) buildwithmaya.com
@@ -1000,7 +1000,7 @@ Recent Tweets:
      
      anyone experience anything different?"
 
-=========================================
+-----------------------------------------
 MENTOR: monroe_carol (@CarolMonroe)
 Name: Carol Monroe
 Bio: AI Strategist & Creative Builder.
@@ -1030,7 +1030,7 @@ Recent Tweets:
      
      genuinely hoping this one happens"
 
-=========================================
+-----------------------------------------
 MENTOR: nealfrazier (@NealFrazierTech)
 Name: Neal Frazier Tech
 Bio: Creative Technologist
@@ -1110,7 +1110,7 @@ Recent Tweets:
      
      Image made with @antigravity"
 
-=========================================
+-----------------------------------------
 MENTOR: nkgoutham (@nkgoutham)
 Name: Krishna Goutham
 Bio: Your thinking is more scalable than you think. We build AI employees around your framework. More - https://thelaunch.space/
@@ -1136,7 +1136,7 @@ Recent Tweets:
   5. [Likes: 2, RTs: 0, Views: 186]
      Text: "interesting. poke is quite nice to chat with lol. i won’t say its great and all (yet) but its definitely not bad."
 
-=========================================
+-----------------------------------------
 MENTOR: nousresearch (@NousResearch)
 Name: Nous Research
 Bio: A bunch of nerds making progress toward open source AI
@@ -1164,7 +1164,7 @@ Recent Tweets:
      
      Hermes Agent now exposes MoA presets as virtual models, giving you capabilities beyond the publicly available frontier: 8% higher than Opus 4.8 and 11% higher than GPT 5.5 on our upcoming benchmark."
 
-=========================================
+-----------------------------------------
 MENTOR: phanindra_ai (@phanindra_ai)
 Name: Phanindra Reddy
 Bio: Building the best aios for founders. Building magicteams.ai
@@ -1199,7 +1199,7 @@ Recent Tweets:
   5. [Likes: 2, RTs: 1, Views: 141]
      Text: "we are backkkk baby, gonna do 6 months of features in 7 days"
 
-=========================================
+-----------------------------------------
 MENTOR: picsoung (@picsoung)
 Name: Nicolas Grenié
 Bio: x-@typeform Developer Advocate🥑 @hackbarna organizer Airbnb style logos 👉 https://t.co/6vDa53CjhE @lovable_dev Ambassador @_builspace S3 & S4
@@ -1228,7 +1228,7 @@ Recent Tweets:
      
      @techeurope_"
 
-=========================================
+-----------------------------------------
 MENTOR: rasaljaya (@rasaljaya)
 Name: Rasal Jayasinghe
 Bio: Hosting Sri Lanka’s #1 Tech Podcast, TechTalk 360 | Cursor Ambassador & Regional Lead South Asia | ElevenLabs Ambassador 🇱🇰
@@ -1278,7 +1278,7 @@ Recent Tweets:
      
      https://apps.apple.com/us/app/cursor/id6767085653"
 
-=========================================
+-----------------------------------------
 MENTOR: stabilityai (@StabilityAI)
 Name: Stability AI
 Bio: We’ll help you make it like nobody’s business. Multimodal media generation and editing tools to get your idea to production. Self-deploy? 👍 Need a partner? 🤝
@@ -1327,7 +1327,7 @@ Recent Tweets:
      
      The "Black Hole" is closing. Watch Prem at @TEDAISF  here:"
 
-=========================================
+-----------------------------------------
 MENTOR: tdinh_me (@tdinh_me)
 Name: Tony Dinh
 Bio: Creating software I love to use.
@@ -1366,7 +1366,7 @@ Recent Tweets:
   5. [Likes: 349, RTs: 2, Views: 21224]
      Text: "$100 MRR 🫡"
 
-=========================================
+-----------------------------------------
 MENTOR: teknium (@Teknium)
 Name: Teknium 🪽
 Bio: Cofounder and Lead Engineer - Hermes Agent @NousResearch, prev @StabilityAI
@@ -1408,7 +1408,7 @@ Recent Tweets:
      
      We will see what we can do on that front over the next week!"
 
-=========================================
+-----------------------------------------
 MENTOR: thepatwalls (@thepatwalls)
 Name: Pat Walls
 Bio: starterstory.com build.starterstory.com On a mission to inspire 1B people to build stuff!
@@ -1460,7 +1460,7 @@ Recent Tweets:
      
      nobody remembers it. my products have impacted millions"
 
-=========================================
+-----------------------------------------
 MENTOR: yongfook (@yongfook)
 Name: Jon Yongfook
 Bio: 🐻 bannerbear.com image generation Bootstrapping SaaS @ $81K MRR

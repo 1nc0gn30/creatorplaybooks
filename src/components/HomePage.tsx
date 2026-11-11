@@ -55,7 +55,7 @@ export function HomePage({
         <div className="home-hero-content">
           <p className="home-kicker">Checked 11 Nov 2026 · {creatorCount} mentors · {MENTOR_PLACES.length} places</p>
           <h1 className="home-headline">
-            <span className="home-headline-line">Notes from builders</span>
+            <span className="home-headline-line">Notes from builders </span>
             <em>who do not all live in one city.</em>
           </h1>
           <p className="home-subhead">
