@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import type { BuilderProfile } from '../types';
 import { User, Target, Link2, FileText, Eye, Accessibility, Palette } from 'lucide-react';
+import { loadAllGoals } from '../lib/goalStore';
 
 export function MeView({ profile, setProfile }: { profile: BuilderProfile; setProfile: (p: BuilderProfile) => void }) {
   const initials = profile.name ? profile.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase() : 'B';
@@ -151,7 +153,7 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
                 </div>
                 <span className="status-badge" style={{ background: 'rgba(236,72,153,0.12)', border: '1px solid rgba(236,72,153,0.2)', color: 'var(--primary)', textTransform: 'uppercase', fontSize: '0.65rem', padding: '3px 8px', borderRadius: '99px', fontWeight: 700 }}>Builder</span>
               </div>
-              <p className="creator-card-clean-bio" style={{ fontSize: '0.84rem', margin: '0 0 12px' }}>{profile.bio || 'Your bio will appear here. Share what you build!'}</p>
+              <p className="creator-card-clean-bio" style={{ fontSize: '0.84rem', margin: '0 0 12px' }}>{profile.bio || 'Your bio shows here.'}</p>
               {profile.project && (
                 <div className="tag-chip" style={{ background: 'rgba(34, 211, 238, 0.1)', borderColor: 'rgba(34, 211, 238, 0.2)', color: 'var(--accent)', fontSize: '0.7rem', padding: '4px 10px', borderRadius: '99px', display: 'inline-block', marginBottom: '14px', fontWeight: 600 }}>
                   Shipping {profile.project}
@@ -165,6 +167,22 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
           </div>
         </div>
       </div>
+      <GoalList />
     </div>
+  );
+}
+
+function GoalList() {
+  const [goals] = useState(() => loadAllGoals());
+  if (!goals.length) return null;
+  return (
+    <section className="goal-saved">
+      <h3>Saved practice goals</h3>
+      <ul>
+        {goals.map((g) => (
+          <li key={g.creatorId}>{g.creatorName}: {g.days} days from {g.start}. {Object.values(g.checks).filter(Boolean).length} steps checked.</li>
+        ))}
+      </ul>
+    </section>
   );
 }

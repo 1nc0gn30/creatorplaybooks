@@ -822,24 +822,19 @@ export function HoneycombWebGLGrid({ filteredCreators, openCreatorModal, modalCr
         >
           <div 
             style={{
-              color: '#ffffff',
-              fontFamily: '"Cal Sans", "Instrument Sans", sans-serif',
-              fontSize: '2.5rem',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: '3px',
-              animation: 'pulse-explore 2s infinite ease-in-out',
-              background: 'linear-gradient(45deg, #ec4899, #8b5cf6, #22d3ee)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: '#f4f4f7',
+              fontFamily: 'Georgia, serif',
+              fontSize: '2rem',
+              fontWeight: '560',
+              letterSpacing: '0',
               textAlign: 'center',
               padding: '10px'
             }}
           >
-            Click me to interact
+            Click to move it
           </div>
-          <div style={{ color: '#7c7c8d', fontSize: '0.95rem', marginTop: '12px', letterSpacing: '0.5px' }}>
-            Drag to rotate & pan • Scroll to zoom • Click cards to open
+          <div style={{ color: '#e4e4ea', fontSize: '0.95rem', marginTop: '12px', letterSpacing: '0.2px' }}>
+            Drag to rotate. Scroll to zoom. Click a card to open it.
           </div>
         </div>
       )}

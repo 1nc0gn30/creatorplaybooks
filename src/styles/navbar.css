@@ -222,7 +222,7 @@
 }
 
 /* ---------- Responsive switch ---------- */
-@media (max-width: 980px) {
+@media (max-width: 1180px) {
   .nav-bar {
     display: none;
   }
@@ -614,7 +614,7 @@
   padding-top: 110px;
 }
 
-@media (min-width: 981px) {
+@media (min-width: 1181px) {
   .nav-mobile-bar,
   .nav-fab,
   .nav-sheet,

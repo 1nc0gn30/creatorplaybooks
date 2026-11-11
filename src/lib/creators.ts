@@ -1544,7 +1544,7 @@ const RAW_CREATORS: CreatorProfile[] = [
     followersStr: '1.7K+',
     bio: 'The AI ROI Guy. Your company is spending millions on AI. I built the software to prove what it is actually returning.',
     products: [
-      { name: 'AI ROI Software', url: 'https://idohodl.com', description: 'Measure actual AI spend ROI' },
+      { name: 'vvamshi.com', url: 'https://vvamshi.com', description: 'Personal site. An older domain from a previous draft returned 404 and is not linked.' },
     ],
     pillars: [
       "Zero-to-One AI Product Building",

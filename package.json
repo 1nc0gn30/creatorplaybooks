@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint": "oxlint src",
     "preview": "vite preview",
     "smoke": "node scripts/smoke-mentors.mjs"
   },
@@ -27,6 +27,8 @@
     "@types/three": "^0.185.0",
     "@vitejs/plugin-react": "^4.3.4",
     "globals": "^15.15.0",
+    "oxlint": "^1.93.0",
+    "playwright-core": "^1.65.0",
     "puppeteer-core": "^25.17.0",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
