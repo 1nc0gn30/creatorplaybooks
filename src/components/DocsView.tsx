@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import type { CreatorProfile } from '../types';
-import { Copy, Check, Terminal, ExternalLink, Rocket, Bot, Code2 } from 'lucide-react';
-
-const CANONICAL_URL = 'https://creatorplaybooks.netlify.app';
+import { Copy, Check, Terminal, ExternalLink } from 'lucide-react';
+import { site } from '../lib/site';
 
 export function DocsView({ activeCreator }: { activeCreator: CreatorProfile }) {
   const [copiedPath, setCopiedPath] = useState<string | null>(null);
 
   const endpoints = [
-    { method: 'GET', path: '/api/creators', desc: 'All creators with full playbooks' },
-    { method: 'GET', path: '/api/creator?id=' + activeCreator.id, desc: 'Single creator playbook JSON' },
-    { method: 'GET', path: '/api/playbook?creator=' + activeCreator.id, desc: 'Markdown playbook export' },
-    { method: 'GET', path: '/api/ideas?creator=' + activeCreator.id + '&count=6', desc: 'AI-generated content ideas' },
-    { method: 'GET', path: '/api/export?creator=' + activeCreator.id, desc: 'Agent-ready JSON bundle' },
+    { method: 'GET', path: '/api/creators', desc: 'The mentor list' },
+    { method: 'GET', path: '/api/creator?id=' + activeCreator.id, desc: 'One mentor, short form' },
+    { method: 'GET', path: '/api/playbook?creator=' + activeCreator.id, desc: 'Plays only' },
+    { method: 'GET', path: '/api/ideas?creator=' + activeCreator.id + '&count=6', desc: 'Draft lines built from that mentor’s hooks' },
+    { method: 'GET', path: '/api/export?creator=' + activeCreator.id, desc: 'A zip of the same notes' },
   ];
 
   const handleCopy = (fullUrl: string, path: string) => {
@@ -25,31 +24,28 @@ export function DocsView({ activeCreator }: { activeCreator: CreatorProfile }) {
     <div className="page docs-page">
       <div className="docs-header">
         <div className="docs-header-badge">
-          <Code2 size={12} />
-          API Reference
+          Reference
         </div>
-        <h2 className="page-title">Docs & API</h2>
-        <p className="page-subtitle">Every creator playbook is fully exposed as structured JSON for AI agents, Cursor prompts, or custom automation workflows.</p>
+        <h2 className="page-title">API</h2>
+        <p className="page-subtitle">Each mentor is a JSON document. The host is set in site.json, so these links move with the domain.</p>
       </div>
 
       <div className="docs-overview-grid">
         <div className="docs-overview-card shippers">
           <div className="docs-overview-card-icon">
-            <span><Rocket size={20} style={{ color: 'var(--primary)' }} /></span>
-            <h3 style={{ color: 'var(--primary)' }}>For Shippers</h3>
+            <h3>Reading</h3>
           </div>
           <p>
-            Study verified growth plays from top creators. Keep consistent by drafting your weekly posts in the scheduler, track your daily streak, and level up your creator rank as you log your progress!
+            Open a mentor page, copy one play, and put a draft on the dashboard if you want a day of the week attached to it.
           </p>
         </div>
 
         <div className="docs-overview-card builders">
           <div className="docs-overview-card-icon">
-            <span><Bot size={20} style={{ color: 'var(--accent)' }} /></span>
-            <h3 style={{ color: 'var(--accent)' }}>For Builders</h3>
+            <h3>Fetching</h3>
           </div>
           <p>
-            Integrate playbook knowledge directly into your local IDE or AI agents. Copy pre-built agent prompts, download complete config folders, or fetch playbooks programmatically from our endpoints.
+            GET a path below. The body matches the page: profile, plays, hooks, and the source list.
           </p>
         </div>
       </div>
@@ -58,11 +54,11 @@ export function DocsView({ activeCreator }: { activeCreator: CreatorProfile }) {
         <div className="docs-base-banner-inner">
           <Terminal size={18} style={{ color: 'var(--accent)' }} />
           <span style={{ fontSize: '0.88rem', color: 'var(--muted)', fontWeight: 600 }}>API Base URL:</span>
-          <code>{CANONICAL_URL}</code>
+          <code>{site.origin}</code>
         </div>
         <button
           className="btn btn-secondary btn-sm"
-          onClick={() => handleCopy(CANONICAL_URL, 'base')}
+          onClick={() => handleCopy(site.origin, 'base')}
           style={{ padding: '7px 14px', fontSize: '0.8rem', borderRadius: '10px' }}
         >
           {copiedPath === 'base' ? <><Check size={12} style={{ color: 'var(--success)' }} /> Copied</> : <><Copy size={12} /> Copy Base</>}
@@ -71,7 +67,7 @@ export function DocsView({ activeCreator }: { activeCreator: CreatorProfile }) {
 
       <div className="docs-grid">
         {endpoints.map((ep) => {
-          const fullUrl = `${CANONICAL_URL}${ep.path}`;
+          const fullUrl = `${site.origin}${ep.path}`;
           const isCopied = copiedPath === ep.path;
           return (
             <div key={ep.path} className="docs-card">

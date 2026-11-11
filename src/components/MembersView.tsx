@@ -168,7 +168,7 @@ export function MembersView() {
       <section className="member-votes">
         <div className="section-header">
           <h2>Respectful votes</h2>
-          <p className="section-subtitle">Upvote creators whose playbooks help you. Downvote only if their profile is inaccurate. No BS.</p>
+          <p className="section-subtitle">Upvote a playbook you used. Downvote one if a fact looks wrong.</p>
         </div>
         <div className="vote-list">
           {CREATORS.map((c) => {

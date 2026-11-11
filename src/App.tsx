@@ -21,8 +21,7 @@ import { MeView } from './components/MeView';
 import { DocsView } from './components/DocsView';
 import { LoginGate } from './components/LoginGate';
 import { fetchMemberMe, saveMemberMe } from './lib/member-api';
-
-const CANONICAL_URL = 'https://creatorplaybooks.netlify.app';
+import { site } from './lib/site';
 
 function App() {
   const { user, profile, login, logout } = useAuth();
@@ -120,6 +119,15 @@ function App() {
   const level = useMemo(() => levelFromXp(progress.xp), [progress.xp]);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mentorId = params.get('mentor');
+    if (mentorId) {
+      const match = CREATORS.find((c) => c.id === mentorId);
+      if (match) {
+        setActiveCreator(match);
+        setModalCreator(match);
+      }
+    }
     const seenOnboarding = localStorage.getItem('creatorplaybooks_onboarding_seen');
     const seenOrigin = localStorage.getItem('creatorplaybooks_origin_seen');
     if (!seenOrigin) setShowOriginStory(true);
@@ -192,9 +200,17 @@ function App() {
   const openCreatorModal = (creator: CreatorProfile) => {
     setActiveCreator(creator);
     setModalCreator(creator);
+    const url = new URL(window.location.href);
+    url.searchParams.set('mentor', creator.id);
+    window.history.replaceState({}, '', url);
   };
 
-  const closeCreatorModal = () => setModalCreator(null);
+  const closeCreatorModal = () => {
+    setModalCreator(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('mentor');
+    window.history.replaceState({}, '', url);
+  };
 
   const copyPlaybookForCreator = (creator: CreatorProfile) => {
     const text = [`# ${creator.name} Growth Playbook`, '', ...creator.plays.map((p) => [`## ${p.emoji} ${p.title}`, p.description, `Action: ${p.action}`, `Frequency: ${p.frequency}`, ''].flat())].join('\n');
@@ -241,6 +257,7 @@ function App() {
             activeCreator={activeCreator}
             totalPlays={CREATORS.reduce((a, c) => a + c.plays.length, 0)}
             modalCreatorId={modalCreator?.id || null}
+            creatorCount={CREATORS.length}
           />
         )}
         {tab === 'flow' && (
@@ -248,10 +265,10 @@ function App() {
         )}
         {tab === 'dashboard' && (user ? (
           <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
-        ) : <LoginGate message="Track your growth, log posts, and schedule content." cta="Sign in to view your dashboard" />)}
+        ) : <LoginGate message="The dashboard stores drafts, a weekly count, and a streak on this browser after you sign in." cta="Sign in" />)}
         {tab === 'me' && <MeView profile={me} setProfile={updateMe} />}
-        {tab === 'docs' && (user ? <DocsView activeCreator={activeCreator} /> : <LoginGate message="Read the docs and API reference." cta="Sign in to view docs" />)}
-        {tab === 'members' && (user ? <MembersView /> : <LoginGate message="Join the member directory, vote on creators, and submit new ones." cta="Sign in to view members" />)}
+        {tab === 'docs' && (user ? <DocsView activeCreator={activeCreator} /> : <LoginGate message="The docs list the JSON endpoints. Sign in to read them here. The URLs themselves are public." cta="Sign in" />)}
+        {tab === 'members' && (user ? <MembersView /> : <LoginGate message="The member list, votes, and submissions need an account." cta="Sign in" />)}
         {showOriginStory && <OriginStoryModal close={() => { localStorage.setItem('creatorplaybooks_origin_seen', '1'); setShowOriginStory(false); setShowOnboarding(true); }} />}
         {showOnboarding && <OnboardingModal step={onboardingStep} setStep={setOnboardingStep} close={() => { localStorage.setItem('creatorplaybooks_onboarding_seen', '1'); setShowOnboarding(false); }} setTab={setTab} />}
         {modalCreator && <CreatorModal creator={modalCreator} onClose={closeCreatorModal} onCopyPlaybook={() => copyPlaybookForCreator(modalCreator)} onCopyAgent={() => copyAgentPrompt(modalCreator)} onInstallAgent={() => installAgentFolder(modalCreator)} />}
@@ -262,24 +279,24 @@ function App() {
           <div className="footer-brand">
             <a href="/" className="footer-brand-link" title="CreatorPlaybooks home">
               <div className="brand-mark" style={{ overflow: 'hidden' }}>
-                <img src="/brand_logo.png" alt="CreatorPlaybooks logo" className="origin-brand-img" />
+                <img src="/brand-mark.webp" alt="" width={32} height={32} className="origin-brand-img" />
               </div>
               <span className="footer-brand-name">CreatorPlaybooks</span>
             </a>
-            <p className="footer-desc">Real growth playbooks from indie hackers and Netlify shippers. Built for builders who want to grow on X without guessing.</p>
+            <p className="footer-desc">Playbooks from people who post in public. Published by Neal Frazier Tech. Inspired by @buildwithmaya.</p>
             <div className="footer-social">
+              <a href="https://nealfrazier.tech" target="_blank" rel="noreferrer">Neal Frazier Tech</a>
               <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer">@NealFrazierTech</a>
-              <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">@buildwithmaya</a>
-              <a href="https://hotappsummer.netlify.app" target="_blank" rel="noreferrer">#HotAppSummer</a>
-              <a href={`${CANONICAL_URL}/api/creators`} target="_blank" rel="noreferrer">API</a>
+              <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">inspired by @buildwithmaya</a>
+              <a href={`${site.origin}/api/creators`} target="_blank" rel="noreferrer">API</a>
             </div>
           </div>
           <div className="footer-api-col">
             <strong>Agent-ready API</strong>
             <p className="footer-hint">Pull any creator playbook as JSON. Use it in agents, n8n, Cursor, or your own apps.</p>
             <div className="footer-api-links">
-              <a href={`${CANONICAL_URL}/api/creators`} target="_blank" rel="noreferrer">All creators →</a>
-              <a href={`${CANONICAL_URL}/api/creator?id=${activeCreator.id}`} target="_blank" rel="noreferrer">{activeCreator.name} playbook →</a>
+              <a href={`${site.origin}/api/creators`} target="_blank" rel="noreferrer">All mentors</a>
+              <a href={`${site.origin}/api/creator?id=${activeCreator.id}`} target="_blank" rel="noreferrer">{activeCreator.name}</a>
             </div>
           </div>
           <div className="footer-built">
@@ -290,7 +307,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="footer-bottom"><span>© {new Date().getFullYear()} CreatorPlaybooks — grow in public.</span></div>
+        <div className="footer-bottom"><span>© {new Date().getFullYear()} CreatorPlaybooks · published by Neal Frazier Tech</span></div>
       </footer>
       <div className="remix-pad" title="Creative remix controls">
         <button className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text" data-tooltip="Bold Text"><Bold size={16} /></button>

@@ -1,7 +1,7 @@
 {
-  "name": "MayaGrowth",
-  "short_name": "MayaGrowth",
-  "description": "Grow on X like @buildwithmaya. A build-in-public growth system.",
+  "name": "CreatorPlaybooks",
+  "short_name": "Playbooks",
+  "description": "Creator playbooks published by Neal Frazier Tech. Inspired by @buildwithmaya.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#090810",

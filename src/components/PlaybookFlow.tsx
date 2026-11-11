@@ -387,8 +387,6 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
   return (
     <div className="flow-container">
       <div className="flow-bg-grid" />
-      <div className="flow-glow-orb flow-glow-pink" />
-      <div className="flow-glow-orb flow-glow-cyan" />
 
       {/* Info bar */}
       {showInfo && (
@@ -396,8 +394,8 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
           <div className="flow-info-content">
             <Info size={14} className="flow-info-icon" />
             <div>
-              <span className="flow-info-title">Playbook Flow Canvas</span>
-              <span className="flow-info-text">Drag to pan - scroll to zoom - tap a mentor to expand - tap a connection to see why they're linked</span>
+              <span className="flow-info-title">Map</span>
+              <span className="flow-info-text">Drag to move. Scroll to zoom. Open a person, or a line between two people, to read why they sit near each other.</span>
             </div>
           </div>
           <button className="flow-info-close" onClick={() => setShowInfo(false)}><X size={13} /></button>

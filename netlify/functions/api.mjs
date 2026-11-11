@@ -5,6 +5,8 @@ const CORS = {
 };
 
 import { getStore } from '@netlify/blobs';
+import mentorRefresh from '../../shared/mentorRefresh.json' with { type: 'json' };
+import site from '../../site.json' with { type: 'json' };
 
 const BASE_CREATORS = [
   {
@@ -2894,18 +2896,28 @@ async function mergeWithBlob(store, creator) {
   try {
     const scraped = await store.get(creator.xHandle, { type: 'json' });
     if (!scraped || !scraped.ok) return creator;
-    const mergedBio = (scraped.bio && scraped.bio.trim().length > 0) ? scraped.bio : creator.bio;
-    const mergedFollowers = (scraped.followers && scraped.followers > 0) ? scraped.followers : creator.followers;
+    // Older blob scrapes predate the Nov 11, 2026 research pass and must not
+    // overwrite bios, products, or follower figures.
+    const fresh = typeof scraped.scrapedAt === 'string' && scraped.scrapedAt >= '2026-11-11';
+    if (!fresh) {
+      return {
+        ...creator,
+        recentTweets: scraped.recentTweets || creator.recentTweets || [],
+        scrapedAt: scraped.scrapedAt || null,
+        source: 'curated',
+      };
+    }
+    const mergedFollowers = scraped.followers > 0 ? scraped.followers : creator.followers;
     return {
       ...creator,
-      bio: mergedBio,
+      bio: scraped.bio && scraped.bio.trim() ? scraped.bio : creator.bio,
       followers: mergedFollowers,
       followersStr: formatFollowers(mergedFollowers),
       avatar: scraped.avatar || creator.avatar,
       banner: scraped.banner || creator.banner,
       recentTweets: scraped.recentTweets || [],
       scrapedAt: scraped.scrapedAt,
-      source: scraped.source || 'bundled',
+      source: scraped.source || 'live',
     };
   } catch {
     return creator;
@@ -2915,6 +2927,12 @@ async function mergeWithBlob(store, creator) {
 function getActiveCreators(creatorsList) {
   // All creators are now released - time gating removed
   return creatorsList;
+}
+
+function applyMentorRefresh(creator) {
+  const patch = mentorRefresh[creator.id];
+  if (!patch) return creator;
+  return { ...creator, ...patch };
 }
 
 export default async (req, context) => {
@@ -2930,7 +2948,7 @@ export default async (req, context) => {
 
   if (path === 'health') return json({ ok: true, service: 'CreatorPlaybooks', agentApi: true, time: new Date().toISOString() });
 
-  const activeBaseCreators = getActiveCreators(BASE_CREATORS);
+  const activeBaseCreators = getActiveCreators(BASE_CREATORS).map(applyMentorRefresh);
   const mergedCreators = await Promise.all(activeBaseCreators.map(c => mergeWithBlob(store, c)));
 
   if (path === 'creators') {
@@ -2978,6 +2996,9 @@ export default async (req, context) => {
         xUrl: `https://x.com/${creator.xHandle}`,
         avatar: creator.avatar,
         banner: creator.banner,
+        currentFocus: creator.currentFocus || '',
+        followersAsOf: creator.followersAsOf || null,
+        sources: creator.sources || [],
       },
     };
 
@@ -3003,7 +3024,7 @@ export default async (req, context) => {
     }
 
     if (include('resources') || expandAll) {
-      const base = 'https://creatorplaybooks.netlify.app';
+      const base = site.origin;
       response.resources = {
         self: `${base}/api/creator?id=${creator.id}`,
         expanded: `${base}/api/creator?id=${creator.id}&expand=all`,

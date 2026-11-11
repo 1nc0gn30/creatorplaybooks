@@ -48,58 +48,10 @@ export function bundledMediaFor(creator: CreatorProfile): CreatorMediaState {
   };
 }
 
-async function fetchWithTimeout(url: string, timeout = 6000) {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), timeout);
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(t);
-    return res;
-  } catch (e) {
-    clearTimeout(t);
-    throw e;
-  }
-}
-
-function tryFetchAvatar(handle: string): Promise<string | null> {
-  // unavatar provides a reliable public avatar resolver
-  const url = `https://unavatar.io/twitter/${handle.replace('@', '')}?fallback=false`;
-  return fetchWithTimeout(url, 4000)
-    .then((res) => (res.ok && res.headers.get('content-type')?.startsWith('image') ? url : null))
-    .catch(() => null);
-}
-
-/* no reliable public banner API without X auth */
-
 export async function refreshCreatorMedia(creator: CreatorProfile): Promise<CreatorMediaState> {
   const cached = getCachedCreatorMedia(creator.id);
   if (cached) return cached;
-
   const bundled = bundledMediaFor(creator);
-
-  // Maya is the only fully verified creator with real bundled assets.
-  if (creator.id === 'maya') {
-    setCachedCreatorMedia(creator.id, bundled);
-    return bundled;
-  }
-
-  // For other creators, attempt avatar refresh only. Media/posts require real sourcing.
-  try {
-    const freshAvatar = await tryFetchAvatar(creator.handle);
-    if (freshAvatar) {
-      const state: CreatorMediaState = {
-        ...bundled,
-        avatar: freshAvatar,
-        source: 'fetched',
-        lastUpdated: Date.now(),
-      };
-      setCachedCreatorMedia(creator.id, state);
-      return state;
-    }
-  } catch (e) {
-    console.warn(`refresh failed for ${creator.handle}`, e);
-  }
-
   setCachedCreatorMedia(creator.id, bundled);
   return bundled;
 }

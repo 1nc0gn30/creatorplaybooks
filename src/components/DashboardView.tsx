@@ -12,15 +12,15 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
         <div className="dashboard-header-left">
           <div className="dashboard-header-badge">
             <span className="pulse-dot" />
-            Growth Dashboard
+            Log
           </div>
-          <h2 className="page-title">Your growth command center</h2>
-          <p className="page-subtitle">Track what matters, log your plays, and keep the streak alive.</p>
+          <h2 className="page-title">What you have written down</h2>
+          <p className="page-subtitle">Drafts for the week, posts you marked done, and a streak if the days are consecutive.</p>
         </div>
         {hasStreak && (
           <div className="dashboard-streak-banner">
             <Flame size={18} className="flame-icon" style={{ color: 'var(--warning)' }} />
-            <span>{progress.streak} day streak - keep it going!</span>
+            <span>{progress.streak} day streak</span>
           </div>
         )}
       </div>

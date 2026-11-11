@@ -25,13 +25,14 @@ export function OriginStoryModal({ close }: { close: () => void }) {
         {/* Banner Section */}
         <div className="origin-banner">
           <div className="origin-logo-ring">
-            <img src="/brand_logo.png" alt="CreatorPlaybooks Brand Logo" className="origin-brand-img" />
+            <img src="/brand-mark.webp" alt="" width={48} height={48} className="origin-brand-img" />
           </div>
           <div className="origin-title-block">
             <span className="origin-kicker">Origin Story</span>
-            <h2 className="origin-title">CreatorPlaybooks started as one question:</h2>
+            <h2 className="origin-title">A reading list, not a course.</h2>
             <div className="origin-credits">
-              by <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">@buildwithmaya</a> + <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer">@NealFrazierTech</a>
+              Published by <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer">Neal Frazier Tech</a>
+              <span className="origin-inspired"> · inspired by <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">@buildwithmaya</a></span>
             </div>
           </div>
         </div>
@@ -39,16 +40,16 @@ export function OriginStoryModal({ close }: { close: () => void }) {
         {/* Body Section */}
         <div className="origin-body">
           <p className="lead" style={{ marginBottom: '20px' }}>
-            Why do some indie hackers grow an audience while others ship silently?
+            The pages collect what public builders are doing, in the places they actually name.
           </p>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '16px' }}>
-            We studied builders like <strong>Maya</strong> who ship in public, share playbooks, and turn followers into users. Then we turned those patterns into an agent-ready library of repeatable growth plays.
+            Neal Frazier Tech publishes the site. The idea of studying one person’s posting habits came from @buildwithmaya. The facts were checked on 11 Nov 2026.
           </p>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '16px' }}>
-            Every creator playbook here is reverse-engineered from real posts and is structured so you can copy their plays, schedule drafts, or drop the playbook JSON directly into your cursor/AI agent.
+            Read a page, take one play, and write your own version. The JSON is the same text, for a script.
           </p>
           <div className="highlight-box" style={{ marginTop: '24px', marginBottom: '8px' }}>
-            <strong>The formula is simple:</strong> Pick a mentor. Copy their plays. Adapt to your stack. Start shipping.
+            Pick one person. Read the sources. Write the post yourself.
           </div>
         </div>
 
@@ -56,7 +57,7 @@ export function OriginStoryModal({ close }: { close: () => void }) {
         <div className="origin-actions">
           <button className="btn btn-hot btn-lg origin-cta" onClick={close}>
             <span className="origin-cta-shine" />
-            <ArrowRight size={18} /> Get Started — Browse Mentors
+            <ArrowRight size={18} /> Go to the directory
           </button>
         </div>
       </div>
