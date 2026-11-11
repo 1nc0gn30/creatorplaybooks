@@ -163,10 +163,10 @@ export function scoreProgress(p: UserProgress): GrowthScore {
 }
 
 export function levelFromXp(xp: number) {
-  if (xp < 200) return { level: 1, title: 'Seedling', next: 200 };
-  if (xp < 500) return { level: 2, title: 'Sprout', next: 500 };
-  if (xp < 1000) return { level: 3, title: 'Growth Engine', next: 1000 };
-  return { level: 4, title: 'Audience Magnet', next: 2000 };
+  if (xp < 200) return { level: 1, title: 'Starting', next: 200 };
+  if (xp < 500) return { level: 2, title: 'Steady', next: 500 };
+  if (xp < 1000) return { level: 3, title: 'Practiced', next: 1000 };
+  return { level: 4, title: 'Kept at it', next: 2000 };
 }
 
 export interface BuilderProfile {
@@ -188,7 +188,7 @@ export function defaultBuilder(): BuilderProfile {
     bio: 'Building in public.\nSharing what I learn as I ship.',
     project: 'Your project',
     url: 'https://yourproject.com',
-    goal: 'Post daily for 30 days and grow to 500 followers.',
+    goal: 'Finish one play from a mentor page this month.',
     streak: 0,
     xp: 0,
     avatar: '/maya/avatar.jpg',

@@ -2199,7 +2199,7 @@
         "description": "idohodl.com, used on the old playbook, returns 404. vvamshi.com is the live site and the X profile link.",
         "action": "When a domain dies, replace every public link in the same week. Say the new URL once. Do not leave the 404 as a relic.",
         "frequency": "Once",
-        "example": "idohodl.com returned HTTP 404 on Nov 11, 2026. X profile URL is vvamshi.com.",
+        "example": "On Nov 11, 2026 the old domain in an earlier draft of this page returned HTTP 404. The live profile link is vvamshi.com.",
         "sourceUrl": "https://vvamshi.com"
       }
     ],
@@ -2224,13 +2224,7 @@
         "label": "vvamshi.com",
         "url": "https://vvamshi.com",
         "checked": "2026-11-11",
-        "note": "Staff Product Engineer at Magnit Global, Magnit Pulse."
-      },
-      {
-        "label": "idohodl.com",
-        "url": "https://idohodl.com",
-        "checked": "2026-11-11",
-        "note": "Returns 404. Removed from the page."
+        "note": "Staff Product Engineer at Magnit Global, Magnit Pulse. An older domain from a previous draft of this page returned 404 and is not linked."
       }
     ],
     "followers": 1698,

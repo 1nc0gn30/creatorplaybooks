@@ -3,6 +3,7 @@ import { X, Copy, Check, Bot, FolderOpen, Share2, ExternalLink, ChevronDown, Che
 import type { CreatorProfile } from '../types';
 import { useXProfile, formatNumber } from '../lib/xData';
 import { site } from '../lib/site';
+import { PlaybookGoal } from './PlaybookGoal';
 
 export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, onInstallAgent }: { creator: CreatorProfile; onClose: () => void; onCopyPlaybook: () => void; onCopyAgent: () => void; onInstallAgent: () => void }) {
   const xUrl = `https://x.com/${creator.handle.replace('@', '')}`;
@@ -409,6 +410,8 @@ curl -s '${site.origin}/api/creator?id=${creator.id}&expand=plays,hooks,angles' 
               </button>
             </div>
           </div>
+
+          <PlaybookGoal creator={creator} />
 
           {creator.sources && creator.sources.length > 0 && (
             <div className="creator-modal-section">

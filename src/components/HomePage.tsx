@@ -3,6 +3,7 @@ import { Search, SlidersHorizontal, Tag, X } from 'lucide-react';
 import { CATEGORIES } from '../lib/creators';
 import { MENTOR_PLACES } from '../lib/places';
 import { MentorDirectory } from './MentorDirectory';
+import { HologramDirectory } from './HologramDirectory';
 import { useMemo } from 'react';
 
 export function HomePage({
@@ -54,7 +55,7 @@ export function HomePage({
         <div className="home-hero-content">
           <p className="home-kicker">Checked 11 Nov 2026 · {creatorCount} mentors · {MENTOR_PLACES.length} places</p>
           <h1 className="home-headline">
-            Notes from builders<br />
+            <span className="home-headline-line">Notes from builders</span>
             <em>who do not all live in one city.</em>
           </h1>
           <p className="home-subhead">
@@ -129,6 +130,7 @@ export function HomePage({
         <div className="home-section-header">
           <h2 className="home-section-title">The directory</h2>
         </div>
+        <HologramDirectory creators={filteredCreators} onOpen={openCreatorModal} activeId={modalCreatorId} />
 
         <div className="home-filter-bar">
           <div className="home-search">

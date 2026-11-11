@@ -100,11 +100,9 @@
   letter-spacing: -0.03em;
   margin: 0 0 24px;
 }
-.home-headline br {
-  display: none;
-}
-@media (min-width: 640px) {
-  .home-headline br { display: block; }
+.home-headline-line,
+.home-headline em {
+  display: block;
 }
 
 .home-gradient-text {
