@@ -1,0 +1,170 @@
+/* Restrained polish for type, contrast, mentor sheets, and video frames. */
+
+:root {
+  --muted: #b7b7c6;
+  --ink-muted: #d5d5de;
+}
+
+.brand-tag {
+  letter-spacing: 0.01em;
+}
+
+.now-callout {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.now-kicker {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.now-callout p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.curated-badge {
+  margin-left: 8px;
+  font-size: 0.72rem;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.play-example {
+  margin: 0 0 12px;
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.source-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.source-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.source-list a {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.source-list span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.creator-modal-actions .btn:focus-visible,
+.modal-close:focus-visible,
+.home-btn:focus-visible,
+.nav-bar a:focus-visible,
+.nav-bar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.home-headline {
+  text-wrap: balance;
+}
+
+.home-subhead,
+.footer-desc,
+.creator-modal-bio {
+  text-wrap: pretty;
+}
+
+/* 1080x1920 phone recordings are portrait, even though the width is not "mobile". */
+@media (max-aspect-ratio: 4/5) {
+  .home-hero {
+    min-height: auto;
+    padding: 112px 28px 48px;
+  }
+
+  .home-headline {
+    font-size: clamp(2.8rem, 8vw, 4.4rem);
+  }
+
+  .home-origin-story,
+  .home-steps,
+  .home-api-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  .creator-modal-backdrop {
+    padding: 18px;
+    align-items: flex-start;
+  }
+
+  .creator-modal {
+    width: min(760px, 100%) !important;
+    max-height: calc(100vh - 36px) !important;
+    margin: 0 auto;
+  }
+
+  .creator-modal-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .creator-modal-hero {
+    min-height: 220px;
+  }
+
+  .now-callout p,
+  .creator-modal-bio {
+    font-size: 1.12rem;
+    line-height: 1.55;
+  }
+}
+
+@media (max-width: 720px) {
+  .creator-modal-backdrop {
+    padding: 0;
+  }
+
+  .creator-modal {
+    width: 100% !important;
+    max-height: 100vh !important;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .creator-modal-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .source-list li,
+  .creator-modal-product {
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-orb,
+  .home-kicker-dot,
+  .creator-modal,
+  .creator-modal-backdrop {
+    animation: none !important;
+  }
+}

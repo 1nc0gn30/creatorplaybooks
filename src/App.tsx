@@ -120,6 +120,15 @@ function App() {
   const level = useMemo(() => levelFromXp(progress.xp), [progress.xp]);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mentorId = params.get('mentor');
+    if (mentorId) {
+      const match = CREATORS.find((c) => c.id === mentorId);
+      if (match) {
+        setActiveCreator(match);
+        setModalCreator(match);
+      }
+    }
     const seenOnboarding = localStorage.getItem('creatorplaybooks_onboarding_seen');
     const seenOrigin = localStorage.getItem('creatorplaybooks_origin_seen');
     if (!seenOrigin) setShowOriginStory(true);
@@ -192,9 +201,17 @@ function App() {
   const openCreatorModal = (creator: CreatorProfile) => {
     setActiveCreator(creator);
     setModalCreator(creator);
+    const url = new URL(window.location.href);
+    url.searchParams.set('mentor', creator.id);
+    window.history.replaceState({}, '', url);
   };
 
-  const closeCreatorModal = () => setModalCreator(null);
+  const closeCreatorModal = () => {
+    setModalCreator(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('mentor');
+    window.history.replaceState({}, '', url);
+  };
 
   const copyPlaybookForCreator = (creator: CreatorProfile) => {
     const text = [`# ${creator.name} Growth Playbook`, '', ...creator.plays.map((p) => [`## ${p.emoji} ${p.title}`, p.description, `Action: ${p.action}`, `Frequency: ${p.frequency}`, ''].flat())].join('\n');
@@ -241,6 +258,7 @@ function App() {
             activeCreator={activeCreator}
             totalPlays={CREATORS.reduce((a, c) => a + c.plays.length, 0)}
             modalCreatorId={modalCreator?.id || null}
+            creatorCount={CREATORS.length}
           />
         )}
         {tab === 'flow' && (
@@ -266,11 +284,11 @@ function App() {
               </div>
               <span className="footer-brand-name">CreatorPlaybooks</span>
             </a>
-            <p className="footer-desc">Real growth playbooks from indie hackers and Netlify shippers. Built for builders who want to grow on X without guessing.</p>
+            <p className="footer-desc">Real growth playbooks from indie hackers and AI shippers. Published by Neal Frazier Tech. The format was inspired by @buildwithmaya.</p>
             <div className="footer-social">
+              <a href="https://nealfrazier.tech" target="_blank" rel="noreferrer">Neal Frazier Tech</a>
               <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer">@NealFrazierTech</a>
-              <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">@buildwithmaya</a>
-              <a href="https://hotappsummer.netlify.app" target="_blank" rel="noreferrer">#HotAppSummer</a>
+              <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">inspired by @buildwithmaya</a>
               <a href={`${CANONICAL_URL}/api/creators`} target="_blank" rel="noreferrer">API</a>
             </div>
           </div>
@@ -290,7 +308,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="footer-bottom"><span>© {new Date().getFullYear()} CreatorPlaybooks — grow in public.</span></div>
+        <div className="footer-bottom"><span>© {new Date().getFullYear()} CreatorPlaybooks · published by Neal Frazier Tech</span></div>
       </footer>
       <div className="remix-pad" title="Creative remix controls">
         <button className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text" data-tooltip="Bold Text"><Bold size={16} /></button>

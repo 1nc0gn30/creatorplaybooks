@@ -18,6 +18,7 @@ export function HomePage({
   activeCreator,
   totalPlays,
   modalCreatorId,
+  creatorCount,
 }: {
   filteredCreators: CreatorProfile[];
   searchQuery: string;
@@ -32,6 +33,7 @@ export function HomePage({
   activeCreator: CreatorProfile;
   totalPlays: number;
   modalCreatorId: string | null;
+  creatorCount: number;
 }) {
 
 
@@ -55,7 +57,7 @@ export function HomePage({
         <div className="home-hero-content">
           <div className="home-kicker">
             <span className="home-kicker-dot" />
-            34 verified creator playbooks
+            {creatorCount} creator playbooks, checked Nov 2026
           </div>
           <h1 className="home-headline">
             Growth playbooks from<br />
@@ -77,7 +79,7 @@ export function HomePage({
           </div>
           <div className="home-stats-bar">
             <div className="home-stat">
-              <span className="home-stat-num">34</span>
+              <span className="home-stat-num">{creatorCount}</span>
               <span className="home-stat-label">creators</span>
             </div>
             <div className="home-stat-sep" />
@@ -185,14 +187,14 @@ export function HomePage({
           </blockquote>
           
           <div className="origin-authors">
-            <span className="origin-by">Co-created by</span>
+            <span className="origin-by">Published by</span>
+            <a href="https://nealfrazier.tech" target="_blank" rel="noreferrer" className="author-badge neal-badge">
+              <span className="author-avatar" style={{ background: 'linear-gradient(135deg, #8b5cf6, #22d3ee)' }}>N</span>
+              <span>Neal Frazier Tech</span>
+            </a>
             <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer" className="author-badge maya-badge">
               <span className="author-avatar" style={{ background: 'linear-gradient(135deg, #ec4899, #8b5cf6)' }}>M</span>
-              <span>@buildwithmaya</span>
-            </a>
-            <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer" className="author-badge neal-badge">
-              <span className="author-avatar" style={{ background: 'linear-gradient(135deg, #8b5cf6, #22d3ee)' }}>N</span>
-              <span>@NealFrazierTech</span>
+              <span>inspired by @buildwithmaya</span>
             </a>
           </div>
 
@@ -261,7 +263,7 @@ export function HomePage({
               </button>
               <div className="home-dropdown-menu">
                 <button className="home-dropdown-item" onClick={() => setSelectedCategory(null)}>
-                  All categories <span className="home-dropdown-count">34</span>
+                  All categories <span className="home-dropdown-count">{creatorCount}</span>
                 </button>
                 {CATEGORIES.map((cat) => (
                   <button key={cat.id} className="home-dropdown-item" onClick={() => setSelectedCategory(cat.id)}>
@@ -279,7 +281,7 @@ export function HomePage({
               </button>
               <div className="home-dropdown-menu">
                 <button className="home-dropdown-item" onClick={() => setSelectedTag(null)}>
-                  All tags <span className="home-dropdown-count">34</span>
+                  All tags <span className="home-dropdown-count">{allTags.length}</span>
                 </button>
                 {allTags.slice(0, 16).map((t) => (
                   <button key={t} className="home-dropdown-item" onClick={() => setSelectedTag(t)}>

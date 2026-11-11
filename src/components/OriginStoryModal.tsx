@@ -31,7 +31,8 @@ export function OriginStoryModal({ close }: { close: () => void }) {
             <span className="origin-kicker">Origin Story</span>
             <h2 className="origin-title">CreatorPlaybooks started as one question:</h2>
             <div className="origin-credits">
-              by <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">@buildwithmaya</a> + <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer">@NealFrazierTech</a>
+              Published by <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer">Neal Frazier Tech</a>
+              <span className="origin-inspired"> · inspired by <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">@buildwithmaya</a></span>
             </div>
           </div>
         </div>

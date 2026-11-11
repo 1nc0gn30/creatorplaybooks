@@ -1,4 +1,8 @@
-# MayaGrowth - Creator Playbooks Platform
+# CreatorPlaybooks
+
+Published by **Neal Frazier Tech** ([@NealFrazierTech](https://x.com/NealFrazierTech)). The playbook format was inspired by [@buildwithmaya](https://x.com/buildwithmaya).
+
+Live X profiles need `X_BEARER_TOKEN` on Netlify. Without it, mentor pages stay on the curated Nov 11, 2026 research.
 
 Live X API integration powered by X Developer API v2.
 

@@ -59,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    try {
     netlifyIdentity.init({
       container: '#netlify-identity-modal',
       locale: 'en',
@@ -90,6 +91,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       netlifyIdentity.off('login');
       netlifyIdentity.off('logout');
     };
+    } catch {
+      setIsReady(true);
+    }
   }, []);
 
   return (

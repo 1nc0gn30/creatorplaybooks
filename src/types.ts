@@ -27,6 +27,11 @@ export interface CreatorProfile {
   hooks: string[];
   angles: string[];
   tags: string[];
+  /** What they are doing now, written for a short video. */
+  currentFocus?: string;
+  /** ISO date the follower count was checked. */
+  followersAsOf?: string;
+  sources?: MentorSource[];
 }
 
 export type MayaProfile = CreatorProfile;
@@ -55,6 +60,16 @@ export interface GrowthPlay {
   description: string;
   action: string;
   frequency: string;
+  /** Observable example this play is based on. Original summary, not a copied post. */
+  example?: string;
+  sourceUrl?: string;
+}
+
+export interface MentorSource {
+  label: string;
+  url: string;
+  checked: string;
+  note?: string;
 }
 
 export interface ContentIdea {

@@ -21,7 +21,8 @@ export default async (req) => {
 
   const token = process.env.X_BEARER_TOKEN;
   if (!token) {
-    return jsonResponse({ error: 'X_BEARER_TOKEN not configured' }, 500);
+    // 200 so the browser does not log a failed request. The UI uses curated profiles.
+    return jsonResponse({ unavailable: true, reason: 'X_BEARER_TOKEN not configured' }, 200);
   }
 
   try {
@@ -40,18 +41,14 @@ export default async (req) => {
     );
 
     if (!userRes.ok) {
-      const err = await userRes.json().catch(() => ({}));
-      return jsonResponse(
-        { error: err.detail || `X API error ${userRes.status}` },
-        userRes.status
-      );
+      return jsonResponse({ unavailable: true, reason: `X API error ${userRes.status}` }, 200);
     }
 
     const userData = await userRes.json();
     const user = userData.data;
 
     if (!user) {
-      return jsonResponse({ error: 'User not found on X' }, 404);
+      return jsonResponse({ unavailable: true, reason: 'User not found on X' }, 200);
     }
 
     const result = {
@@ -125,8 +122,7 @@ export default async (req) => {
 
     return jsonResponse(result, 200);
   } catch (e) {
-    console.error('x-data function error:', e);
-    return jsonResponse({ error: e.message || 'Internal error' }, 500);
+    return jsonResponse({ unavailable: true, reason: 'X lookup failed' }, 200);
   }
 };
 

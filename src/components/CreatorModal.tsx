@@ -71,7 +71,7 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
         '--accent': creator.theme.accent,
       } as React.CSSProperties}
     >
-      <div className="creator-modal" onClick={(e) => e.stopPropagation()} style={{ borderColor: 'rgba(var(--primary), 0.2)' }}>
+      <div className="creator-modal" data-mentor={creator.id} onClick={(e) => e.stopPropagation()} style={{ borderColor: 'rgba(var(--primary), 0.2)' }}>
         <button className="modal-close" onClick={onClose} title="Close modal"><X size={20} /></button>
         
         {/* Banner Section */}
@@ -106,12 +106,20 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
               {xProfile?.verified && <span className="badge" style={{ background: '#1da1f222', color: '#1da1f2', border: '1px solid #1da1f244' }}>✓ Verified</span>}
             </div>
             <span className="creator-modal-handle" style={{ textShadow: '0 1px 10px rgba(0,0,0,0.8)', fontWeight: 700 }}>{creator.handle}</span>
-            {xLoading && <span className="badge" style={{ marginLeft: '8px', fontSize: '0.7rem', background: '#ffffff15', color: '#aaa' }}>⟳ X live sync...</span>}
+            {xLoading && <span className="badge" style={{ marginLeft: '8px', fontSize: '0.7rem', background: '#ffffff15', color: '#aaa' }}>Checking X…</span>}
+            {!xLoading && !xProfile && <span className="badge curated-badge">Curated · Nov 11, 2026</span>}
           </div>
         </div>
 
         <div className="creator-modal-body">
           {/* Bio */}
+          {creator.currentFocus && (
+            <div className="now-callout">
+              <span className="now-kicker">What they're up to</span>
+              <p>{creator.currentFocus}</p>
+            </div>
+          )}
+
           <p className="creator-modal-bio">{xProfile?.bio || creator.bio}</p>
 
           {/* Pillars */}
@@ -127,7 +135,7 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
           <div className="creator-modal-stats">
             <div className="stat">
               <span className="value" style={{ color: creator.theme.primary }}>{liveFollowers}</span>
-              <span className="label">Followers{xLoading && ' ⟳'}</span>
+              <span className="label">Followers{!xProfile && creator.followersAsOf ? ` · ${creator.followersAsOf}` : ''}</span>
             </div>
             <div className="stat">
               <span className="value" style={{ color: creator.theme.secondary }}>{creator.products.length}</span>
@@ -196,6 +204,9 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
                     {isExpanded && (
                       <div className="creator-modal-play-body" style={{ animation: 'fadeIn 0.25s ease' }}>
                         <p style={{ color: 'var(--ink-muted)', fontSize: '0.94rem', lineHeight: 1.65 }}>{p.description}</p>
+                        {p.example && (
+                          <p className="play-example"><strong>Seen in the wild. </strong>{p.example}</p>
+                        )}
                         <div className="play-action-box" style={{ borderLeftColor: creator.theme.primary }}>
                           <span style={{ fontSize: '0.74rem', color: creator.theme.primary, textTransform: 'uppercase', fontWeight: 800, display: 'block', marginBottom: '5px', letterSpacing: '0.06em' }}>Daily Action Challenge</span>
                           <span className="play-action" style={{ color: 'var(--ink)', fontWeight: 550, fontSize: '0.94rem' }}>{p.action}</span>
@@ -299,7 +310,7 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
                     {t.media.length > 0 && (
                       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(t.media.length, 2)}, 1fr)`, gap: '8px', marginBottom: '10px' }}>
                         {t.media.map((m, mi) => (
-                          <img key={mi} src={m.url} alt="" style={{ width: '100%', borderRadius: '10px', objectFit: 'cover', aspectRatio: '16/10' }} />
+                          <img key={mi} src={m.url} alt="" style={{ width: '100%', borderRadius: '10px', objectFit: 'cover', aspectRatio: '16/10' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                         ))}
                       </div>
                     )}
@@ -341,7 +352,8 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
                     <img 
                       src={imgUrl} 
                       alt={`${creator.name} Proof of Work ${i + 1}`} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                     />
                   </div>
                 ))}
@@ -391,6 +403,23 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
               </button>
             </div>
           </div>
+
+          {creator.sources && creator.sources.length > 0 && (
+            <div className="creator-modal-section">
+              <div className="creator-modal-section-header">
+                <h3>Sources</h3>
+                <span className="creator-modal-section-sub">Checked with the profile</span>
+              </div>
+              <ul className="source-list">
+                {creator.sources.map((s) => (
+                  <li key={s.url}>
+                    <a href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
+                    <span>Checked {s.checked}{s.note ? ` · ${s.note}` : ''}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Modal Actions */}
           <div className="creator-modal-actions">

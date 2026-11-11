@@ -59,7 +59,7 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
           </div>
           <span className="brand-text">
             <span className="brand-name">CreatorPlaybooks</span>
-            <span className="brand-tag">by Maya + Neal</span>
+            <span className="brand-tag">by Neal Frazier Tech</span>
           </span>
         </a>
 
@@ -110,7 +110,7 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
           </div>
           <span className="brand-text">
             <span className="brand-name">CreatorPlaybooks</span>
-            <span className="brand-tag">by Maya + Neal</span>
+            <span className="brand-tag">by Neal Frazier Tech</span>
           </span>
         </a>
 

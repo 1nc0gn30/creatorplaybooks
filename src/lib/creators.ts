@@ -1,5 +1,6 @@
 import type { CreatorProfile } from '../types';
 import { CREATOR_MEDIA } from './mediaManifest';
+import mentorRefresh from '../../shared/mentorRefresh.json';
 
 export const CATEGORIES = [
   { id: 'netlify-shippers', label: 'Netlify AI Shippers', emoji: '🚀', description: 'High-volume builders shipping with Netlify and AI tools.' },
@@ -7,7 +8,7 @@ export const CATEGORIES = [
   { id: 'big-players', label: 'Big Players', emoji: '📡', description: 'Established creators with large audiences and proven systems.' },
 ] as const;
 
-const ALL_CREATORS: CreatorProfile[] = [
+const RAW_CREATORS: CreatorProfile[] = [
   {
     id: 'maya',
     handle: '@buildwithmaya',
@@ -2877,4 +2878,13 @@ export function getActiveCreators<T extends { id: string }>(creatorsList: T[]): 
   return creatorsList;
 }
 
+type RefreshMap = Record<string, Partial<CreatorProfile>>;
+
+function applyMentorRefresh(creator: CreatorProfile): CreatorProfile {
+  const patch = (mentorRefresh as RefreshMap)[creator.id];
+  if (!patch) return creator;
+  return { ...creator, ...patch };
+}
+
+export const ALL_CREATORS = RAW_CREATORS.map(applyMentorRefresh);
 export const CREATORS = getActiveCreators(ALL_CREATORS);
