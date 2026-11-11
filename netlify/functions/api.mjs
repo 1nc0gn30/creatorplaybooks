@@ -6,6 +6,7 @@ const CORS = {
 
 import { getStore } from '@netlify/blobs';
 import mentorRefresh from '../../shared/mentorRefresh.json' with { type: 'json' };
+import site from '../../site.json' with { type: 'json' };
 
 const BASE_CREATORS = [
   {
@@ -3023,7 +3024,7 @@ export default async (req, context) => {
     }
 
     if (include('resources') || expandAll) {
-      const base = 'https://creatorplaybooks.netlify.app';
+      const base = site.origin;
       response.resources = {
         self: `${base}/api/creator?id=${creator.id}`,
         expanded: `${base}/api/creator?id=${creator.id}&expand=all`,

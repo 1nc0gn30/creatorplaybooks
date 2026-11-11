@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Copy, Check, Bot, FolderOpen, Share2, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import type { CreatorProfile } from '../types';
 import { useXProfile, formatNumber } from '../lib/xData';
+import { site } from '../lib/site';
 
 export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, onInstallAgent }: { creator: CreatorProfile; onClose: () => void; onCopyPlaybook: () => void; onCopyAgent: () => void; onInstallAgent: () => void }) {
   const xUrl = `https://x.com/${creator.handle.replace('@', '')}`;
@@ -19,7 +20,9 @@ export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, on
   const { profile: xProfile, loading: xLoading } = useXProfile(creator.xHandle, true);
 
   // Use live avatar/banner when available
-  const liveAvatar = xProfile?.avatar || creator.avatar;
+  const localThumb = creator.avatar.match(/\/creators\/([^/]+)\//);
+  const localAvatar = localThumb ? `/creators/thumbs/${localThumb[1]}.webp` : creator.avatar;
+  const liveAvatar = xProfile?.avatar || localAvatar;
   const liveBanner = xProfile?.banner || creator.banner;
   const liveFollowers = xProfile?.followers ? formatNumber(xProfile.followers) : creator.followersStr;
 
@@ -36,7 +39,7 @@ export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, on
   };
 
   const apiFetchSnippet = `// Fetch ${creator.name}'s complete playbook bundle
-fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expand=all')
+fetch('${site.origin}/api/creator?id=${creator.id}&expand=all')
   .then(res => res.json())
   .then(({ profile, category, playbook, hooks, angles, theme, tags, resources }) => {
     console.log('\u2705', profile.name, '—', profile.followersStr, 'followers');
@@ -54,11 +57,11 @@ fetch('https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expand=
 
   const apiCurlSnippet = `# Get ${creator.name}'s full mentor bundle
 # Includes profile, plays, hooks, angles, theme, tags, media, and related endpoints
-curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expand=all' \
+curl -s '${site.origin}/api/creator?id=${creator.id}&expand=all' \
   -H 'Accept: application/json' | jq '.'`;
 
   const apiCurlSelectSnippet = `# Select only the fields you need
-curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expand=plays,hooks,angles' \
+curl -s '${site.origin}/api/creator?id=${creator.id}&expand=plays,hooks,angles' \
   -H 'Accept: application/json' | jq '{ name: .profile.name, plays: .playbook.plays, hooks: .hooks, angles: .angles }'`;
 
   return (
@@ -94,7 +97,10 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
             <img 
               src={liveAvatar} 
               alt={creator.name} 
-              className="creator-modal-avatar" 
+              className="creator-modal-avatar"
+              width={90}
+              height={90}
+              decoding="async"
               onError={() => setImgError(true)} 
             />
           )}
@@ -205,10 +211,10 @@ curl -s 'https://creatorplaybooks.netlify.app/api/creator?id=${creator.id}&expan
                       <div className="creator-modal-play-body" style={{ animation: 'fadeIn 0.25s ease' }}>
                         <p style={{ color: 'var(--ink-muted)', fontSize: '0.94rem', lineHeight: 1.65 }}>{p.description}</p>
                         {p.example && (
-                          <p className="play-example"><strong>Seen in the wild. </strong>{p.example}</p>
+                          <p className="play-example"><strong>Example. </strong>{p.example}</p>
                         )}
                         <div className="play-action-box" style={{ borderLeftColor: creator.theme.primary }}>
-                          <span style={{ fontSize: '0.74rem', color: creator.theme.primary, textTransform: 'uppercase', fontWeight: 800, display: 'block', marginBottom: '5px', letterSpacing: '0.06em' }}>Daily Action Challenge</span>
+                          <span style={{ fontSize: '0.74rem', color: creator.theme.primary, textTransform: 'uppercase', fontWeight: 800, display: 'block', marginBottom: '5px', letterSpacing: '0.06em' }}>Try this</span>
                           <span className="play-action" style={{ color: 'var(--ink)', fontWeight: 550, fontSize: '0.94rem' }}>{p.action}</span>
                         </div>
                       </div>

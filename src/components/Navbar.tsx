@@ -55,7 +55,7 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
       <nav className="nav-bar" aria-label="Primary">
         <a href="/" className="brand" title="CreatorPlaybooks home">
           <div className="brand-mark" style={{ overflow: 'hidden' }}>
-            <img src="/brand_logo.png" alt="CreatorPlaybooks logo" className="origin-brand-img" />
+            <img src="/brand-mark.webp" alt="" width={32} height={32} className="origin-brand-img" />
           </div>
           <span className="brand-text">
             <span className="brand-name">CreatorPlaybooks</span>
@@ -106,7 +106,7 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
       <nav className="nav-mobile-bar" aria-label="Primary">
         <a href="/" className="brand" title="CreatorPlaybooks home">
           <div className="brand-mark" style={{ overflow: 'hidden' }}>
-            <img src="/brand_logo.png" alt="CreatorPlaybooks logo" className="origin-brand-img" />
+            <img src="/brand-mark.webp" alt="" width={32} height={32} className="origin-brand-img" />
           </div>
           <span className="brand-text">
             <span className="brand-name">CreatorPlaybooks</span>

@@ -1,0 +1,23 @@
+/** Places named on a mentor profile or site in RESEARCH.md, checked 2026-11-11. */
+export const MENTOR_PLACES: { label: string; who: string }[] = [
+  { label: 'Austin', who: 'Clark Wimberly' },
+  { label: 'Dubai', who: 'Phanindra Reddy' },
+  { label: 'Barcelona', who: 'Nicolas Grenié' },
+  { label: 'Bengaluru', who: 'Krishna Goutham' },
+  { label: 'Singapore', who: 'Jon Yongfook and HeadshotPro' },
+  { label: 'Atlanta', who: 'KP and Vamshi' },
+  { label: 'Wrocław', who: 'Gerrit Halfmann' },
+  { label: 'Kuala Lumpur', who: 'Lynn Zeng' },
+  { label: 'New York', who: 'Jai Bhagat' },
+  { label: 'San Diego', who: 'Maddie D. Reese' },
+  { label: 'Sri Lanka', who: 'Rasal Jayasinghe' },
+  { label: 'Spain', who: 'Conor Martin' },
+  { label: 'England', who: 'Ash' },
+  { label: 'United Kingdom', who: 'Mark Bowley' },
+  { label: 'Ontario', who: 'Arvid Kahl' },
+  { label: 'San Francisco', who: 'Hiten Shah and Mathias Biilmann' },
+  { label: 'Italy', who: 'Flavio Copes' },
+  { label: 'Florida', who: 'Pat Walls' },
+  { label: 'Virginia Beach', who: 'Neal Frazier' },
+  { label: 'Africa', who: 'AltSchool Africa' },
+];

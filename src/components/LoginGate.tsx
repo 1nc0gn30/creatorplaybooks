@@ -11,15 +11,15 @@ export function LoginGate({ message, cta }: { message: string; cta: string }) {
           <span className="pulse-dot" />
           Members Only
         </div>
-        <h2>Unlock your growth toolkit</h2>
+        <h2>This page needs an account</h2>
         <p>{message}</p>
 
         <div className="login-gate-perks">
           <div className="login-gate-perk">
             <div className="login-gate-perk-icon pink"><TrendingUp size={16} /></div>
             <div>
-              <strong>Track your growth</strong>
-              <span>Streaks, XP, consistency scores, and level progression</span>
+              <strong>A simple log</strong>
+              <span>Posts this week, a streak, and a score from those counts</span>
             </div>
           </div>
           <div className="login-gate-perk">
@@ -32,15 +32,15 @@ export function LoginGate({ message, cta }: { message: string; cta: string }) {
           <div className="login-gate-perk">
             <div className="login-gate-perk-icon purple"><Users size={16} /></div>
             <div>
-              <strong>Join the community</strong>
-              <span>Vote on creators, submit new ones, and build your profile</span>
+              <strong>Votes</strong>
+              <span>Mark a playbook helpful, or flag a fact that looks wrong</span>
             </div>
           </div>
           <div className="login-gate-perk">
             <div className="login-gate-perk-icon amber"><Sparkles size={16} /></div>
             <div>
-              <strong>Personalize everything</strong>
-              <span>Builder profile, accessibility prefs, and live preview card</span>
+              <strong>Your name and links</strong>
+              <span>A profile, larger type, and higher contrast if you want them</span>
             </div>
           </div>
         </div>
@@ -51,7 +51,7 @@ export function LoginGate({ message, cta }: { message: string; cta: string }) {
 
         <div className="login-gate-hint">
           <span className="pulse-dot" />
-          Free to join - sign in with email or GitHub
+          Sign in with email or GitHub. The mentor pages stay public.
         </div>
       </div>
     </div>

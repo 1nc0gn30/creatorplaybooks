@@ -62,7 +62,7 @@ try {
   await page.setViewport({ width: 1920, height: 1080 });
   await page.goto(base + '/', { waitUntil: 'domcontentloaded', timeout: 20000 });
   const home = await page.evaluate(() => document.body.innerText);
-  if (!home.includes('Neal Frazier Tech') || !home.includes('creator playbooks')) {
+  if (!home.includes('Neal Frazier Tech') || !home.includes('Open the directory')) {
     failures.push('home');
     console.error('FAIL home branding');
   } else {

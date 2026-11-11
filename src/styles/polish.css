@@ -1,8 +1,242 @@
 /* Restrained polish for type, contrast, mentor sheets, and video frames. */
 
 :root {
-  --muted: #b7b7c6;
-  --ink-muted: #d5d5de;
+  --muted: #c4c4d0;
+  --ink-muted: #e4e4ea;
+  --heading: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+  --body: "Segoe UI", system-ui, sans-serif;
+  --ui: "Segoe UI", system-ui, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+.btn-hot,
+.home-btn-primary,
+.nav-bar .btn-hot,
+.nav-mobile-bar .btn-hot {
+  background: #9f1239;
+  color: #fff;
+}
+
+.nav-login-text,
+.btn-sm,
+.nav-bar .btn,
+.nav-mobile-bar .btn {
+  font-size: 0.95rem;
+}
+
+.footer-social a,
+.footer-api-links a,
+.footer-badge {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.home-orb,
+.home-grid,
+.origin-watermark,
+.card-top-glow {
+  display: none;
+}
+
+.home-hero {
+  min-height: auto;
+  padding: 128px 28px 48px;
+}
+
+.home-headline {
+  font-family: "Iowan Old Style", Palatino, Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2.7rem, 6vw, 4.6rem);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+
+.home-headline em {
+  font-style: italic;
+  font-weight: 500;
+  color: #f7f4ef;
+}
+
+.home-subhead {
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--ink-muted);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.home-kicker {
+  color: var(--ink-muted);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.place-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.place-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 920px;
+  margin: 8px auto 28px;
+  padding: 0;
+  list-style: none;
+}
+
+.place-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 140px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+}
+
+.place-list strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.place-list span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.home-credit {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 8px 24px 12px;
+  color: var(--ink-muted);
+  line-height: 1.6;
+}
+
+.home-credit a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mentor-board {
+  list-style: none;
+  margin: 8px auto 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 1100px;
+}
+
+.mentor-tile {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 14px;
+  width: 100%;
+  min-height: 148px;
+  padding: 16px;
+  text-align: left;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #12121a;
+  color: var(--ink);
+}
+
+.mentor-tile:hover,
+.mentor-tile:focus-visible,
+.mentor-tile.is-active {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.mentor-tile img,
+.mentor-tile-fallback {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #2a2a34;
+}
+
+.mentor-tile-fallback {
+  display: grid;
+  place-items: center;
+  font-weight: 650;
+}
+
+.mentor-tile-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mentor-tile-name {
+  font-family: "Iowan Old Style", Palatino, Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 550;
+  letter-spacing: -0.02em;
+}
+
+.mentor-tile-handle,
+.mentor-tile-meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.mentor-tile-focus {
+  color: var(--ink-muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mentor-tile-meta {
+  grid-column: 2;
+}
+
+.home-step {
+  background: #12121a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-btn:focus-visible,
+.mentor-tile:focus-visible,
+.home-filter-chip:focus-visible,
+.home-search input:focus-visible {
+  outline: 2px solid #f7f4ef;
+  outline-offset: 3px;
+}
+
+
+@media (max-width: 980px) {
+  .mentor-board { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 680px), (max-aspect-ratio: 4/5) {
+  .mentor-board { grid-template-columns: 1fr; }
+  .home-hero { padding-top: 108px; }
+  .home-headline { font-size: clamp(2.4rem, 8vw, 3.6rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-btn:hover { transform: none; }
 }
 
 .brand-tag {

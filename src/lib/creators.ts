@@ -3,9 +3,9 @@ import { CREATOR_MEDIA } from './mediaManifest';
 import mentorRefresh from '../../shared/mentorRefresh.json';
 
 export const CATEGORIES = [
-  { id: 'netlify-shippers', label: 'Netlify AI Shippers', emoji: '🚀', description: 'High-volume builders shipping with Netlify and AI tools.' },
-  { id: 'indie-hackers', label: 'Indie Hackers', emoji: '🛠️', description: 'Solo builders sharing their journey and products in public.' },
-  { id: 'big-players', label: 'Big Players', emoji: '📡', description: 'Established creators with large audiences and proven systems.' },
+  { id: 'netlify-shippers', label: 'Netlify', emoji: '', description: 'People building on Netlify, or working in that community.' },
+  { id: 'indie-hackers', label: 'Indie hackers', emoji: '', description: 'Solo founders who publish the product and, sometimes, the numbers.' },
+  { id: 'big-players', label: 'Larger accounts', emoji: '', description: 'Labs, companies, and writers with large public audiences.' },
 ] as const;
 
 const RAW_CREATORS: CreatorProfile[] = [

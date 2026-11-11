@@ -1,7 +1,8 @@
 import type { CreatorProfile } from '../types';
-import { Sparkles, Search, SlidersHorizontal, Tag, ArrowRight, Zap, Bot, Code2, Terminal, Globe, X, ChevronRight } from 'lucide-react';
+import { Search, SlidersHorizontal, Tag, X } from 'lucide-react';
 import { CATEGORIES } from '../lib/creators';
-import { HoneycombWebGLGrid } from './HoneycombWebGLGrid';
+import { MENTOR_PLACES } from '../lib/places';
+import { MentorDirectory } from './MentorDirectory';
 import { useMemo } from 'react';
 
 export function HomePage({
@@ -45,202 +46,88 @@ export function HomePage({
 
   const activeFilterCount = (selectedCategory ? 1 : 0) + (selectedTag ? 1 : 0) + (searchQuery ? 1 : 0);
 
+  const placeLine = MENTOR_PLACES.map((p) => p.label).join(', ');
+
   return (
     <div className="home-page">
-      {/* Background effects */}
-      <div className="home-orb home-orb-1" />
-      <div className="home-orb home-orb-2" />
-      <div className="home-grid" />
-
-      {/* Hero */}
       <section className="home-hero">
         <div className="home-hero-content">
-          <div className="home-kicker">
-            <span className="home-kicker-dot" />
-            {creatorCount} creator playbooks, checked Nov 2026
-          </div>
+          <p className="home-kicker">Checked 11 Nov 2026 · {creatorCount} mentors · {MENTOR_PLACES.length} places</p>
           <h1 className="home-headline">
-            Growth playbooks from<br />
-            <span className="home-gradient-text">the creators who ship.</span>
+            Notes from builders<br />
+            <em>who do not all live in one city.</em>
           </h1>
           <p className="home-subhead">
-            Stop guessing what to post. Study the exact repeatable plays used by indie hackers, Netlify shippers, and big players — then copy them into your workflow.
+            CreatorPlaybooks is a reading list. The people in it post from Austin, Dubai, Barcelona, Bengaluru, Singapore, Atlanta, and the other places named on their profiles. Each page says what they are doing now, and where that sentence came from.
           </p>
+          <p className="place-sr">{placeLine}</p>
+          <ul className="place-list" aria-hidden="true">
+            {MENTOR_PLACES.map((place) => (
+              <li key={place.label}>
+                <strong>{place.label}</strong>
+                <span>{place.who}</span>
+              </li>
+            ))}
+          </ul>
           <div className="home-hero-actions">
-            <button className="home-btn home-btn-primary" onClick={() => document.getElementById('directory')?.scrollIntoView({ behavior: 'smooth' })}>
-              <Sparkles size={18} />
-              Browse mentors
-              <ChevronRight size={16} />
+            <button type="button" className="home-btn home-btn-primary" onClick={() => document.getElementById('directory')?.scrollIntoView({ behavior: 'smooth' })}>
+              Open the directory
             </button>
-            <button className="home-btn home-btn-secondary" onClick={() => document.getElementById('api-section')?.scrollIntoView({ behavior: 'smooth' })}>
-              <Code2 size={18} />
-              Try the API
+            <button type="button" className="home-btn home-btn-secondary" onClick={() => document.getElementById('api-section')?.scrollIntoView({ behavior: 'smooth' })}>
+              Read the API
             </button>
           </div>
           <div className="home-stats-bar">
             <div className="home-stat">
               <span className="home-stat-num">{creatorCount}</span>
-              <span className="home-stat-label">creators</span>
+              <span className="home-stat-label">mentors</span>
             </div>
             <div className="home-stat-sep" />
             <div className="home-stat">
-              <span className="home-stat-num">{totalPlays}+</span>
-              <span className="home-stat-label">growth plays</span>
+              <span className="home-stat-num">{totalPlays}</span>
+              <span className="home-stat-label">plays</span>
             </div>
             <div className="home-stat-sep" />
             <div className="home-stat">
-              <span className="home-stat-num">1</span>
-              <span className="home-stat-label">agent-ready API</span>
+              <span className="home-stat-num">{MENTOR_PLACES.length}</span>
+              <span className="home-stat-label">places</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
       <section className="home-section home-how">
         <div className="home-section-header">
-          <span className="home-section-eyebrow">How it works</span>
-          <h2 className="home-section-title">Pick a mentor. Copy the playbook. Start shipping.</h2>
+          <h2 className="home-section-title">Three steps, none of them magic.</h2>
         </div>
         <div className="home-steps">
           <div className="home-step">
-            <div className="home-step-icon"><Sparkles size={22} /></div>
-            <h3>Discover</h3>
-            <p>Browse creators by category, audience size, or topic. Every profile is reverse-engineered from real posts.</p>
+            <h3>1. Read one page</h3>
+            <p>Pick a person whose work you actually want. The page lists products, plays, and the URLs those claims came from.</p>
           </div>
           <div className="home-step">
-            <div className="home-step-icon"><Terminal size={22} /></div>
-            <h3>Copy</h3>
-            <p>Grab the full playbook, content hooks, or a ready-to-paste agent prompt trained on their voice.</p>
+            <h3>2. Take one play</h3>
+            <p>A play is a habit you can try this week: a format, a cadence, a place to publish. The wording is ours. The example is theirs.</p>
           </div>
           <div className="home-step">
-            <div className="home-step-icon"><Zap size={22} /></div>
-            <h3>Run</h3>
-            <p>Schedule posts, track streaks, and level up in the dashboard. Consistency beats virality.</p>
+            <h3>3. Write your version</h3>
+            <p>The dashboard can hold a draft and a day of the week. It does not post for you.</p>
           </div>
         </div>
       </section>
 
-      {/* Origin Story */}
-      <section className="home-origin-story">
-        {/* Subtle glowing liquid trail watermark */}
-        <div className="origin-watermark" />
-        
-        <div className="home-origin-left">
-          <div className="origin-visual-stack">
-            {/* Background Grid Ambience */}
-            <div className="stack-grid-bg" />
-            
-            {/* Card 3: Code Card (Bottom) */}
-            <div className="stack-card card-bottom">
-              <div className="stack-card-header">
-                <span className="dot red" />
-                <span className="dot yellow" />
-                <span className="dot green" />
-                <span className="stack-title">playbook.json</span>
-              </div>
-              <pre className="stack-code">
-                <code>{`{
-  "creator": "maya",
-  "plays": [
-    { "play": "Build in public", "xp": 12 },
-    { "play": "Hook template", "leads": 450 }
-  ]
-}`}</code>
-              </pre>
-            </div>
-            
-            {/* Card 2: Swipe File List (Middle) */}
-            <div className="stack-card card-middle">
-              <div className="stack-card-badge">Swipe File</div>
-              <h4>Voice & Angles</h4>
-              <div className="swipe-lines">
-                <div className="swipe-line-item">✦ "Why X grew while Y failed..."</div>
-                <div className="swipe-line-item">✦ "I analyzed 100 posts..."</div>
-                <div className="swipe-line-item">✦ "Stop doing Z. Do this instead..."</div>
-              </div>
-            </div>
-            
-            {/* Card 1: Brand Identifier Card (Top) */}
-            <div className="stack-card card-top">
-              <div className="card-top-glow" />
-              <div className="card-top-inner">
-                <div className="origin-logo-ring">
-                  <img src="/brand_logo.png" alt="CreatorPlaybooks Brand Logo" className="origin-brand-img" />
-                </div>
-                <h3>CreatorPlaybooks</h3>
-                <span className="pill-active">
-                  <span className="pulse-dot" />
-                  Growth System
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="home-origin-right">
-          <span className="origin-badge">Origin Story</span>
-          <span className="home-section-eyebrow" style={{ display: 'block', marginBottom: '6px' }}>CreatorPlaybooks started as one question:</span>
-          
-          <blockquote className="origin-quote">
-            “Why do some indie hackers grow an audience while others ship silently?”
-          </blockquote>
-          
-          <div className="origin-authors">
-            <span className="origin-by">Published by</span>
-            <a href="https://nealfrazier.tech" target="_blank" rel="noreferrer" className="author-badge neal-badge">
-              <span className="author-avatar" style={{ background: 'linear-gradient(135deg, #8b5cf6, #22d3ee)' }}>N</span>
-              <span>Neal Frazier Tech</span>
-            </a>
-            <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer" className="author-badge maya-badge">
-              <span className="author-avatar" style={{ background: 'linear-gradient(135deg, #ec4899, #8b5cf6)' }}>M</span>
-              <span>inspired by @buildwithmaya</span>
-            </a>
-          </div>
-
-          <p className="lead">
-            We studied builders like <strong>Maya</strong> who ship in public, share playbooks, and turn followers into users. Then we turned those patterns into an agent-ready library of repeatable growth plays.
-          </p>
-          
-          <p className="origin-desc">
-            Every creator playbook here is reverse-engineered from real posts and is structured so you can copy their plays, schedule drafts, or drop the playbook JSON directly into your Cursor/AI agent.
-          </p>
-          
-          <div className="origin-formula-box">
-            <div className="formula-header">
-              <Zap size={14} className="formula-icon" />
-              <span>The 4-Step Growth Engine</span>
-            </div>
-            <div className="formula-steps-row">
-              <div className="formula-step-item">
-                <span className="num">1</span>
-                <span className="step-txt">Pick a mentor</span>
-              </div>
-              <div className="formula-arrow">→</div>
-              <div className="formula-step-item">
-                <span className="num">2</span>
-                <span className="step-txt">Copy plays</span>
-              </div>
-              <div className="formula-arrow">→</div>
-              <div className="formula-step-item">
-                <span className="num">3</span>
-                <span className="step-txt">Adapt stack</span>
-              </div>
-              <div className="formula-arrow">→</div>
-              <div className="formula-step-item">
-                <span className="num">4</span>
-                <span className="step-txt">Start shipping</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <section className="home-credit">
+        <p>
+          Published by <a href="https://nealfrazier.tech">Neal Frazier Tech</a>.
+          The format was inspired by <a href="https://x.com/buildwithmaya">@buildwithmaya</a>.
+          Facts on each page were checked on 11 Nov 2026. If a number is money, it is the person’s own figure, not an audit.
+        </p>
       </section>
 
       {/* Directory */}
       <section className="home-section home-directory" id="directory">
         <div className="home-section-header">
-          <span className="home-section-eyebrow">Mentor directory</span>
-          <h2 className="home-section-title">Find your growth blueprint</h2>
+          <h2 className="home-section-title">The directory</h2>
         </div>
 
         <div className="home-filter-bar">
@@ -248,7 +135,8 @@ export function HomePage({
             <Search size={16} />
             <input
               type="text"
-              placeholder="Search creators, handles, or tags..."
+              placeholder="Search by name, handle, or tag"
+              aria-label="Search mentors"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -267,7 +155,7 @@ export function HomePage({
                 </button>
                 {CATEGORIES.map((cat) => (
                   <button key={cat.id} className="home-dropdown-item" onClick={() => setSelectedCategory(cat.id)}>
-                    <span>{cat.emoji}</span> {cat.label}
+                    {cat.label}
                     <span className="home-dropdown-count">{categoryCounts.get(cat.id) ?? 0}</span>
                   </button>
                 ))}
@@ -301,28 +189,23 @@ export function HomePage({
         {selectedCategory && (
           <div className="home-category-hero" style={{ background: `linear-gradient(135deg, ${activeCreator.theme.primary}15, ${activeCreator.theme.accent}15)` }}>
             <div className="home-category-hero-text">
-              <strong>{CATEGORIES.find(c => c.id === selectedCategory)?.emoji} {CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong>
+              <strong>{CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong>
               <span>{CATEGORIES.find(c => c.id === selectedCategory)?.description}</span>
             </div>
-            <button onClick={() => setSelectedCategory(null)}><X size={14} /></button>
+            <button type="button" onClick={() => setSelectedCategory(null)} aria-label="Clear category"><X size={14} /></button>
           </div>
         )}
 
         {filteredCreators.length === 0 ? (
           <div className="home-empty">
-            <div className="home-empty-icon">🔭</div>
-            <h3>No creators match</h3>
-            <p>Try clearing your search or filters.</p>
-            <button className="home-btn home-btn-secondary" onClick={() => { setSearchQuery(''); setSelectedCategory(null); setSelectedTag(null); }}>
-              <ArrowRight size={14} /> Clear filters
+            <h3>No mentors match</h3>
+            <p>Clear the search or the filters and the full list comes back.</p>
+            <button type="button" className="home-btn home-btn-secondary" onClick={() => { setSearchQuery(''); setSelectedCategory(null); setSelectedTag(null); }}>
+              Clear filters
             </button>
           </div>
         ) : (
-          <HoneycombWebGLGrid 
-            filteredCreators={filteredCreators}
-            openCreatorModal={openCreatorModal}
-            modalCreatorId={modalCreatorId}
-          />
+          <MentorDirectory creators={filteredCreators} activeId={modalCreatorId} onOpen={openCreatorModal} />
         )}
       </section>
 
@@ -330,15 +213,14 @@ export function HomePage({
       <section className="home-section home-api" id="api-section">
         <div className="home-api-card">
           <div className="home-api-left">
-            <span className="home-section-eyebrow">Agent-ready API</span>
-            <h2 className="home-section-title">Plug every playbook into your agent.</h2>
-            <p className="home-section-subtitle">Pull any creator playbook as clean JSON. Drop it into Cursor, n8n, or your own automation.</p>
+            <h2 className="home-section-title">The same notes, as JSON.</h2>
+            <p className="home-section-subtitle">One request returns a mentor. Another returns the list. Use them in an editor or a script. They are the same words as the pages.</p>
             <div className="home-api-actions">
               <a href="/api/creators" target="_blank" rel="noreferrer" className="home-btn home-btn-primary">
-                <Globe size={16} /> /api/creators
+                All mentors
               </a>
-              <a href="/api/creator?id=maya" target="_blank" rel="noreferrer" className="home-btn home-btn-secondary">
-                <Bot size={16} /> Sample playbook
+              <a href="/api/creator?id=maya&expand=all" target="_blank" rel="noreferrer" className="home-btn home-btn-secondary">
+                Maya, as JSON
               </a>
             </div>
           </div>

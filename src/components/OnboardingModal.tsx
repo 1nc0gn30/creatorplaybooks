@@ -3,9 +3,9 @@ import type { Tab } from '../types';
 
 export function OnboardingModal({ step, setStep, close, setTab }: { step: number; setStep: (n: number) => void; close: () => void; setTab: (t: Tab | 'members') => void }) {
   const steps = [
-    { icon: '🔭', title: 'Pick a mentor', body: 'Browse real playbooks from creators who have shipped and grown on X. Study their repeatable strategy, pillars, and angles.', cta: 'Next Step' },
-    { icon: '📋', title: 'Copy their plays', body: 'Grab the full markdown playbook, content hooks, or copy a ready-to-paste AI agent prompt trained on their voice.', cta: 'Next Step' },
-    { icon: '⚡', title: 'Run your first play', body: 'Log your posts, schedule content, track your streak, and level up your growth health in the dashboard. Consistency wins.', cta: 'Open Dashboard' },
+    { icon: '1', title: 'Pick a mentor', body: 'Open a page. Read the products, the plays, and the sources at the bottom.', cta: 'Next' },
+    { icon: '2', title: 'Copy one play', body: 'The hooks are original lines in that person’s cadence. They are not their posts. Rewrite them before you publish.', cta: 'Next' },
+    { icon: '3', title: 'Keep a draft', body: 'The dashboard holds text and a day of the week. It does not post to X.', cta: 'Open the log' },
   ];
   const s = steps[step];
 

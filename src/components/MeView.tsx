@@ -11,8 +11,8 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
           <Palette size={12} />
           Builder Profile
         </div>
-        <h2 className="page-title">Who you are, what you ship</h2>
-        <p className="page-subtitle">Edit your details, customize accessibility, and see your live preview card update in real time.</p>
+        <h2 className="page-title">Your details</h2>
+        <p className="page-subtitle">Name, links, and reading preferences. They stay in this browser until you sign in and save them.</p>
       </div>
 
       <div className="me-grid-layout">
