@@ -19,7 +19,6 @@ import { OnboardingModal } from './components/OnboardingModal';
 import { DashboardView } from './components/DashboardView';
 import { MeView } from './components/MeView';
 import { DocsView } from './components/DocsView';
-import { LoginGate } from './components/LoginGate';
 import { fetchMemberMe, saveMemberMe } from './lib/member-api';
 import { site } from './lib/site';
 
@@ -263,12 +262,12 @@ function App() {
         {tab === 'flow' && (
           <PlaybookFlow creators={filteredCreators} onOpenCreator={openCreatorModal} />
         )}
-        {tab === 'dashboard' && (user ? (
+        {tab === 'dashboard' && (
           <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
-        ) : <LoginGate message="The dashboard stores drafts, a weekly count, and a streak on this browser after you sign in." cta="Sign in" />)}
+        )}
         {tab === 'me' && <MeView profile={me} setProfile={updateMe} />}
-        {tab === 'docs' && (user ? <DocsView activeCreator={activeCreator} /> : <LoginGate message="The docs list the JSON endpoints. Sign in to read them here. The URLs themselves are public." cta="Sign in" />)}
-        {tab === 'members' && (user ? <MembersView /> : <LoginGate message="The member list, votes, and submissions need an account." cta="Sign in" />)}
+        {tab === 'docs' && <DocsView activeCreator={activeCreator} />}
+        {tab === 'members' && <MembersView />}
         {showOriginStory && <OriginStoryModal close={() => { localStorage.setItem('creatorplaybooks_origin_seen', '1'); setShowOriginStory(false); setShowOnboarding(true); }} />}
         {showOnboarding && <OnboardingModal step={onboardingStep} setStep={setOnboardingStep} close={() => { localStorage.setItem('creatorplaybooks_onboarding_seen', '1'); setShowOnboarding(false); }} setTab={setTab} />}
         {modalCreator && <CreatorModal creator={modalCreator} onClose={closeCreatorModal} onCopyPlaybook={() => copyPlaybookForCreator(modalCreator)} onCopyAgent={() => copyAgentPrompt(modalCreator)} onInstallAgent={() => installAgentFolder(modalCreator)} />}
@@ -279,7 +278,7 @@ function App() {
           <div className="footer-brand">
             <a href="/" className="footer-brand-link" title="CreatorPlaybooks home">
               <div className="brand-mark" style={{ overflow: 'hidden' }}>
-                <img src="/brand-mark.webp" alt="" width={32} height={32} className="origin-brand-img" />
+                <img src="/brand-mark.webp" alt="CreatorPlaybooks emblem" width={32} height={32} className="origin-brand-img" />
               </div>
               <span className="footer-brand-name">CreatorPlaybooks</span>
             </a>
@@ -303,11 +302,12 @@ function App() {
             <strong>Built with</strong>
             <div className="footer-badges">
               <a href="https://nousresearch.com" target="_blank" rel="noreferrer" className="footer-badge" title="Nous Research — Hermes agent"><span className="footer-badge-dot" style={{ background: '#ec4899' }} /> Nous Hermes</a>
-              <a href="https://join.netlify.com/d8a2zdtel9gy-w6zrwt" target="_blank" rel="noreferrer" className="footer-badge" title="Deploy on Netlify"><span className="footer-badge-dot" style={{ background: '#22d3ee' }} /> Netlify</a>
+              <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noreferrer" className="footer-badge" title="Support open-access tools"><span className="footer-badge-dot" style={{ background: '#f59e0b' }} /> ☕ Buy Us a Coffee</a>
             </div>
+            <p className="footer-hint" style={{ marginTop: '8px', fontSize: '0.72rem', wordBreak: 'break-all' }}>Solana Tip: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code></p>
           </div>
         </div>
-        <div className="footer-bottom"><span>© {new Date().getFullYear()} CreatorPlaybooks · published by Neal Frazier Tech</span></div>
+        <div className="footer-bottom"><span>Engineered by Neal Frazier Tech (@1nc0gn30) • <a href="https://nullai.tech" target="_blank" rel="noreferrer">NullAI Platform</a> · <a href="https://github.com/1nc0gn30/creatorplaybooks" target="_blank" rel="noreferrer">GitHub</a></span></div>
       </footer>
       <div className="remix-pad" title="Creative remix controls">
         <button className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text" data-tooltip="Bold Text"><Bold size={16} /></button>

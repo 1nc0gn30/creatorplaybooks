@@ -25,7 +25,7 @@ export function OriginStoryModal({ close }: { close: () => void }) {
         {/* Banner Section */}
         <div className="origin-banner">
           <div className="origin-logo-ring">
-            <img src="/brand-mark.webp" alt="" width={48} height={48} className="origin-brand-img" />
+            <img src="/brand-mark.webp" alt="CreatorPlaybooks emblem" width={48} height={48} className="origin-brand-img" />
           </div>
           <div className="origin-title-block">
             <span className="origin-kicker">Origin Story</span>
