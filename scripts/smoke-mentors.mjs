@@ -13,7 +13,7 @@ import puppeteer from 'puppeteer-core';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const refresh = JSON.parse(readFileSync(join(root, 'shared/mentorRefresh.json'), 'utf8'));
 const ids = Object.keys(refresh);
-const base = process.env.SMOKE_BASE || 'http://127.0.0.1:4173';
+const base = process.env.SMOKE_BASE || 'http://127.0.0.1:5185';
 
 if (ids.length < 30) {
   console.error(`expected a full mentor set, found ${ids.length}`);

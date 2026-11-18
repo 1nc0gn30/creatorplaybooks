@@ -18,7 +18,7 @@ function Avatar({ src, name }: { src: string; name: string }) {
   return (
     <img
       src={src}
-      alt=""
+      alt={`${name} avatar`}
       width={72}
       height={72}
       loading="lazy"

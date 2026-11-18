@@ -1,0 +1,12 @@
+# Gitleaks configuration for creatorplaybooks.
+# Commit 6067d526c1f9fb9e1efebf06b7ddb1a3dcd339ff has a separator line of equal signs
+# in scratch/analysis_input.txt that matched netlify-access-token with 0 entropy.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Synthetic separator line of equal signs in historical scratch file"
+commits = ["6067d526c1f9fb9e1efebf06b7ddb1a3dcd339ff"]
+paths = [
+  '''^scratch/analysis_input\.txt$''',
+]

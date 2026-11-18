@@ -4,7 +4,7 @@ import { CATEGORIES } from '../lib/creators';
 import { MENTOR_PLACES } from '../lib/places';
 import { MentorDirectory } from './MentorDirectory';
 import { HologramDirectory } from './HologramDirectory';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 export function HomePage({
   filteredCreators,
@@ -39,6 +39,28 @@ export function HomePage({
 }) {
 
 
+  const [savedOnly, setSavedOnly] = useState(false);
+  const [savedIds, setSavedIds] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('cp_saved_mentors') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  const toggleSaved = (id: string) => {
+    setSavedIds((prev) => {
+      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      localStorage.setItem('cp_saved_mentors', JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const displayedCreators = useMemo(
+    () => (savedOnly ? filteredCreators.filter((c) => savedIds.includes(c.id)) : filteredCreators),
+    [filteredCreators, savedOnly, savedIds]
+  );
+
   const categoryCounts = useMemo(() => {
     const map = new Map<string, number>();
     categories.forEach(([k, v]) => map.set(k, v));
@@ -55,7 +77,7 @@ export function HomePage({
         <div className="home-hero-content">
           <p className="home-kicker">Checked 11 Nov 2026 · {creatorCount} mentors · {MENTOR_PLACES.length} places</p>
           <h1 className="home-headline">
-            <span className="home-headline-line">Notes from builders</span>
+            <span className="home-headline-line">Notes from builders </span>
             <em>who do not all live in one city.</em>
           </h1>
           <p className="home-subhead">
@@ -73,6 +95,17 @@ export function HomePage({
           <div className="home-hero-actions">
             <button type="button" className="home-btn home-btn-primary" onClick={() => document.getElementById('directory')?.scrollIntoView({ behavior: 'smooth' })}>
               Open the directory
+            </button>
+            <button
+              type="button"
+              className="home-btn home-btn-secondary"
+              onClick={() => {
+                if (!filteredCreators.length) return;
+                const pick = filteredCreators[Math.floor(Math.random() * filteredCreators.length)];
+                openCreatorModal(pick);
+              }}
+            >
+              Random mentor
             </button>
             <button type="button" className="home-btn home-btn-secondary" onClick={() => document.getElementById('api-section')?.scrollIntoView({ behavior: 'smooth' })}>
               Read the API
@@ -180,6 +213,13 @@ export function HomePage({
                 ))}
               </div>
             </div>
+            <button
+              type="button"
+              className={`home-filter-chip ${savedOnly ? 'active' : ''}`}
+              onClick={() => setSavedOnly((v) => !v)}
+            >
+              Saved Queue ({savedIds.length})
+            </button>
             {activeFilterCount > 0 && (
               <button className="home-filter-chip reset" onClick={() => { setSearchQuery(''); setSelectedCategory(null); setSelectedTag(null); }}>
                 Reset
@@ -198,16 +238,16 @@ export function HomePage({
           </div>
         )}
 
-        {filteredCreators.length === 0 ? (
+        {displayedCreators.length === 0 ? (
           <div className="home-empty">
             <h3>No mentors match</h3>
-            <p>Clear the search or the filters and the full list comes back.</p>
-            <button type="button" className="home-btn home-btn-secondary" onClick={() => { setSearchQuery(''); setSelectedCategory(null); setSelectedTag(null); }}>
+            <p>{savedOnly ? 'Bookmark mentors in any playbook modal to build your reading queue, or clear the Saved Queue filter.' : 'Clear the search or the filters and the full list comes back.'}</p>
+            <button type="button" className="home-btn home-btn-secondary" onClick={() => { setSearchQuery(''); setSelectedCategory(null); setSelectedTag(null); setSavedOnly(false); }}>
               Clear filters
             </button>
           </div>
         ) : (
-          <MentorDirectory creators={filteredCreators} activeId={modalCreatorId} onOpen={openCreatorModal} />
+          <MentorDirectory creators={displayedCreators} activeId={modalCreatorId} onOpen={(c) => { if (!savedIds.includes(c.id)) toggleSaved(c.id); openCreatorModal(c); }} />
         )}
       </section>
 

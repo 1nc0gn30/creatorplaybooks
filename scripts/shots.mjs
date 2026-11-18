@@ -9,7 +9,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const refresh = JSON.parse(readFileSync(join(root, 'shared/mentorRefresh.json'), 'utf8'));
 const out = '/opt/cursor/artifacts/pass3';
 mkdirSync(out, { recursive: true });
-const base = process.env.SMOKE_BASE || 'http://127.0.0.1:4173';
+const base = process.env.SMOKE_BASE || 'http://127.0.0.1:5185';
 const browser = await chromium.launch({
   executablePath: process.env.CHROME || '/usr/bin/google-chrome',
   headless: true,

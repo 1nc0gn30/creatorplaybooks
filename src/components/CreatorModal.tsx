@@ -318,7 +318,7 @@ curl -s '${site.origin}/api/creator?id=${creator.id}&expand=plays,hooks,angles' 
                     {t.media.length > 0 && (
                       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(t.media.length, 2)}, 1fr)`, gap: '8px', marginBottom: '10px' }}>
                         {t.media.map((m, mi) => (
-                          <img key={mi} src={m.url} alt="" style={{ width: '100%', borderRadius: '10px', objectFit: 'cover', aspectRatio: '16/10' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          <img key={mi} src={m.url} alt={`${creator.name} post attachment ${mi + 1}`} style={{ width: '100%', borderRadius: '10px', objectFit: 'cover', aspectRatio: '16/10' }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                         ))}
                       </div>
                     )}

@@ -19,7 +19,6 @@ const CreatorModal = lazy(() => import('./components/CreatorModal').then((m) => 
 const DashboardView = lazy(() => import('./components/DashboardView').then((m) => ({ default: m.DashboardView })));
 const MeView = lazy(() => import('./components/MeView').then((m) => ({ default: m.MeView })));
 const DocsView = lazy(() => import('./components/DocsView').then((m) => ({ default: m.DocsView })));
-const LoginGate = lazy(() => import('./components/LoginGate').then((m) => ({ default: m.LoginGate })));
 
 const YEAR = new Date().getFullYear();
 
@@ -267,12 +266,12 @@ function App() {
             {tab === 'flow' && (
               <PlaybookFlow creators={filteredCreators} onOpenCreator={openCreatorModal} />
             )}
-            {tab === 'dashboard' && (user ? (
+            {tab === 'dashboard' && (
               <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
-            ) : <LoginGate message="The dashboard stores drafts, a weekly count, and a streak on this browser after you sign in." cta="Sign in" />)}
+            )}
             {tab === 'me' && <MeView profile={me} setProfile={updateMe} />}
-            {tab === 'docs' && (user ? <DocsView activeCreator={activeCreator} /> : <LoginGate message="The docs list the JSON endpoints. Sign in to read them here. The URLs themselves are public." cta="Sign in" />)}
-            {tab === 'members' && (user ? <MembersView /> : <LoginGate message="The member list, votes, and submissions need an account." cta="Sign in" />)}
+            {tab === 'docs' && <DocsView activeCreator={activeCreator} />}
+            {tab === 'members' && <MembersView />}
           </Suspense>
         )}
         {showOriginStory && <OriginStoryModal close={() => { localStorage.setItem('creatorplaybooks_origin_seen', '1'); setShowOriginStory(false); setShowOnboarding(true); }} />}
@@ -289,7 +288,7 @@ function App() {
           <div className="footer-brand">
             <a href="/" className="footer-brand-link" title="CreatorPlaybooks home">
               <div className="brand-mark" style={{ overflow: 'hidden' }}>
-                <img src="/brand-mark.webp" alt="" width={32} height={32} className="origin-brand-img" />
+                <img src="/brand-mark.webp" alt="CreatorPlaybooks emblem" width={32} height={32} className="origin-brand-img" />
               </div>
               <span className="footer-brand-name">CreatorPlaybooks</span>
             </a>
@@ -313,8 +312,9 @@ function App() {
             <strong>Built with</strong>
             <div className="footer-badges">
               <a href="https://nousresearch.com" target="_blank" rel="noreferrer" className="footer-badge" title="Nous Research — Hermes agent"><span className="footer-badge-dot" style={{ background: '#ec4899' }} /> Nous Hermes</a>
-              <a href="https://join.netlify.com/d8a2zdtel9gy-w6zrwt" target="_blank" rel="noreferrer" className="footer-badge" title="Deploy on Netlify"><span className="footer-badge-dot" style={{ background: '#22d3ee' }} /> Netlify</a>
+              <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noreferrer" className="footer-badge" title="Support open-access tools"><span className="footer-badge-dot" style={{ background: '#f59e0b' }} /> ☕ Buy Us a Coffee</a>
             </div>
+            <p className="footer-hint" style={{ marginTop: '8px', fontSize: '0.72rem', wordBreak: 'break-all' }}>Solana Tip: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code></p>
           </div>
         </div>
         <div className="footer-bottom"><span>© {YEAR} CreatorPlaybooks · published by Neal Frazier Tech</span></div>
