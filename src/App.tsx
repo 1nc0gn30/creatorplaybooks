@@ -1,27 +1,25 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Sparkles, Zap, Wand2, Highlighter, Underline, Italic, Bold } from 'lucide-react';
 import type { BuilderProfile, ContentIdea, CreatorProfile, ScheduledPost, UserProgress, Tab } from './types';
-import { PlaybookFlow } from './components/PlaybookFlow';
 import { defaultBuilder, defaultProgress, levelFromXp, scoreProgress } from './lib/maya';
 import { CREATORS } from './lib/creators';
-import { downloadZip } from './lib/export';
 import { useAuth } from './lib/auth-context';
 import { generateIdeasForCreator } from './lib/ideas';
-import { buildExportBundle } from './lib/exportBundle';
-import { MembersView } from './components/MembersView';
 import { Navbar } from './components/Navbar';
-import { CreatorModal } from './components/CreatorModal';
 import { HomePage } from './components/HomePage';
-import './styles/navbar.css';
-import './styles/auth-pages.css';
 import { OriginStoryModal } from './components/OriginStoryModal';
 import { OnboardingModal } from './components/OnboardingModal';
-import { DashboardView } from './components/DashboardView';
-import { MeView } from './components/MeView';
-import { DocsView } from './components/DocsView';
-import { LoginGate } from './components/LoginGate';
+import './styles/navbar.css';
 import { fetchMemberMe, saveMemberMe } from './lib/member-api';
 import { site } from './lib/site';
+
+const PlaybookFlow = lazy(() => import('./components/PlaybookFlow').then((m) => ({ default: m.PlaybookFlow })));
+const MembersView = lazy(() => import('./components/MembersView').then((m) => ({ default: m.MembersView })));
+const CreatorModal = lazy(() => import('./components/CreatorModal').then((m) => ({ default: m.CreatorModal })));
+const DashboardView = lazy(() => import('./components/DashboardView').then((m) => ({ default: m.DashboardView })));
+const MeView = lazy(() => import('./components/MeView').then((m) => ({ default: m.MeView })));
+const DocsView = lazy(() => import('./components/DocsView').then((m) => ({ default: m.DocsView })));
+const LoginGate = lazy(() => import('./components/LoginGate').then((m) => ({ default: m.LoginGate })));
 
 const YEAR = new Date().getFullYear();
 
@@ -222,7 +220,11 @@ function App() {
     navigator.clipboard.writeText(prompt);
   };
 
-  const installAgentFolder = (creator: CreatorProfile) => {
+  const installAgentFolder = async (creator: CreatorProfile) => {
+    const [{ downloadZip }, { buildExportBundle }] = await Promise.all([
+      import('./lib/export'),
+      import('./lib/exportBundle'),
+    ]);
     const bundle = buildExportBundle(creator, me, progress, score, schedule);
     downloadZip(bundle, `${creator.id}-agent-kit.zip`);
   };
@@ -260,18 +262,26 @@ function App() {
             creatorCount={CREATORS.length}
           />
         )}
-        {tab === 'flow' && (
-          <PlaybookFlow creators={filteredCreators} onOpenCreator={openCreatorModal} />
+        {tab !== 'creators' && (
+          <Suspense fallback={<p className="page page-subtitle">Loading.</p>}>
+            {tab === 'flow' && (
+              <PlaybookFlow creators={filteredCreators} onOpenCreator={openCreatorModal} />
+            )}
+            {tab === 'dashboard' && (user ? (
+              <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
+            ) : <LoginGate message="The dashboard stores drafts, a weekly count, and a streak on this browser after you sign in." cta="Sign in" />)}
+            {tab === 'me' && <MeView profile={me} setProfile={updateMe} />}
+            {tab === 'docs' && (user ? <DocsView activeCreator={activeCreator} /> : <LoginGate message="The docs list the JSON endpoints. Sign in to read them here. The URLs themselves are public." cta="Sign in" />)}
+            {tab === 'members' && (user ? <MembersView /> : <LoginGate message="The member list, votes, and submissions need an account." cta="Sign in" />)}
+          </Suspense>
         )}
-        {tab === 'dashboard' && (user ? (
-          <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
-        ) : <LoginGate message="The dashboard stores drafts, a weekly count, and a streak on this browser after you sign in." cta="Sign in" />)}
-        {tab === 'me' && <MeView profile={me} setProfile={updateMe} />}
-        {tab === 'docs' && (user ? <DocsView activeCreator={activeCreator} /> : <LoginGate message="The docs list the JSON endpoints. Sign in to read them here. The URLs themselves are public." cta="Sign in" />)}
-        {tab === 'members' && (user ? <MembersView /> : <LoginGate message="The member list, votes, and submissions need an account." cta="Sign in" />)}
         {showOriginStory && <OriginStoryModal close={() => { localStorage.setItem('creatorplaybooks_origin_seen', '1'); setShowOriginStory(false); setShowOnboarding(true); }} />}
         {showOnboarding && <OnboardingModal step={onboardingStep} setStep={setOnboardingStep} close={() => { localStorage.setItem('creatorplaybooks_onboarding_seen', '1'); setShowOnboarding(false); }} setTab={setTab} />}
-        {modalCreator && <CreatorModal creator={modalCreator} onClose={closeCreatorModal} onCopyPlaybook={() => copyPlaybookForCreator(modalCreator)} onCopyAgent={() => copyAgentPrompt(modalCreator)} onInstallAgent={() => installAgentFolder(modalCreator)} />}
+        {modalCreator && (
+          <Suspense fallback={<p className="goal-empty">Loading the page.</p>}>
+            <CreatorModal creator={modalCreator} onClose={closeCreatorModal} onCopyPlaybook={() => copyPlaybookForCreator(modalCreator)} onCopyAgent={() => copyAgentPrompt(modalCreator)} onInstallAgent={() => installAgentFolder(modalCreator)} />
+          </Suspense>
+        )}
       </main>
 
       <footer className="footer">

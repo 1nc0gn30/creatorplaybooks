@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { CreatorProfile } from '../types';
 import { Copy, Check, Terminal, ExternalLink } from 'lucide-react';
 import { site } from '../lib/site';
+import '../styles/auth-pages.css';
 
 export function DocsView({ activeCreator }: { activeCreator: CreatorProfile }) {
   const [copiedPath, setCopiedPath] = useState<string | null>(null);

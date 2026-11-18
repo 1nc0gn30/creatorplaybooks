@@ -4,6 +4,7 @@ import { useAuth } from '../lib/auth-context';
 import type { MemberProfile } from '../lib/member-types';
 import { voteCreator, fetchVotes, submitCreator } from '../lib/member-api';
 import { CREATORS } from '../lib/creators';
+import '../styles/auth-pages.css';
 
 export function MembersView() {
   const { user, profile, updateProfile, refreshProfile } = useAuth();

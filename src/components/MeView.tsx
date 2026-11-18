@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { BuilderProfile } from '../types';
 import { User, Target, Link2, FileText, Eye, Accessibility, Palette } from 'lucide-react';
 import { loadAllGoals } from '../lib/goalStore';
+import '../styles/auth-pages.css';
 
 export function MeView({ profile, setProfile }: { profile: BuilderProfile; setProfile: (p: BuilderProfile) => void }) {
   const initials = profile.name ? profile.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase() : 'B';

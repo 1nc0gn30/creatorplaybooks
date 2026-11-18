@@ -1,5 +1,6 @@
 import { Calendar, MessageSquare, Zap, Plus, RefreshCw, Flame, Trash2, TrendingUp, Trophy } from 'lucide-react';
 import type { ContentIdea, ScheduledPost } from '../types';
+import '../styles/auth-pages.css';
 
 export function DashboardView({ progress, setProgress, score, level, ideas, refreshIdeas, schedule, addScheduled, removeScheduled, newPost, setNewPost, newDay, setNewDay, activeCreator }: any) {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];

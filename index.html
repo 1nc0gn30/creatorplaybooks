@@ -23,7 +23,24 @@
     <title>CreatorPlaybooks by Neal Frazier Tech</title>
   </head>
   <body>
+    <div id="boot">
+      <section class="home-hero">
+        <div class="home-hero-content">
+          <h1 class="home-headline">
+            <span class="home-headline-line">Notes from builders</span>
+            <em>who do not all live in one city.</em>
+          </h1>
+          <p class="home-subhead">CreatorPlaybooks is a reading list. The people in it post from Austin, Dubai, Barcelona, Bengaluru, Singapore, Atlanta, and the other places named on their profiles. Each page says what they are doing now, and where that sentence came from.</p>
+        </div>
+      </section>
+    </div>
     <div id="root"></div>
+    <script>
+      const boot = document.getElementById('boot');
+      const root = document.getElementById('root');
+      const hideBoot = () => { if (root.childElementCount) boot.remove(); };
+      new MutationObserver(hideBoot).observe(root, { childList: true });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
