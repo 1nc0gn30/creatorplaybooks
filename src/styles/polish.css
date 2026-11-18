@@ -418,6 +418,42 @@
 .hologram-stage { margin-top: 12px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
 .hologram-stage > div { max-height: 70vh; }
 
+.goal-notes {
+  margin: 4px 0 16px;
+  padding: 12px 14px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.goal-notes h4 { margin: 0 0 8px; font-size: 0.95rem; }
+.goal-notes ul { margin: 0; padding-left: 1.1rem; color: var(--ink-muted); display: grid; gap: 6px; }
+.goal-scale { margin-top: 8px; font-size: 0.92rem; }
+
+#boot {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.creator-modal { width: min(880px, 100%); }
+.creator-modal-body { max-width: 760px; }
+
+.page-title { text-wrap: balance; }
+.page-subtitle, .docs-overview-card p, .me-card p { text-wrap: pretty; }
+
+@media (max-width: 390px) {
+  .place-list li { flex-basis: 100%; max-width: none; }
+  .home-hero-actions { display: flex; flex-direction: column; align-items: stretch; }
+  .home-btn { width: 100%; }
+  .page { padding-left: 16px; padding-right: 16px; }
+}
+
+@media (min-width: 1440px) {
+  .docs-page, .dashboard-page, .me-page { max-width: 1280px; margin-left: auto; margin-right: auto; }
+}
+
 .goal-plan { margin-top: 8px; padding: 18px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: #12121a; }
 .goal-plan-head p, .goal-empty { color: var(--ink-muted); line-height: 1.5; }
 .goal-lengths { border: 0; margin: 0; padding: 0; }
@@ -429,6 +465,8 @@
 .goal-stats div { min-width: 88px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.04); }
 .goal-stats strong { display: block; font-size: 1.3rem; }
 .goal-stats span, .goal-phase em, .goal-today em { color: var(--muted); font-style: normal; font-size: 0.82rem; }
+.goal-phase label span, .goal-today label span { display: grid; gap: 4px; min-width: 0; }
+.goal-phase em, .goal-today em { display: block; }
 .goal-bar { height: 8px; border-radius: 99px; background: rgba(255,255,255,0.08); margin: 12px 0 18px; }
 .goal-bar span { display: block; height: 100%; background: #f4f4f7; border-radius: 99px; }
 .goal-phase ol, .goal-today, .goal-saved ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }

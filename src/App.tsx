@@ -1,35 +1,42 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Sparkles, Zap, Wand2, Highlighter, Underline, Italic, Bold } from 'lucide-react';
 import type { BuilderProfile, ContentIdea, CreatorProfile, ScheduledPost, UserProgress, Tab } from './types';
-import { PlaybookFlow } from './components/PlaybookFlow';
 import { defaultBuilder, defaultProgress, levelFromXp, scoreProgress } from './lib/maya';
 import { CREATORS } from './lib/creators';
-import { downloadZip } from './lib/export';
-import { useAuth } from './lib/auth';
+import { useAuth } from './lib/auth-context';
 import { generateIdeasForCreator } from './lib/ideas';
-import { buildExportBundle } from './lib/exportBundle';
-import { MembersView } from './components/MembersView';
 import { Navbar } from './components/Navbar';
-import { CreatorModal } from './components/CreatorModal';
 import { HomePage } from './components/HomePage';
-import './styles/navbar.css';
-import './styles/auth-pages.css';
 import { OriginStoryModal } from './components/OriginStoryModal';
 import { OnboardingModal } from './components/OnboardingModal';
-import { DashboardView } from './components/DashboardView';
-import { MeView } from './components/MeView';
-import { DocsView } from './components/DocsView';
+import './styles/navbar.css';
 import { fetchMemberMe, saveMemberMe } from './lib/member-api';
 import { site } from './lib/site';
+
+const PlaybookFlow = lazy(() => import('./components/PlaybookFlow').then((m) => ({ default: m.PlaybookFlow })));
+const MembersView = lazy(() => import('./components/MembersView').then((m) => ({ default: m.MembersView })));
+const CreatorModal = lazy(() => import('./components/CreatorModal').then((m) => ({ default: m.CreatorModal })));
+const DashboardView = lazy(() => import('./components/DashboardView').then((m) => ({ default: m.DashboardView })));
+const MeView = lazy(() => import('./components/MeView').then((m) => ({ default: m.MeView })));
+const DocsView = lazy(() => import('./components/DocsView').then((m) => ({ default: m.DocsView })));
+
+const YEAR = new Date().getFullYear();
+
+function readMentor(): CreatorProfile | null {
+  const mentorId = new URLSearchParams(window.location.search).get('mentor');
+  if (!mentorId) return null;
+  return CREATORS.find((c) => c.id === mentorId) ?? null;
+}
 
 function App() {
   const { user, profile, login, logout } = useAuth();
   const [tab, setTab] = useState<Tab | 'members' | 'flow'>('creators');
-  const [activeCreator, setActiveCreator] = useState<CreatorProfile>(CREATORS[0]);
-  const [modalCreator, setModalCreator] = useState<CreatorProfile | null>(null);
+  const [activeCreator, setActiveCreator] = useState<CreatorProfile>(() => readMentor() ?? CREATORS[0]);
+  const [modalCreator, setModalCreator] = useState<CreatorProfile | null>(() => readMentor());
   const [showRemix, setShowRemix] = useState(false);
   const [progress, setProgress] = useState<UserProgress>(defaultProgress());
-  const [ideas, setIdeas] = useState<ContentIdea[]>(generateIdeasForCreator(CREATORS[0], 6));
+  const [ideas, setIdeas] = useState<ContentIdea[]>(() => generateIdeasForCreator(readMentor() ?? CREATORS[0], 6));
+  const [ideaFor, setIdeaFor] = useState(() => (readMentor() ?? CREATORS[0]).id);
   const [schedule, setSchedule] = useState<ScheduledPost[]>([]);
   const [newPost, setNewPost] = useState('');
   const [newDay, setNewDay] = useState('Monday');
@@ -38,7 +45,9 @@ function App() {
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {}
+      } catch {
+        /* keep the default profile */
+      }
     }
     return defaultBuilder();
   });
@@ -65,8 +74,12 @@ function App() {
     return () => { cancelled = true; };
   }, [user]);
 
-  const [showOriginStory, setShowOriginStory] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showOriginStory, setShowOriginStory] = useState(() => !localStorage.getItem('creatorplaybooks_origin_seen'));
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    const seenOrigin = localStorage.getItem('creatorplaybooks_origin_seen');
+    const seenOnboarding = localStorage.getItem('creatorplaybooks_onboarding_seen');
+    return Boolean(seenOrigin) && !seenOnboarding;
+  });
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -118,22 +131,6 @@ function App() {
   const level = useMemo(() => levelFromXp(progress.xp), [progress.xp]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const mentorId = params.get('mentor');
-    if (mentorId) {
-      const match = CREATORS.find((c) => c.id === mentorId);
-      if (match) {
-        setActiveCreator(match);
-        setModalCreator(match);
-      }
-    }
-    const seenOnboarding = localStorage.getItem('creatorplaybooks_onboarding_seen');
-    const seenOrigin = localStorage.getItem('creatorplaybooks_origin_seen');
-    if (!seenOrigin) setShowOriginStory(true);
-    else if (!seenOnboarding) setShowOnboarding(true);
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
@@ -160,9 +157,10 @@ function App() {
     else document.body.style.removeProperty('--surface-2');
   }, [remix, activeCreator, me, menuOpen]);
 
-  useEffect(() => {
+  if (ideaFor !== activeCreator.id) {
+    setIdeaFor(activeCreator.id);
     setIdeas(generateIdeasForCreator(activeCreator, 6));
-  }, [activeCreator]);
+  }
 
   const updateMe = (next: BuilderProfile) => {
     setMe(next);
@@ -221,7 +219,11 @@ function App() {
     navigator.clipboard.writeText(prompt);
   };
 
-  const installAgentFolder = (creator: CreatorProfile) => {
+  const installAgentFolder = async (creator: CreatorProfile) => {
+    const [{ downloadZip }, { buildExportBundle }] = await Promise.all([
+      import('./lib/export'),
+      import('./lib/exportBundle'),
+    ]);
     const bundle = buildExportBundle(creator, me, progress, score, schedule);
     downloadZip(bundle, `${creator.id}-agent-kit.zip`);
   };
@@ -259,18 +261,26 @@ function App() {
             creatorCount={CREATORS.length}
           />
         )}
-        {tab === 'flow' && (
-          <PlaybookFlow creators={filteredCreators} onOpenCreator={openCreatorModal} />
+        {tab !== 'creators' && (
+          <Suspense fallback={<p className="page page-subtitle">Loading.</p>}>
+            {tab === 'flow' && (
+              <PlaybookFlow creators={filteredCreators} onOpenCreator={openCreatorModal} />
+            )}
+            {tab === 'dashboard' && (
+              <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
+            )}
+            {tab === 'me' && <MeView profile={me} setProfile={updateMe} />}
+            {tab === 'docs' && <DocsView activeCreator={activeCreator} />}
+            {tab === 'members' && <MembersView />}
+          </Suspense>
         )}
-        {tab === 'dashboard' && (
-          <DashboardView progress={progress} setProgress={setProgress} score={score} level={level} ideas={ideas} refreshIdeas={refreshIdeas} schedule={schedule} addScheduled={addScheduled} removeScheduled={removeScheduled} newPost={newPost} setNewPost={setNewPost} newDay={newDay} setNewDay={setNewDay} activeCreator={activeCreator} openCreatorModal={openCreatorModal} me={me} />
-        )}
-        {tab === 'me' && <MeView profile={me} setProfile={updateMe} />}
-        {tab === 'docs' && <DocsView activeCreator={activeCreator} />}
-        {tab === 'members' && <MembersView />}
         {showOriginStory && <OriginStoryModal close={() => { localStorage.setItem('creatorplaybooks_origin_seen', '1'); setShowOriginStory(false); setShowOnboarding(true); }} />}
         {showOnboarding && <OnboardingModal step={onboardingStep} setStep={setOnboardingStep} close={() => { localStorage.setItem('creatorplaybooks_onboarding_seen', '1'); setShowOnboarding(false); }} setTab={setTab} />}
-        {modalCreator && <CreatorModal creator={modalCreator} onClose={closeCreatorModal} onCopyPlaybook={() => copyPlaybookForCreator(modalCreator)} onCopyAgent={() => copyAgentPrompt(modalCreator)} onInstallAgent={() => installAgentFolder(modalCreator)} />}
+        {modalCreator && (
+          <Suspense fallback={<p className="goal-empty">Loading the page.</p>}>
+            <CreatorModal creator={modalCreator} onClose={closeCreatorModal} onCopyPlaybook={() => copyPlaybookForCreator(modalCreator)} onCopyAgent={() => copyAgentPrompt(modalCreator)} onInstallAgent={() => installAgentFolder(modalCreator)} />
+          </Suspense>
+        )}
       </main>
 
       <footer className="footer">
@@ -307,7 +317,7 @@ function App() {
             <p className="footer-hint" style={{ marginTop: '8px', fontSize: '0.72rem', wordBreak: 'break-all' }}>Solana Tip: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code></p>
           </div>
         </div>
-        <div className="footer-bottom"><span>Engineered by Neal Frazier Tech (@1nc0gn30) • <a href="https://nullai.tech" target="_blank" rel="noreferrer">NullAI Platform</a> · <a href="https://github.com/1nc0gn30/creatorplaybooks" target="_blank" rel="noreferrer">GitHub</a></span></div>
+        <div className="footer-bottom"><span>© {YEAR} CreatorPlaybooks · published by Neal Frazier Tech</span></div>
       </footer>
       <div className="remix-pad" title="Creative remix controls">
         <button className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text" data-tooltip="Bold Text"><Bold size={16} /></button>

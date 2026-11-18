@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { X, Copy, Check, Bot, FolderOpen, Share2, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import type { CreatorProfile } from '../types';
 import { useXProfile, formatNumber } from '../lib/xData';
 import { site } from '../lib/site';
-import { PlaybookGoal } from './PlaybookGoal';
+
+const PlaybookGoal = lazy(() => import('./PlaybookGoal').then((m) => ({ default: m.PlaybookGoal })));
 
 export function CreatorModal({ creator, onClose, onCopyPlaybook, onCopyAgent, onInstallAgent }: { creator: CreatorProfile; onClose: () => void; onCopyPlaybook: () => void; onCopyAgent: () => void; onInstallAgent: () => void }) {
   const xUrl = `https://x.com/${creator.handle.replace('@', '')}`;
@@ -411,7 +412,9 @@ curl -s '${site.origin}/api/creator?id=${creator.id}&expand=plays,hooks,angles' 
             </div>
           </div>
 
-          <PlaybookGoal creator={creator} />
+          <Suspense fallback={<p className="goal-empty">Loading the practice plan.</p>}>
+            <PlaybookGoal key={creator.id} creator={creator} />
+          </Suspense>
 
           {creator.sources && creator.sources.length > 0 && (
             <div className="creator-modal-section">

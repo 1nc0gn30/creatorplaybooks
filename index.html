@@ -40,7 +40,7 @@
           "creator": {
             "@type": "Person",
             "name": "Neal Frazier",
-            "url": "https://github.com/1nc0gn30"
+            "url": "https://nealfrazier.tech"
           }
         },
         {
@@ -59,7 +59,7 @@
               "name": "Is CreatorPlaybooks free and open access?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. Every mentor playbook, dashboard draft tool, API doc, and Markdown export is 100% free and unlocked with zero paywalls, supported by optional Stripe Buy Us a Coffee and Solana tips."
+                "text": "Yes. Every mentor playbook, the dashboard, the API docs, and the Markdown export are free."
               }
             }
           ]
@@ -69,7 +69,24 @@
     </script>
   </head>
   <body>
+    <div id="boot">
+      <section class="home-hero">
+        <div class="home-hero-content">
+          <h1 class="home-headline">
+            <span class="home-headline-line">Notes from builders</span>
+            <em>who do not all live in one city.</em>
+          </h1>
+          <p class="home-subhead">CreatorPlaybooks is a reading list. The people in it post from Austin, Dubai, Barcelona, Bengaluru, Singapore, Atlanta, and the other places named on their profiles. Each page says what they are doing now, and where that sentence came from.</p>
+        </div>
+      </section>
+    </div>
     <div id="root"></div>
+    <script>
+      const boot = document.getElementById('boot');
+      const root = document.getElementById('root');
+      const hideBoot = () => { if (root.childElementCount) boot.remove(); };
+      new MutationObserver(hideBoot).observe(root, { childList: true });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

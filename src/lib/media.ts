@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { CreatorProfile } from '../types';
 
 const CACHE_KEY = 'mayagrowth_media_cache_v2';
@@ -55,18 +55,20 @@ export function useMayaMedia(profile: CreatorProfile) {
   const [media, setMedia] = useState<string[]>(profile.media || FALLBACK_MEDIA);
   const [status, setStatus] = useState<{ source: string; refreshedAt: string; loading: boolean; error?: string }>({ source: 'fallback', refreshedAt: '-', loading: true });
 
-  const refresh = async () => {
-    setStatus((s) => ({ ...s, loading: true }));
+  const refresh = useCallback(async () => {
     const result = await refreshMayaMedia(profile);
     setMedia(result.media);
     setStatus({ source: result.source, refreshedAt: result.refreshedAt, loading: false, error: result.error });
-  };
+  }, [profile]);
 
   useEffect(() => {
-    refresh();
-    const id = setInterval(refresh, CACHE_TTL_MS);
-    return () => clearInterval(id);
-  }, [profile.id]);
+    const kick = window.setTimeout(() => { refresh(); }, 0);
+    const id = window.setInterval(() => { refresh(); }, CACHE_TTL_MS);
+    return () => {
+      window.clearTimeout(kick);
+      window.clearInterval(id);
+    };
+  }, [refresh]);
 
   return { media, status, refresh };
 }

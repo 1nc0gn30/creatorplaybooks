@@ -1,24 +1,26 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { CreatorProfile } from '../types';
-import { buildPlan, GOAL_LENGTHS, todayISO } from '../lib/playbookPlan';
+import { GOAL_LENGTHS, todayISO } from '../lib/playbookPlan';
+import { planFor } from '../data/mentorPlans';
 import { completion, datedSteps, dayStreak, downloadIcs, loadGoal, resetGoal, saveGoal, toIcs, type StoredGoal } from '../lib/goalStore';
 
 export function PlaybookGoal({ creator }: { creator: CreatorProfile }) {
-  const steps = useMemo(() => buildPlan(creator), [creator]);
-  const [days, setDays] = useState<number>(30);
-  const [custom, setCustom] = useState('');
-  const [start, setStart] = useState(todayISO);
-  const [goal, setGoal] = useState<StoredGoal | null>(null);
-
-  useEffect(() => {
+  const [goal, setGoal] = useState<StoredGoal | null>(() => loadGoal(creator.id));
+  const [days, setDays] = useState<number>(() => {
     const saved = loadGoal(creator.id);
-    setGoal(saved);
-    if (saved) {
-      setDays(saved.days);
-      setStart(saved.start);
-      if (!(GOAL_LENGTHS as readonly number[]).includes(saved.days)) setCustom(String(saved.days));
-    }
-  }, [creator.id]);
+    return saved && (GOAL_LENGTHS as readonly number[]).includes(saved.days) ? saved.days : 30;
+  });
+  const [custom, setCustom] = useState(() => {
+    const saved = loadGoal(creator.id);
+    if (saved && !(GOAL_LENGTHS as readonly number[]).includes(saved.days)) return String(saved.days);
+    return '';
+  });
+  const [start, setStart] = useState(() => loadGoal(creator.id)?.start || todayISO());
+
+  const chosen = custom.trim() ? Math.min(365, Math.max(1, Number(custom) || days)) : days;
+  const previewDays = goal?.days ?? chosen;
+  const plan = useMemo(() => planFor(creator.id, previewDays), [creator.id, previewDays]);
+  const steps = plan?.steps ?? [];
 
   const activeDays = custom.trim() ? Math.min(365, Math.max(1, Number(custom) || days)) : days;
   const dated = goal ? datedSteps(steps, goal) : [];
@@ -66,8 +68,15 @@ export function PlaybookGoal({ creator }: { creator: CreatorProfile }) {
     <section className="goal-plan" aria-labelledby={`goal-${creator.id}`}>
       <div className="goal-plan-head">
         <h3 id={`goal-${creator.id}`}>Practice plan</h3>
-        <p>Pick how long you want to work this playbook. The steps spread across those days. Suggestions are ours. The study steps point at their public pages.</p>
+        <p>{plan?.why}</p>
+        <p className="goal-scale">This length keeps {planFor(creator.id, chosen)?.steps.length ?? 0} steps. A 7-day goal stays short. A 90-day goal adds the longer work.</p>
       </div>
+      {plan && (
+        <div className="goal-notes">
+          <h4>Easy to get wrong</h4>
+          <ul>{plan.mistakes.map((item) => <li key={item}>{item}</li>)}</ul>
+        </div>
+      )}
 
       <fieldset className="goal-lengths">
         <legend>Goal length</legend>
@@ -152,7 +161,7 @@ export function PlaybookGoal({ creator }: { creator: CreatorProfile }) {
                       <input type="checkbox" checked={!!goal.checks[step.id]} onChange={() => toggle(step.id)} />
                       <span>
                         <strong>{step.title}</strong>
-                        <em>{step.date} · {step.basis === 'suggestion' ? 'Our suggestion' : 'From their public work'}</em>
+                        <em>{step.date} · {step.minutes} min · {step.basis === 'suggestion' ? 'Our suggestion' : 'From their public work'}</em>
                         <p>{step.detail}</p>
                         <p><b>Deliverable.</b> {step.deliverable}</p>
                         <p><b>Checkpoint.</b> {step.checkpoint}</p>

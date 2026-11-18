@@ -2356,7 +2356,7 @@ const RAW_CREATORS: CreatorProfile[] = [
     handle: '@biilmann',
     xHandle: 'biilmann',
     status: 'verified',
-    name: 'Matt Billman (Mathias Biilmann)',
+    name: 'Matt Biilmann',
     emoji: '🌐',
     avatar: CREATOR_MEDIA.biilmann.avatar || '',
     banner: CREATOR_MEDIA.biilmann.banner || '',
