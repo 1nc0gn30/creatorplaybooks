@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Sparkles, TrendingUp, Users, UserCircle, LogIn, LogOut, BookOpen, Workflow } from 'lucide-react';
-import type { AuthUser } from '../lib/auth';
+import type { AuthUser } from '../lib/auth-context';
 import type { MemberProfile } from '../lib/member-types';
 import type { Tab } from '../types';
 import { TabButton } from './TabButton';

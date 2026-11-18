@@ -44,7 +44,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('kp-3', 'One hour', 'Host a one-hour build with a prompt', 'Suggestion, in the shape of that workshop: a prompt, a time, and a URL.', 'Date, prompt, and one link that shipped.', 'The link opens.', 90, 14, 'suggestion'),
       s('kp-4', 'Credit', 'Write the recap mostly about other people', 'The Atlanta post names teammates, not only the host.', 'A recap with at least three names and a detail each.', 'Most sentences are not about you.', 40, 30, 'source', 'https://www.netlify.com/blog/build-with-netlify-came-to-atlanta/'),
       s('kp-5', 'The about page', 'Make the bio match one page you control', 'His about page states the Netlify role.', 'Bio and site say the same current job.', 'A stranger gets the same sentence from both.', 20, 30, 'source', 'https://thisiskp.com/about/'),
-      s('kp-6', 'Three rooms', 'Run three sessions and keep the prompts', 'Suggestion.', 'Three dated recaps.', 'Each recap has a link that still works.', 60, 90, 'suggestion'),
+      s('kp-6', 'Three rooms', 'Run three sessions and keep the prompts', 'Practice only: run three sessions and keep the prompts. Do not present it as something they scheduled.', 'Three dated recaps.', 'Each recap has a link that still works.', 60, 90, 'suggestion'),
     ],
   },
   gerrit: {
@@ -55,7 +55,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('ge-2', 'Changelog', 'Read one icon release', 'Pixelarticons published a 5,646-icon update from search logs. Majesticons 3.9 is dated Nov 3, 2026.', 'Version, date, and three names from the page.', 'You did not round the count.', 30, 7, 'source', 'https://pixelarticons.com/updates/5646-icons-requests-sports-and-basics/'),
       s('ge-3', 'Free set', 'Install the free package or open the gallery', 'The README describes the MIT set and npm install pixelarticons.', 'The install command you ran, or a sentence that you only browsed.', 'The command matches the README.', 25, 14, 'source', 'https://github.com/halfmage/pixelarticons/'),
       s('ge-4', 'Bio order', 'Put the current product first', 'Rankvisit is the first link. The libraries stay. They are just not first.', 'Your bio with the priority URL on line one.', 'The first link is what a new reader should open.', 15, 14, 'source', 'https://x.com/halfmage'),
-      s('ge-5', 'Your changelog', 'Ship a count, a date, and how owners get the files', 'Suggestion.', 'A public note with those parts.', 'The count matches the files.', 70, 30, 'suggestion'),
+      s('ge-5', 'Your changelog', 'Ship a count, a date, and how owners get the files', 'Practice only: ship a count, a date, and how owners get the files. Do not present it as something they scheduled.', 'A public note with those parts.', 'The count matches the files.', 70, 30, 'suggestion'),
       s('ge-6', 'Search log', 'Keep empty searches for two weeks', 'The Pixelarticons note says empty searches became icons, including an avocado spelled several ways.', 'The list, and one item you then added.', 'The new item exists because of a row.', 20, 60, 'source', 'https://pixelarticons.com/updates/5646-icons-requests-sports-and-basics/'),
     ],
   },
@@ -66,7 +66,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('lz-1', 'The film', 'Watch one piece and name the model in the caption', 'Her work page captions films with MiniMax, Seedance, or Wan.', 'Title and model from that caption.', 'The model is in the caption.', 30, 7, 'source', 'https://contra.com/lynnzeng/work'),
       s('lz-2', 'The menu', 'Open the three URLs in the bio', 'picaisso.xyz, newmom.help, and zengs.netlify.app.', 'One sentence per page.', 'You opened all three.', 25, 7, 'source', 'https://x.com/zeng_wt'),
       s('lz-3', 'A test', 'Read the Hailuo note from Jan 11, 2026', 'She describes testing a start-and-end frame and sending feedback.', 'The feature and what she says she sent back.', 'You did not claim the same access.', 20, 14, 'source', 'https://contra.com/p/gBRNQkRe-as-a-hailuo-ai-mini-max-ambassador-i-always-have-early-acc'),
-      s('lz-4', 'Your clip', 'Finish one clip and name the tool in the first lines', 'Suggestion.', 'A published clip with the model named.', 'The caption still works if the logo is removed.', 120, 30, 'suggestion'),
+      s('lz-4', 'Your clip', 'Finish one clip and name the tool in the first lines', 'Practice only: finish one clip and name the tool in the first lines. Do not present it as something they scheduled.', 'A published clip with the model named.', 'The caption still works if the logo is removed.', 120, 30, 'suggestion'),
       s('lz-5', 'A series', 'Keep two visual constraints for four clips', 'Suggestion. Her work reads as a series: same grade, new story.', 'Four clips and the two constraints, written down.', 'A stranger can see the constraints.', 90, 90, 'suggestion'),
     ],
   },
@@ -78,7 +78,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('jai-2', 'The limit', 'Write what was not used', 'The essay says the implementation does not run a Databricks workspace.', 'One sentence in that shape for a system you know.', 'You named a tool you did not use.', 25, 7, 'source', 'https://chaiwithjai.com/blog/monetizing-music-ip'),
       s('jai-3', 'Teaching', 'Read the Oct 20 note', 'He describes Claude Code as a way to spend more time teaching.', 'What the tool did, and what the time was for.', 'No invented student count.', 20, 14, 'source', 'https://www.linkedin.com/posts/chaiwithjai_how-im-using-claude-code-to-spend-more-time-activity-7518372629880139777-Dxdl'),
       s('jai-4', 'The bio', 'Keep one non-work line', 'His bio includes breathwork at Soma Breath next to the cloud work.', 'Your bio with the work and one true practice that is not the stack.', 'The practice line is true.', 15, 14, 'source', 'https://x.com/ChaiWithJai'),
-      s('jai-5', 'Your path', 'Write one path in three stages, with private figures removed', 'Suggestion.', 'A page with three headings and one limit.', 'A reader can see what you have not measured.', 80, 30, 'suggestion'),
+      s('jai-5', 'Your path', 'Write one path in three stages, with private figures removed', 'Practice only: write one path in three stages, with private figures removed. Do not present it as something they scheduled.', 'A page with three headings and one limit.', 'A reader can see what you have not measured.', 80, 30, 'suggestion'),
       s('jai-6', 'A second pass', 'Delete any sentence you cannot point at', 'Suggestion, after your own writeup.', 'The diff.', 'The deleted line is gone from the public version.', 30, 60, 'suggestion'),
     ],
   },
@@ -91,8 +91,8 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('nf-3', 'The archive', 'Leave the old page linked', 'The Season 3 note points at the Season 2 archive on purpose.', 'A link from the new page to the old one, if you have an old challenge.', 'The old page still loads.', 20, 14, 'source', 'https://www.nealfrazier.tech/season-3/day-01/'),
       s('nf-4', 'Local', 'Read what Zoth says stays on the machine', 'zoth.nullai.tech describes a local-first studio.', 'One sentence from the page.', 'No security claim that is not written there.', 25, 14, 'source', 'https://zoth.nullai.tech'),
       s('nf-5', 'The offer', 'Separate the client page from the lab', 'nealfrazier.tech describes Hampton Roads web work next to Zoth and NullAI.', 'Two links: one a client can use, one a lab page.', 'A client does not have to read the lab to find the offer.', 30, 30, 'source', 'https://www.nealfrazier.tech/'),
-      s('nf-6', 'Seven days', 'Seven dates, each with a URL or the word missed', 'Suggestion.', 'The list.', 'Missed days stay visible.', 40, 30, 'suggestion'),
-      s('nf-7', 'A month', 'Thirty drops, or a written stop', 'Suggestion.', 'The log, including the stop if you stopped.', 'Short days were not deleted.', 30, 90, 'suggestion'),
+      s('nf-6', 'Seven days', 'Seven dates, each with a URL or the word missed', 'Practice only: seven dates, each with a URL or the word missed. Do not present it as something they scheduled.', 'The list.', 'Missed days stay visible.', 40, 30, 'suggestion'),
+      s('nf-7', 'A month', 'Thirty drops, or a written stop', 'Practice only: thirty drops, or a written stop. Do not present it as something they scheduled.', 'The log, including the stop if you stopped.', 'Short days were not deleted.', 30, 90, 'suggestion'),
     ],
   },
   maddiedreese: {
@@ -100,10 +100,10 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
     mistakes: ['Inventing project names that are not on the site.', 'Treating five wins as an audited list.'],
     steps: [
       s('md-1', 'The printer', 'Open the site and find the printer path', 'The bio invites a message to the printer.', 'The printer URL, or a sentence that you could not find it.', 'You opened maddiedreese.com.', 20, 7, 'source', 'https://maddiedreese.com'),
-      s('md-2', 'A toy', 'Ship one interaction that takes under a minute', 'Suggestion.', 'A live URL and a one-line invitation.', 'You can finish it yourself in under a minute.', 120, 14, 'suggestion'),
+      s('md-2', 'A toy', 'Ship one interaction that takes under a minute', 'Practice only: ship one interaction that takes under a minute. Do not present it as something they scheduled.', 'A live URL and a one-line invitation.', 'You can finish it yourself in under a minute.', 120, 14, 'suggestion'),
       s('md-3', 'The index', 'Add it to the homepage the same day', 'Her profile sends people to one site.', 'The homepage lists the new thing.', 'The homepage link and the post link match.', 20, 14, 'source', 'https://maddiedreese.com'),
       s('md-4', 'A timed build', 'Enter one hackathon or set your own hour', 'The bio states five wins. You need the constraint and the result, not a win.', 'Prompt, stack, link, and whether it placed.', '“Placed” stays blank if you do not know.', 180, 30, 'source', 'https://x.com/maddiedreese'),
-      s('md-5', 'Three toys', 'Three public interactions on one index', 'Suggestion.', 'Three URLs on one page.', 'Each still loads at the end of the month.', 60, 90, 'suggestion'),
+      s('md-5', 'Three toys', 'Three public interactions on one index', 'Practice only: three public interactions on one index. Do not present it as something they scheduled.', 'Three URLs on one page.', 'Each still loads at the end of the month.', 60, 90, 'suggestion'),
     ],
   },
   clarklab: {
@@ -111,9 +111,9 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
     mistakes: ['Describing Superfun as a solo brand.', 'Posting a capabilities list with nothing made that week.'],
     steps: [
       s('cw-1', 'The names', 'Read the first screen', 'City and both names, as the site states them.', 'Those three facts.', 'Angie is in the note.', 15, 7, 'source', 'https://superfun.team'),
-      s('cw-2', 'This week', 'Post one screen and one decision you rejected', 'Suggestion.', 'A clip or image plus five lines.', 'The rejected option is specific.', 60, 7, 'suggestion'),
+      s('cw-2', 'This week', 'Post one screen and one decision you rejected', 'Practice only: post one screen and one decision you rejected. Do not present it as something they scheduled.', 'A clip or image plus five lines.', 'The rejected option is specific.', 60, 7, 'suggestion'),
       s('cw-3', 'The bio', 'One job, one place, one practice', 'His bio is design engineer, Superfun, Austin.', 'Your bio in two lines.', 'It fits.', 15, 14, 'source', 'https://x.com/clarklab'),
-      s('cw-4', 'Four notes', 'One make-note a week', 'Suggestion.', 'Four dated notes, each with an image or a link.', 'The studio page can stay quiet.', 45, 60, 'suggestion'),
+      s('cw-4', 'Four notes', 'One make-note a week', 'Practice only: one make-note a week. Do not present it as something they scheduled.', 'Four dated notes, each with an image or a link.', 'The studio page can stay quiet.', 45, 60, 'suggestion'),
     ],
   },
   rasaljaya: {
@@ -124,7 +124,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('rj-2', 'Both lists', 'Put the two ambassador lists in one note', 'X on Nov 11: SpaceXSI, BuiltList, Replit, Devin, ElevenLabs. The site also lists Cursor and SpaceXAI.', 'Two columns, dated.', 'Neither is labeled current unless you checked that day.', 20, 7, 'source', 'https://www.rasaljay.com'),
       s('rj-3', 'BuiltList', 'Describe only what the X profile shows', 'A separate product site was not verified.', 'What the profile says, and “no site verified” if that is still true.', 'No invented URL.', 15, 14, 'source', 'https://x.com/builtlistlk'),
       s('rj-4', 'One episode', 'Publish one local detail with an episode link', 'Suggestion: a detail that only makes sense in Sri Lanka.', 'The post.', 'The detail is checkable.', 40, 30, 'suggestion', 'https://thett360.com/'),
-      s('rj-5', 'A month', 'Four episode posts', 'Suggestion.', 'Four links.', 'Each points at the show.', 30, 60, 'suggestion'),
+      s('rj-5', 'A month', 'Four episode posts', 'Practice only: four episode posts. Do not present it as something they scheduled.', 'Four links.', 'Each points at the show.', 30, 60, 'suggestion'),
     ],
   },
   ayushtweetshere: {
@@ -132,9 +132,9 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
     mistakes: ['Inventing a fourth product.', 'Putting all three links in one post.'],
     steps: [
       s('ay-1', 'Three pages', 'Open the three URLs', 'getvoibe.com, outlierkit.com, superframeworks.com/idea-bank.', 'One sentence per site, from the page.', 'Three sentences, three URLs.', 30, 7, 'source', 'https://superframeworks.com/idea-bank'),
-      s('ay-2', 'One URL', 'Write about only one of them', 'Suggestion.', 'One post, one URL.', 'The other two domains are absent.', 30, 7, 'suggestion'),
+      s('ay-2', 'One URL', 'Write about only one of them', 'Practice only: write about only one of them. Do not present it as something they scheduled.', 'One post, one URL.', 'The other two domains are absent.', 30, 7, 'suggestion'),
       s('ay-3', 'The free link', 'Point a profile at the free page', 'His profile URL is the idea bank. The location field says Free Idea Bank.', 'Your profile link, if you have a free page.', 'It is not a checkout.', 15, 14, 'source', 'https://x.com/ayushtweetshere'),
-      s('ay-4', 'A rotation', 'Three posts on three days', 'Suggestion.', 'Three posts.', 'Each names a different URL.', 25, 30, 'suggestion'),
+      s('ay-4', 'A rotation', 'Three posts on three days', 'Practice only: three posts on three days. Do not present it as something they scheduled.', 'Three posts.', 'Each names a different URL.', 25, 30, 'suggestion'),
       s('ay-5', 'Twelve', 'Keep the rotation for four weeks', 'Suggestion. Drop a product whose site goes down.', 'A tally.', 'No post contains two product URLs.', 20, 90, 'suggestion'),
     ],
   },
@@ -144,9 +144,9 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
     steps: [
       s('ph-1', 'The sentence', 'Put the homepage line next to the bio line', 'Both say an AIOS for founders.', 'The two sentences and the date.', 'You wrote the difference if they no longer match.', 15, 7, 'source', 'https://magicteams.ai/'),
       s('ph-2', 'One task', 'Describe one founder task, not a feature list', 'The public line is about the founder being the bottleneck.', 'Task, before, after, link.', 'No feature you did not see.', 40, 7, 'source', 'https://magicteams.ai/'),
-      s('ph-3', 'Your line', 'Make your bio and homepage match the same day', 'Suggestion.', 'Both URLs showing the same line.', 'You changed them together.', 30, 14, 'suggestion'),
+      s('ph-3', 'Your line', 'Make your bio and homepage match the same day', 'Practice only: make your bio and homepage match the same day. Do not present it as something they scheduled.', 'Both URLs showing the same line.', 'You changed them together.', 30, 14, 'suggestion'),
       s('ph-4', 'The city', 'Mention Dubai only with a reason', 'The location field says Dubai.', 'One post, or no post.', 'If the city is there, the reason is there.', 20, 30, 'source', 'https://x.com/phanindra_ai'),
-      s('ph-5', 'Four tasks', 'Four different hours in a founder’s week', 'Suggestion.', 'Four posts.', 'None is a feature grid.', 30, 60, 'suggestion'),
+      s('ph-5', 'Four tasks', 'Four different hours in a founder’s week', 'Practice only: four different hours in a founder’s week. Do not present it as something they scheduled.', 'Four posts.', 'None is a feature grid.', 30, 60, 'suggestion'),
     ],
   },
   ash_wesley_: {
@@ -165,9 +165,9 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
     steps: [
       s('cm-1', 'The handle', 'Open the X profile and the YouTube channel', 'Confirm they match.', 'Both URLs.', 'Both say Conor Martin.', 15, 7, 'source', 'https://www.youtube.com/@conormartinai/videos'),
       s('cm-2', 'One query', 'Write the query, the page, the change, and the check date', 'Suggestion. Do not claim a ranking.', 'Those four fields.', 'No position yet.', 40, 7, 'suggestion'),
-      s('cm-3', 'The check', 'Look the query up on the date you set', 'Suggestion.', 'The date and the result, including “not in the top 20.”', 'The date matches the earlier note.', 20, 14, 'suggestion'),
+      s('cm-3', 'The check', 'Look the query up on the date you set', 'Practice only: look the query up on the date you set. Do not present it as something they scheduled.', 'The date and the result, including “not in the top 20.”', 'The date matches the earlier note.', 20, 14, 'suggestion'),
       s('cm-4', 'A video', 'If you publish one, put the query in the first line', 'His profile points at YouTube.', 'Title, query, link.', 'The video exists.', 60, 30, 'source', 'https://x.com/conormartinai'),
-      s('cm-5', 'Four queries', 'Four checks in a month', 'Suggestion.', 'A table.', 'No ranking you did not look up.', 30, 90, 'suggestion'),
+      s('cm-5', 'Four queries', 'Four checks in a month', 'Practice only: four checks in a month. Do not present it as something they scheduled.', 'A table.', 'No ranking you did not look up.', 30, 90, 'suggestion'),
     ],
   },
   monroe_carol: {
@@ -178,7 +178,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('car-2', 'One handoff', 'Write one workflow that broke, and the fix', 'Suggestion. No tool list.', 'One note.', 'The fix is a step.', 50, 7, 'suggestion'),
       s('car-3', 'A contribution', 'Name a Supabase surface only if you have one', 'Her site says SupaSquad. Yours needs your own link, or an honest blank.', 'Project, surface, link, or “none yet.”', 'The link opens if you included one.', 30, 14, 'source', 'https://www.carolmonroe.com'),
       s('car-4', 'The show', 'Read the TechloversFM X profile and stop there', 'A standalone domain was not verified.', 'What the profile says.', 'No invented URL.', 15, 14, 'source', 'https://x.com/TechloversFM'),
-      s('car-5', 'Four notes', 'Four different handoffs', 'Suggestion.', 'Four dated notes.', 'None is a tool roundup.', 40, 60, 'suggestion'),
+      s('car-5', 'Four notes', 'Four different handoffs', 'Practice only: four different handoffs. Do not present it as something they scheduled.', 'Four dated notes.', 'None is a tool roundup.', 40, 60, 'suggestion'),
     ],
   },
   picsoung: {
@@ -189,7 +189,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('ng-2', 'Three logos', 'Make three logos if the tool still allows it', 'The bio calls them Airbnb-style logos.', 'Three images and the generator URL, or a note that it would not run.', 'You tried.', 30, 7, 'source', 'https://bnbicons.com'),
       s('ng-3', 'Logistics', 'Write a meetup as date, place, and one talk', 'HackBarna is in the bio. Use “unknown” rather than a guessed guest.', 'Those fields.', 'No invented speaker.', 25, 14, 'source', 'https://x.com/picsoung'),
       s('ng-4', 'Your domain', 'Put a side project on its own domain', 'Suggestion: one sentence, mentioned after the serious work.', 'The domain and the sentence.', 'The homepage is not a thread.', 90, 30, 'suggestion', 'https://duckfight.club'),
-      s('ng-5', 'Three months', 'One meetup note a month', 'Suggestion.', 'Three notes.', 'Each has a date or says the date is unknown.', 20, 90, 'suggestion'),
+      s('ng-5', 'Three months', 'One meetup note a month', 'Practice only: one meetup note a month. Do not present it as something they scheduled.', 'Three notes.', 'Each has a date or says the date is unknown.', 20, 90, 'suggestion'),
     ],
   },
   nkgoutham: {
@@ -200,7 +200,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('kg-2', 'Two texts', 'Put the bio next to the site and do not merge them', 'On Nov 11 the bio addressed Grok. The site does the explaining.', 'What each one says.', 'You did not blend them into one biography.', 15, 7, 'source', 'https://x.com/nkgoutham'),
       s('kg-3', 'Your bio', 'If your bio addresses a model, replace it', 'Suggestion: what you sell, who it is for, the city.', 'The new bio.', 'It does not address a model.', 20, 14, 'suggestion'),
       s('kg-4', 'One Tuesday', 'Write one service founder’s afternoon', 'Suggestion: inbox, proposal, or delivery.', 'One post.', 'The buyer sells a service.', 40, 30, 'suggestion'),
-      s('kg-5', 'Four scenes', 'Four businesses, one product link total', 'Suggestion.', 'Four posts.', 'Only one links the offer.', 30, 60, 'suggestion'),
+      s('kg-5', 'Four scenes', 'Four businesses, one product link total', 'Practice only: four businesses, one product link total. Do not present it as something they scheduled.', 'Four posts.', 'Only one links the offer.', 30, 60, 'suggestion'),
     ],
   },
   markbowley: {
@@ -209,9 +209,9 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
     steps: [
       s('mb-1', 'The row', 'Open every bio link and write whether it loads', 'Sparkstation, Breefing, Fully Fed, and More Making were live. Handmark and Winnny are accounts.', 'A line per link.', 'Fully Fed has no user count in the note.', 30, 7, 'source', 'https://x.com/markbowley'),
       s('mb-2', 'One letter', 'Read one More Making post', 'The newsletter is the profile link.', 'Title and one sentence.', 'You linked moremaking.substack.com.', 25, 7, 'source', 'https://moremaking.substack.com'),
-      s('mb-3', 'One URL', 'Post about a single product', 'Suggestion.', 'One post.', 'The other products are absent.', 25, 14, 'suggestion'),
+      s('mb-3', 'One URL', 'Post about a single product', 'Practice only: post about a single product. Do not present it as something they scheduled.', 'One post.', 'The other products are absent.', 25, 14, 'suggestion'),
       s('mb-4', 'A rejection', 'Show a first draft you threw away', 'The bio pairs AI with 30 years of design. The decision is the post.', 'Draft, rejection, keeper.', 'The reason is specific.', 40, 30, 'source', 'https://x.com/markbowley'),
-      s('mb-5', 'Monthly check', 'Remove a dead link the week it dies', 'Suggestion.', 'A dated checklist.', 'Every remaining URL loads.', 20, 60, 'suggestion'),
+      s('mb-5', 'Monthly check', 'Remove a dead link the week it dies', 'Practice only: remove a dead link the week it dies. Do not present it as something they scheduled.', 'A dated checklist.', 'Every remaining URL loads.', 20, 60, 'suggestion'),
     ],
   },
   hacksultan: {
@@ -222,7 +222,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('hs-2', 'The name field', 'Record both the placeholder and the public name', 'On Nov 11 the name field read “Name cannot be blank.” This page uses Akintunde Sultan.', 'Both strings.', 'You did not “fix” the school into the glitch.', 10, 7, 'source', 'https://x.com/hackSultan'),
       s('hs-3', 'The profile URL', 'If you have an institution, link it from the profile', 'His website field is the school.', 'Your profile URL.', 'It is the institution’s domain.', 10, 14, 'source', 'https://altschoolafrica.com'),
       s('hs-4', 'One learner', 'Publish one path, with permission', 'Suggestion: the skill and the next step. No grades, no payments.', 'That note and the program link.', 'Permission is real.', 40, 30, 'suggestion'),
-      s('hs-5', 'Four stories', 'Four learner notes in a season', 'Suggestion.', 'Four posts.', 'Each names a skill.', 30, 90, 'suggestion'),
+      s('hs-5', 'Four stories', 'Four learner notes in a season', 'Practice only: four learner notes in a season. Do not present it as something they scheduled.', 'Four posts.', 'Each names a skill.', 30, 90, 'suggestion'),
     ],
   },
   dhruvalgolakiya: {
@@ -242,8 +242,8 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
     steps: [
       s('va-1', 'The now line', 'Read employer, product, and kind of work', 'From vvamshi.com.', 'Three short quotes.', 'Magnit Pulse is named only if the page still names it.', 20, 7, 'source', 'https://vvamshi.com'),
       s('va-2', 'Less switching', 'Write one workflow and the tool you removed', 'The site talks about tasks inside tools people already use.', 'The workflow and the cut.', 'No vendor he did not name.', 40, 7, 'source', 'https://vvamshi.com'),
-      s('va-3', 'Your 404s', 'Find one dead link on your own site and replace it', 'Suggestion.', 'Old path and new path.', 'The old path is not in your bio.', 30, 14, 'suggestion'),
-      s('va-4', 'Four cuts', 'Four handoffs in a month', 'Suggestion.', 'Four notes.', 'Each names the tool that went away.', 30, 60, 'suggestion'),
+      s('va-3', 'Your 404s', 'Find one dead link on your own site and replace it', 'Practice only: find one dead link on your own site and replace it. Do not present it as something they scheduled.', 'Old path and new path.', 'The old path is not in your bio.', 30, 14, 'suggestion'),
+      s('va-4', 'Four cuts', 'Four handoffs in a month', 'Practice only: four handoffs in a month. Do not present it as something they scheduled.', 'Four notes.', 'Each names the tool that went away.', 30, 60, 'suggestion'),
     ],
   },
   levelsio: {
@@ -254,7 +254,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('lv-2', 'The book', 'Open readmake.com', 'That is the profile link, not the largest product.', 'One sentence.', 'You did not describe it as Photo AI.', 15, 7, 'source', 'https://readmake.com'),
       s('lv-3', 'The project list', 'Open levels.io/projects and record the update date', 'It was Nov 3, 2026, and the page includes failures.', 'The date and one project that is not a win, if the page still shows one.', 'The date is the one on the page.', 25, 14, 'source', 'https://levels.io/projects'),
       s('lv-4', 'Both Photo AI figures', 'Write $105K and $68K with their sources', 'March note versus the Nov 11 bio. Both are his.', 'Two lines.', 'You did not average them.', 20, 30, 'source', 'https://levels.io/projects'),
-      s('lv-5', 'Your column', 'If you share revenue, put your own number and date in the bio', 'Suggestion.', 'The line.', 'It is labeled as yours.', 20, 30, 'suggestion'),
+      s('lv-5', 'Your column', 'If you share revenue, put your own number and date in the bio', 'Practice only: if you share revenue, put your own number and date in the bio. Do not present it as something they scheduled.', 'The line.', 'It is labeled as yours.', 20, 30, 'suggestion'),
       s('lv-6', 'Misses', 'List projects that did not work', 'Suggestion, in the shape of his project page.', 'At least five lines, including misses.', 'The misses are real.', 40, 90, 'suggestion', 'https://levels.io/projects'),
     ],
   },
@@ -266,7 +266,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('td-2', 'The book', 'Open myindiebook.com', 'That is the profile link.', 'One sentence from the page.', 'You opened it.', 15, 7, 'source', 'https://www.myindiebook.com'),
       s('td-3', 'NEW', 'Mark one launch NEW and leave the older product in the list', 'Suggestion, from the bio order.', 'A bio draft with both URLs.', 'Both URLs are real.', 20, 14, 'suggestion', 'https://survive10waves.com'),
       s('td-4', 'Still opened', 'Remove a product you no longer open', 'The bio starts from tools he uses. DevUtils and TypingMind are the examples.', 'The list before and after.', 'The removed line is one you stopped opening.', 20, 30, 'source', 'https://devutils.com'),
-      s('td-5', 'Three checks', 'If you publish a number, date it once a month', 'Suggestion.', 'Three dated lines.', 'Each date is a day you checked.', 15, 90, 'suggestion'),
+      s('td-5', 'Three checks', 'If you publish a number, date it once a month', 'Practice only: if you publish a number, date it once a month. Do not present it as something they scheduled.', 'Three dated lines.', 'Each date is a day you checked.', 15, 90, 'suggestion'),
     ],
   },
   dannypostma: {
@@ -276,8 +276,8 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('dp-1', 'One sentence', 'Copy the bio', 'One company.', 'The sentence.', 'No second product.', 10, 7, 'source', 'https://x.com/dannypostma'),
       s('dp-2', 'The intro', 'Open prointro.com/danny and write the next click', 'New followers get a page before the product.', 'What it asks you to do.', 'You did not skip to a feature list.', 15, 7, 'source', 'https://www.prointro.com/danny'),
       s('dp-3', 'A photo', 'Find one headshot on the product site', 'The proof is the photo.', 'The page, and the use: profile or team.', 'You can describe the use.', 15, 14, 'source', 'https://www.headshotpro.com'),
-      s('dp-4', 'Your intro', 'Write a one-page intro and point your profile at it', 'Suggestion.', 'The page.', 'The product is the second click.', 40, 30, 'suggestion'),
-      s('dp-5', 'Four images', 'Four posts, image first', 'Suggestion.', 'Four posts.', 'The model is not the first line.', 20, 60, 'suggestion'),
+      s('dp-4', 'Your intro', 'Write a one-page intro and point your profile at it', 'Practice only: write a one-page intro and point your profile at it. Do not present it as something they scheduled.', 'The page.', 'The product is the second click.', 40, 30, 'suggestion'),
+      s('dp-5', 'Four images', 'Four posts, image first', 'Practice only: four posts, image first. Do not present it as something they scheduled.', 'Four posts.', 'The model is not the first line.', 20, 60, 'suggestion'),
     ],
   },
   arvidkahl: {
@@ -288,7 +288,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('ak-2', 'The product', 'Open podscan.fm and write what it says it does', 'Two sentences from the homepage.', 'Those two sentences.', 'You did not describe a podcast host.', 15, 7, 'source', 'https://podscan.fm'),
       s('ak-3', 'The show', 'Open tbf.fm and keep it on a separate line from the product', 'The show is still in the bio.', 'Show URL and one sentence.', 'The product URL is a different line.', 15, 14, 'source', 'https://tbf.fm'),
       s('ak-4', 'The blog', 'Take one post from tbf.link/blog and name the situation', 'The blog is in the bio.', 'Title and situation.', 'You linked the post.', 30, 14, 'source', 'https://tbf.link/blog'),
-      s('ak-5', 'Four episodes', 'One idea and a link, not a full recap', 'Suggestion.', 'Four links.', 'Each is a real episode.', 25, 60, 'suggestion'),
+      s('ak-5', 'Four episodes', 'One idea and a link, not a full recap', 'Practice only: one idea and a link, not a full recap. Do not present it as something they scheduled.', 'Four links.', 'Each is a real episode.', 25, 60, 'suggestion'),
     ],
   },
   yongfook: {
@@ -298,8 +298,8 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('yf-1', 'The line', 'Copy the bio and mark the MRR self-reported', 'Two products and the figure.', 'The line.', 'Singapore only if you are quoting the location field.', 10, 7, 'source', 'https://x.com/yongfook'),
       s('yf-2', 'One run', 'Make one image and name the job', 'Ad, card, or certificate. Include the input.', 'Image and job name.', 'You can say what the data was.', 40, 7, 'source', 'https://www.bannerbear.com'),
       s('yf-3', 'Redacted', 'Finish one redaction on the free tool', 'Private text stays out of your note.', 'What you redacted, described safely.', 'You did not pay, or you wrote that the free path was gone.', 20, 14, 'source', 'https://www.redacted.to'),
-      s('yf-4', 'Your number', 'If you publish MRR, date it and use your own books', 'Suggestion.', 'The sentence.', 'It is not his number.', 15, 30, 'suggestion'),
-      s('yf-5', 'Four jobs', 'A different automation job each week', 'Suggestion.', 'Four outputs, each with an input.', 'Each has an input.', 30, 60, 'suggestion'),
+      s('yf-4', 'Your number', 'If you publish MRR, date it and use your own books', 'Practice only: if you publish MRR, date it and use your own books. Do not present it as something they scheduled.', 'The sentence.', 'It is not his number.', 15, 30, 'suggestion'),
+      s('yf-5', 'Four jobs', 'A different automation job each week', 'Practice only: a different automation job each week. Do not present it as something they scheduled.', 'Four outputs, each with an input.', 'Each has an input.', 30, 60, 'suggestion'),
     ],
   },
   hnshah: {
@@ -309,7 +309,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('hn-1', 'The years', 'Write the three companies and the years', 'From the bio.', 'Three lines.', 'No fourth company.', 10, 7, 'source', 'https://x.com/hnshah'),
       s('hn-2', 'One essay', 'Open hiten.com and read past one headline', 'X is the first paragraph. The site is the essay.', 'Title and URL.', 'You read past the headline.', 30, 7, 'source', 'https://hiten.com/'),
       s('hn-3', 'Crazy Egg', 'Confirm the domain loads, and stop', 'It responded when we checked. Do not review the product unless you used it.', 'Loaded or not, on the day you try.', 'No review.', 10, 14, 'source', 'https://www.crazyegg.com'),
-      s('hn-4', 'A cut', 'Delete every line that depends on this month’s feed', 'Suggestion.', 'Before and after.', 'The cut lines are gone.', 40, 14, 'suggestion'),
+      s('hn-4', 'A cut', 'Delete every line that depends on this month’s feed', 'Practice only: delete every line that depends on this month’s feed. Do not present it as something they scheduled.', 'Before and after.', 'The cut lines are gone.', 40, 14, 'suggestion'),
       s('hn-5', 'Four essays', 'One a week on your own domain', 'Suggestion. X gets a paragraph and a link.', 'Four URLs.', 'Each X post is shorter than the essay.', 40, 60, 'suggestion'),
     ],
   },
@@ -321,7 +321,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('dc-2', 'The portfolio', 'Open damon.build and list only products you can see', 'Do not add one from memory.', 'The list.', 'Every name was on the page.', 20, 7, 'source', 'https://damon.build'),
       s('dc-3', 'One job', 'Use one product for one output', 'Testimonial.to or PDF.ai is enough.', 'The output and the domain.', 'The other four are not in the post.', 40, 14, 'source', 'https://testimonial.to'),
       s('dc-4', 'The rename', 'Write old name, new name, and date', 'This page kept the id and changed the public handle.', 'That note, for your own rename if you have one.', 'Both names are in it.', 15, 30, 'source', 'https://x.com/damonchen'),
-      s('dc-5', 'Five days', 'Five posts, five domains', 'Suggestion.', 'Five posts.', 'Each URL is different.', 25, 30, 'suggestion'),
+      s('dc-5', 'Five days', 'Five posts, five domains', 'Practice only: five posts, five domains. Do not present it as something they scheduled.', 'Five posts.', 'Each URL is different.', 25, 30, 'suggestion'),
     ],
   },
   flaviocopes: {
@@ -332,7 +332,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('fc-2', 'Both counts', 'Open the Aug 3 post and the summer note', '55, then 87. Both are his.', 'Both numbers and both URLs.', 'You did not hide one.', 25, 7, 'source', 'https://flaviocopes.com/free-courses-for-developers/'),
       s('fc-3', 'The date', 'Copy the workshop open date and price', 'Nov 23, 2026, from that page.', 'Date and price.', 'You did not write “open now” if today is earlier.', 15, 14, 'source', 'https://flaviocopes.com/courses/ai-workshop/'),
       s('fc-4', 'A path', 'Order five of your old posts', 'Suggestion, from the way he turned tutorials into courses.', 'A page with an order.', 'A reader knows what comes first.', 90, 30, 'suggestion'),
-      s('fc-5', 'Your date', 'Publish an open date before you imply a cohort is open', 'Suggestion.', 'The date on a page.', 'The post uses the same date.', 30, 30, 'suggestion'),
+      s('fc-5', 'Your date', 'Publish an open date before you imply a cohort is open', 'Practice only: publish an open date before you imply a cohort is open. Do not present it as something they scheduled.', 'The date on a page.', 'The post uses the same date.', 30, 30, 'suggestion'),
       s('fc-6', 'Twelve weeks', 'One email a week, and write down the skips', 'He describes a weekly issue. Your sections can differ.', 'Twelve sends, or the skipped weeks in the log.', 'Skips are written down.', 30, 90, 'source', 'https://flaviocopes.com/newsletter/'),
     ],
   },
@@ -343,8 +343,8 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('pw-1', 'Two sites', 'Open both and write the difference', 'Stories on one. Building on the other.', 'Two sentences.', 'They are not the same pitch.', 20, 7, 'source', 'https://www.starterstory.com'),
       s('pw-2', 'One story', 'List only numbers the page shows', 'Business, channel, figure or blank.', 'Those fields.', 'No added revenue.', 30, 7, 'source', 'https://www.starterstory.com'),
       s('pw-3', 'The mission', 'Copy the billion line and label it as his', 'It is in the bio. It is not a KPI.', 'The sentence with “he says.”', 'It is not in a stats row.', 10, 14, 'source', 'https://x.com/thepatwalls'),
-      s('pw-4', 'Your split', 'Give two kinds of readers two URLs', 'Suggestion.', 'Two links and who each is for.', 'A post uses only one.', 40, 30, 'suggestion', 'https://build.starterstory.com'),
-      s('pw-5', 'Four stories', 'One a week, numbers only with a source line', 'Suggestion.', 'Four pieces.', 'Every number has a source.', 40, 60, 'suggestion'),
+      s('pw-4', 'Your split', 'Give two kinds of readers two URLs', 'Practice only: give two kinds of readers two URLs. Do not present it as something they scheduled.', 'Two links and who each is for.', 'A post uses only one.', 40, 30, 'suggestion', 'https://build.starterstory.com'),
+      s('pw-5', 'Four stories', 'One a week, numbers only with a source line', 'Practice only: one a week, numbers only with a source line. Do not present it as something they scheduled.', 'Four pieces.', 'Every number has a source.', 40, 60, 'suggestion'),
     ],
   },
   biilmann: {
@@ -353,7 +353,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
     steps: [
       s('bb-1', 'The spelling', 'Copy the role from the bio', 'CEO and co-founder. Profile link netlify.com.', 'The line.', 'The spelling is Biilmann.', 10, 7, 'source', 'https://x.com/biilmann'),
       s('bb-2', 'The recap', 'Find his name and the other names around it', 'August 12-13, 2026.', 'The sentence, plus one other person named there.', 'He is not the only name.', 20, 7, 'source', 'https://www.netlify.com/blog/build-with-netlify-came-to-atlanta/'),
-      s('bb-3', 'Your line', 'Make the bio the job and the link the company', 'Suggestion.', 'Bio and profile URL.', 'No second pitch.', 15, 14, 'suggestion', 'https://www.netlify.com'),
+      s('bb-3', 'Your line', 'Make the bio the job and the link the company', 'Practice only: make the bio the job and the link the company. Do not present it as something they scheduled.', 'Bio and profile URL.', 'No second pitch.', 15, 14, 'suggestion', 'https://www.netlify.com'),
       s('bb-4', 'A term', 'If you name a pattern, define it once and keep those words', 'The bio says he coins terms. A term counts only if you still use it.', 'The definition URL, or “no term.”', 'The product page uses the same words, if you have one.', 30, 60, 'source', 'https://x.com/biilmann'),
     ],
   },
@@ -364,8 +364,8 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('nr-1', 'One ability', 'Read v0.23.0 until you can name one new ability', 'Browser desktop, gateway, or plugin catalog. Pick the one you can point at.', 'The ability and the heading.', 'You can scroll to that heading.', 30, 7, 'source', 'https://github.com/NousResearch/hermes-agent/releases/tag/v0.23.0'),
       s('nr-2', 'The patch', 'Read what v0.23.1 fixed', 'A catalog size bug, in the notes.', 'One sentence.', 'You did not call the patch a new product.', 20, 7, 'source', 'https://github.com/nousresearch/hermes-agent/releases'),
       s('nr-3', 'Install', 'Find the install path on the Hermes site', 'That site is the X profile link.', 'The command or the button label.', 'It is on that site.', 20, 14, 'source', 'https://hermes-agent.nousresearch.com'),
-      s('nr-4', 'Your note', 'Ship a version note with one user-visible change', 'Suggestion.', 'The note.', 'It names a version.', 60, 30, 'suggestion'),
-      s('nr-5', 'Three windows', 'Three releases, each with “since” and a date', 'Suggestion.', 'Three notes.', 'Each has a date.', 30, 90, 'suggestion'),
+      s('nr-4', 'Your note', 'Ship a version note with one user-visible change', 'Practice only: ship a version note with one user-visible change. Do not present it as something they scheduled.', 'The note.', 'It names a version.', 60, 30, 'suggestion'),
+      s('nr-5', 'Three windows', 'Three releases, each with “since” and a date', 'Practice only: three releases, each with “since” and a date. Do not present it as something they scheduled.', 'Three notes.', 'Each has a date.', 30, 90, 'suggestion'),
     ],
   },
   teknium: {
@@ -375,8 +375,8 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('tk-1', 'Three facts', 'Write role, project, and previous lab', 'Stability is previous.', 'Three lines.', 'Previous is labeled previous.', 10, 7, 'source', 'https://x.com/Teknium'),
       s('tk-2', 'The author', 'Open the release and copy the author and tag', 'teknium1, v0.23.0, Nov 5, 2026.', 'Author and tag.', 'You opened the release.', 15, 7, 'source', 'https://github.com/NousResearch/hermes-agent/releases/tag/v0.23.0'),
       s('tk-3', 'Both pages', 'Open the GitHub profile and the Hugging Face page named in the bio', 'Write what each is. Do not describe a model you did not open.', 'Two sentences.', 'You opened both.', 20, 14, 'source', 'https://github.com/teknium1'),
-      s('tk-4', 'Your name', 'Put your name on something you ship, from both accounts if you have two', 'Suggestion.', 'Two URLs to the same tag or file.', 'They match.', 30, 30, 'suggestion'),
-      s('tk-5', 'Deep links', 'For a month, link past the homepage', 'Suggestion.', 'Four URLs with a path.', 'None is only an org root.', 15, 60, 'suggestion'),
+      s('tk-4', 'Your name', 'Put your name on something you ship, from both accounts if you have two', 'Practice only: put your name on something you ship, from both accounts if you have two. Do not present it as something they scheduled.', 'Two URLs to the same tag or file.', 'They match.', 30, 30, 'suggestion'),
+      s('tk-5', 'Deep links', 'For a month, link past the homepage', 'Practice only: for a month, link past the homepage. Do not present it as something they scheduled.', 'Four URLs with a path.', 'None is only an org root.', 15, 60, 'suggestion'),
     ],
   },
   demishassabis: {
@@ -399,7 +399,7 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('ka-3', 'The notice', 'Quote the LLM101n line that the course does not exist', 'The repo is archived.', 'The sentence.', 'You did not tell anyone to enroll.', 15, 7, 'source', 'https://github.com/karpathy/LLM101n'),
       s('ka-4', 'Secondary', 'Read the May 2026 coverage and label it secondary', 'It reports a May 19, 2026 post. We could not re-read that post.', 'Date, claim, and “secondary source.”', 'It is not written as a bio line.', 25, 14, 'source', 'https://www.startuphub.ai/ai-news/ai-figures/2026/figure-andrej-karpathy-anthropic-pretraining-2026-05-31'),
       s('ka-5', 'Eureka', 'Read the pause writeup the same way', 'Secondary. Do not say the school is enrolling.', 'One sentence and the label.', 'No enrollment claim.', 20, 30, 'source', 'https://www.techi.com/company/eureka-labs/'),
-      s('ka-6', 'A small repo', 'Publish something that runs, with the limit in the README', 'Suggestion.', 'The repo.', 'The limit is on the first screen.', 180, 30, 'suggestion'),
+      s('ka-6', 'A small repo', 'Publish something that runs, with the limit in the README', 'Practice only: publish something that runs, with the limit in the README. Do not present it as something they scheduled.', 'The repo.', 'The limit is on the first screen.', 180, 30, 'suggestion'),
     ],
   },
   stabilityai: {
@@ -410,8 +410,8 @@ export const MENTOR_PLANS: Record<string, MentorPlan> = {
       s('sa-2', 'A door', 'Find API, self-host, and the app on the image page', 'The bio says self-deploy or a partner.', 'The three labels.', 'You can say which one a small project would use.', 20, 7, 'source', 'https://stability.ai/stable-image'),
       s('sa-3', 'Audio', 'Read the Stable Audio 3.0 note and quote the data claim', 'The site says licensed data. Do not extend that to every model.', 'The claim, with “the site says.”', 'The limit is in your sentence.', 15, 14, 'source', 'https://stability.ai/'),
       s('sa-4', 'One price', 'Copy one pricing row and the credit value', 'The docs say what a credit costs, if that line is still there.', 'The row and the day you checked.', 'No dollar figure you invented.', 20, 14, 'source', 'https://docs.stability.ai/pricing'),
-      s('sa-5', 'Your launch', 'Name one door and one price', 'Suggestion.', 'The post with both.', 'A reader can start without asking you.', 40, 30, 'suggestion'),
-      s('sa-6', 'A quarter', 'Re-read the model list and write the date you see', 'Suggestion.', 'The date, or “unchanged.”', 'You opened the page.', 15, 90, 'suggestion', 'https://stability.ai/core-models'),
+      s('sa-5', 'Your launch', 'Name one door and one price', 'Practice only: name one door and one price. Do not present it as something they scheduled.', 'The post with both.', 'A reader can start without asking you.', 40, 30, 'suggestion'),
+      s('sa-6', 'A quarter', 'Re-read the model list and write the date you see', 'Practice only: re-read the model list and write the date you see. Do not present it as something they scheduled.', 'The date, or “unchanged.”', 'You opened the page.', 15, 90, 'suggestion', 'https://stability.ai/core-models'),
     ],
   },
 };

@@ -90,10 +90,6 @@ export function useXProfile(handle: string, includeTweets = true) {
       setLoading(false);
       return;
     }
-    setLoading(true);
-    setError(null);
-    setFromFallback(false);
-
     const data = await fetchXProfile(handle, includeTweets);
     if (data) {
       setProfile(data);
@@ -106,7 +102,8 @@ export function useXProfile(handle: string, includeTweets = true) {
   }, [handle, includeTweets]);
 
   useEffect(() => {
-    load();
+    const timer = window.setTimeout(() => { load(); }, 0);
+    return () => window.clearTimeout(timer);
   }, [load]);
 
   const refresh = useCallback(() => {

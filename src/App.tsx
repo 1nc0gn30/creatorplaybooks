@@ -5,7 +5,7 @@ import { PlaybookFlow } from './components/PlaybookFlow';
 import { defaultBuilder, defaultProgress, levelFromXp, scoreProgress } from './lib/maya';
 import { CREATORS } from './lib/creators';
 import { downloadZip } from './lib/export';
-import { useAuth } from './lib/auth';
+import { useAuth } from './lib/auth-context';
 import { generateIdeasForCreator } from './lib/ideas';
 import { buildExportBundle } from './lib/exportBundle';
 import { MembersView } from './components/MembersView';
@@ -23,14 +23,23 @@ import { LoginGate } from './components/LoginGate';
 import { fetchMemberMe, saveMemberMe } from './lib/member-api';
 import { site } from './lib/site';
 
+const YEAR = new Date().getFullYear();
+
+function readMentor(): CreatorProfile | null {
+  const mentorId = new URLSearchParams(window.location.search).get('mentor');
+  if (!mentorId) return null;
+  return CREATORS.find((c) => c.id === mentorId) ?? null;
+}
+
 function App() {
   const { user, profile, login, logout } = useAuth();
   const [tab, setTab] = useState<Tab | 'members' | 'flow'>('creators');
-  const [activeCreator, setActiveCreator] = useState<CreatorProfile>(CREATORS[0]);
-  const [modalCreator, setModalCreator] = useState<CreatorProfile | null>(null);
+  const [activeCreator, setActiveCreator] = useState<CreatorProfile>(() => readMentor() ?? CREATORS[0]);
+  const [modalCreator, setModalCreator] = useState<CreatorProfile | null>(() => readMentor());
   const [showRemix, setShowRemix] = useState(false);
   const [progress, setProgress] = useState<UserProgress>(defaultProgress());
-  const [ideas, setIdeas] = useState<ContentIdea[]>(generateIdeasForCreator(CREATORS[0], 6));
+  const [ideas, setIdeas] = useState<ContentIdea[]>(() => generateIdeasForCreator(readMentor() ?? CREATORS[0], 6));
+  const [ideaFor, setIdeaFor] = useState(() => (readMentor() ?? CREATORS[0]).id);
   const [schedule, setSchedule] = useState<ScheduledPost[]>([]);
   const [newPost, setNewPost] = useState('');
   const [newDay, setNewDay] = useState('Monday');
@@ -39,7 +48,9 @@ function App() {
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {}
+      } catch {
+        /* keep the default profile */
+      }
     }
     return defaultBuilder();
   });
@@ -66,8 +77,12 @@ function App() {
     return () => { cancelled = true; };
   }, [user]);
 
-  const [showOriginStory, setShowOriginStory] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showOriginStory, setShowOriginStory] = useState(() => !localStorage.getItem('creatorplaybooks_origin_seen'));
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    const seenOrigin = localStorage.getItem('creatorplaybooks_origin_seen');
+    const seenOnboarding = localStorage.getItem('creatorplaybooks_onboarding_seen');
+    return Boolean(seenOrigin) && !seenOnboarding;
+  });
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -119,22 +134,6 @@ function App() {
   const level = useMemo(() => levelFromXp(progress.xp), [progress.xp]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const mentorId = params.get('mentor');
-    if (mentorId) {
-      const match = CREATORS.find((c) => c.id === mentorId);
-      if (match) {
-        setActiveCreator(match);
-        setModalCreator(match);
-      }
-    }
-    const seenOnboarding = localStorage.getItem('creatorplaybooks_onboarding_seen');
-    const seenOrigin = localStorage.getItem('creatorplaybooks_origin_seen');
-    if (!seenOrigin) setShowOriginStory(true);
-    else if (!seenOnboarding) setShowOnboarding(true);
-  }, []);
-
-  useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
@@ -161,9 +160,10 @@ function App() {
     else document.body.style.removeProperty('--surface-2');
   }, [remix, activeCreator, me, menuOpen]);
 
-  useEffect(() => {
+  if (ideaFor !== activeCreator.id) {
+    setIdeaFor(activeCreator.id);
     setIdeas(generateIdeasForCreator(activeCreator, 6));
-  }, [activeCreator]);
+  }
 
   const updateMe = (next: BuilderProfile) => {
     setMe(next);
@@ -307,7 +307,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="footer-bottom"><span>© {new Date().getFullYear()} CreatorPlaybooks · published by Neal Frazier Tech</span></div>
+        <div className="footer-bottom"><span>© {YEAR} CreatorPlaybooks · published by Neal Frazier Tech</span></div>
       </footer>
       <div className="remix-pad" title="Creative remix controls">
         <button className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text" data-tooltip="Bold Text"><Bold size={16} /></button>

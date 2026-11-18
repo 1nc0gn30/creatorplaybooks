@@ -418,6 +418,34 @@
 .hologram-stage { margin-top: 12px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
 .hologram-stage > div { max-height: 70vh; }
 
+.goal-notes {
+  margin: 4px 0 16px;
+  padding: 12px 14px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.goal-notes h4 { margin: 0 0 8px; font-size: 0.95rem; }
+.goal-notes ul { margin: 0; padding-left: 1.1rem; color: var(--ink-muted); display: grid; gap: 6px; }
+.goal-scale { margin-top: 8px; font-size: 0.92rem; }
+
+.creator-modal { width: min(880px, 100%); }
+.creator-modal-body { max-width: 760px; }
+
+.page-title { text-wrap: balance; }
+.page-subtitle, .docs-overview-card p, .me-card p { text-wrap: pretty; }
+
+@media (max-width: 390px) {
+  .place-list li { flex-basis: 100%; max-width: none; }
+  .home-hero-actions { display: flex; flex-direction: column; align-items: stretch; }
+  .home-btn { width: 100%; }
+  .page { padding-left: 16px; padding-right: 16px; }
+}
+
+@media (min-width: 1440px) {
+  .docs-page, .dashboard-page, .me-page, .flow-container { max-width: 1280px; margin-left: auto; margin-right: auto; }
+}
+
 .goal-plan { margin-top: 8px; padding: 18px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.08); background: #12121a; }
 .goal-plan-head p, .goal-empty { color: var(--ink-muted); line-height: 1.5; }
 .goal-lengths { border: 0; margin: 0; padding: 0; }

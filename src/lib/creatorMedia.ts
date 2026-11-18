@@ -93,7 +93,7 @@ export function useCreatorMedia(creator: CreatorProfile) {
       if (mounted) setState(next);
     });
     return () => { mounted = false; };
-  }, [creator.id]);
+  }, [creator]);
 
   return { ...state, refresh, refreshing };
 }

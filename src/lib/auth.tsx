@@ -1,39 +1,10 @@
-import { useEffect, useState, createContext, useContext, type ReactNode, useCallback } from 'react';
+import { useEffect, useState, type ReactNode, useCallback } from 'react';
 import netlifyIdentity from 'netlify-identity-widget';
 import type { MemberProfile } from './member-types';
 import { normalize, fetchMemberMe, saveMemberMe, fetchVotes } from './member-api';
+import { AuthContext, type AuthUser } from './auth-context';
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  avatar?: string;
-  jwt: (force?: boolean) => Promise<string>;
-}
-
-interface AuthContextValue {
-  user: AuthUser | null;
-  profile: MemberProfile | null;
-  isReady: boolean;
-  login: () => void;
-  logout: () => void;
-  openInvite: () => void;
-  refreshProfile: () => Promise<void>;
-  updateProfile: (patch: Partial<MemberProfile>) => Promise<void>;
-  votes: Record<string, any>;
-}
-
-const AuthContext = createContext<AuthContextValue>({
-  user: null,
-  profile: null,
-  isReady: false,
-  login: () => {},
-  logout: () => {},
-  openInvite: () => {},
-  refreshProfile: async () => {},
-  updateProfile: async () => {},
-  votes: {},
-});
+export type { AuthUser };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -59,41 +30,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    let timer = 0;
+    const markReady = (current: ReturnType<typeof netlifyIdentity.currentUser> | null) => {
+      timer = window.setTimeout(() => {
+        if (cancelled) return;
+        if (current) {
+          setUser(normalize(current));
+          fetchMemberMe().then((next) => { if (!cancelled) setProfile(next); }).catch(() => {});
+          fetchVotes().then((next) => { if (!cancelled) setVotes(next); }).catch(() => {});
+        }
+        setIsReady(true);
+      }, 0);
+    };
+
     try {
-    netlifyIdentity.init({
-      container: '#netlify-identity-modal',
-      locale: 'en',
-    });
+      netlifyIdentity.init({
+        container: '#netlify-identity-modal',
+        locale: 'en',
+      });
+      markReady(netlifyIdentity.currentUser());
 
-    const current = netlifyIdentity.currentUser();
-    if (current) {
-      const u = normalize(current);
-      setUser(u);
-      fetchMemberMe().then(setProfile).catch(() => {});
-      fetchVotes().then(setVotes).catch(() => {});
+      netlifyIdentity.on('login', (u: any) => {
+        const nu = normalize(u);
+        setUser(nu);
+        fetchMemberMe().then(setProfile).catch(() => {});
+        fetchVotes().then(setVotes).catch(() => {});
+        netlifyIdentity.close();
+      });
+      netlifyIdentity.on('logout', () => {
+        setUser(null);
+        setProfile(null);
+        setVotes({});
+      });
+    } catch {
+      markReady(null);
     }
-    setIsReady(true);
-
-    netlifyIdentity.on('login', (u: any) => {
-      const nu = normalize(u);
-      setUser(nu);
-      fetchMemberMe().then(setProfile).catch(() => {});
-      fetchVotes().then(setVotes).catch(() => {});
-      netlifyIdentity.close();
-    });
-    netlifyIdentity.on('logout', () => {
-      setUser(null);
-      setProfile(null);
-      setVotes({});
-    });
 
     return () => {
-      netlifyIdentity.off('login');
-      netlifyIdentity.off('logout');
+      cancelled = true;
+      window.clearTimeout(timer);
+      try {
+        netlifyIdentity.off('login');
+        netlifyIdentity.off('logout');
+      } catch {
+        /* identity never started */
+      }
     };
-    } catch {
-      setIsReady(true);
-    }
   }, []);
 
   return (
@@ -114,9 +97,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
-
-export { netlifyIdentity };

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { CreatorProfile } from '../types';
@@ -59,22 +59,25 @@ export function HoneycombWebGLGrid({ filteredCreators, openCreatorModal, modalCr
   const interactedRef = useRef(false);
 
   const [zoomedInCreator, setZoomedInCreator] = useState<CreatorProfile | null>(null);
+  const [trackedModal, setTrackedModal] = useState(modalCreatorId);
   const zoomedInCreatorRef = useRef<CreatorProfile | null>(null);
+
+  if (trackedModal !== modalCreatorId) {
+    setTrackedModal(modalCreatorId);
+    if (modalCreatorId === null) setZoomedInCreator(null);
+  }
+
+  useLayoutEffect(() => {
+    zoomedInCreatorRef.current = zoomedInCreator;
+  }, [zoomedInCreator]);
 
   const handleInteract = () => {
     interactedRef.current = true;
     setInteracted(true);
   };
 
-  // Reset zoom state if modal closes
   useEffect(() => {
-    if (modalCreatorId === null) {
-      zoomedInCreatorRef.current = null;
-      setZoomedInCreator(null);
-    }
-  }, [modalCreatorId]);
-
-  useEffect(() => {
+    const textures = texturesRef.current;
     const container = containerRef.current;
     if (!container) return;
 
@@ -783,7 +786,7 @@ export function HoneycombWebGLGrid({ filteredCreators, openCreatorModal, modalCr
       if (resObs) resObs.disconnect();
       frontGeo.dispose(); sidesGeo.dispose(); pulseGeo.dispose(); pGeo.dispose(); pMat.dispose();
       starGeo.dispose(); starMat.dispose(); nebGeo.dispose();
-      Object.values(texturesRef.current).forEach(t => t.dispose());
+      Object.values(textures).forEach(t => t.dispose());
       controls.dispose();
       renderer.dispose();
       if (loseCtxExt) loseCtxExt.loseContext();

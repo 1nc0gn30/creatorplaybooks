@@ -83,7 +83,7 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
   const pinchRef = useRef<{ dist: number; scale: number; cx: number; cy: number } | null>(null);
   const isPinching = useRef(false);
   const transformRef = useRef(transform);
-  transformRef.current = transform;
+  const [frame, setFrame] = useState<{ width: number; height: number } | null>(null);
 
   // ── NODE POSITIONS ──────────────────────────────────────
   const nodes = useMemo(() => {
@@ -213,6 +213,26 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
     const y = (rect.height - contentH * scale) / 2 - minY * scale;
     setTransform({ x, y, scale });
   }, [nodes]);
+
+  useEffect(() => {
+    transformRef.current = transform;
+  }, [transform]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      setFrame({ width: rect.width, height: rect.height });
+    };
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    const frameId = window.requestAnimationFrame(measure);
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      ro.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => fitView(), 100);
@@ -361,16 +381,14 @@ export function PlaybookFlow({ creators, onOpenCreator }: PlaybookFlowProps) {
   const activeConnData = connections.find(c => c.id === activeConn);
   const expandedNodeData = nodes.find(n => n.id === expandedNode);
 
-  const connPopupPos = activeConnData ? (() => {
+  const connPopupPos = activeConnData && frame ? (() => {
     const raw = {
       x: activeConnData.midX * transform.scale + transform.x,
       y: activeConnData.midY * transform.scale + transform.y,
     };
-    if (!containerRef.current) return raw;
-    const rect = containerRef.current.getBoundingClientRect();
     return {
-      x: Math.max(140, Math.min(rect.width - 140, raw.x)),
-      y: Math.max(60, Math.min(rect.height - 60, raw.y)),
+      x: Math.max(140, Math.min(frame.width - 140, raw.x)),
+      y: Math.max(60, Math.min(frame.height - 60, raw.y)),
     };
   })() : null;
 

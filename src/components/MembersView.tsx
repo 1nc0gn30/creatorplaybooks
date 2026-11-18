@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Users, Edit3, Save, ExternalLink, ThumbsUp, ThumbsDown, Plus, X, Loader2, CheckCircle, Globe, Github, Sparkles } from 'lucide-react';
-import { useAuth } from '../lib/auth';
+import { useAuth } from '../lib/auth-context';
 import type { MemberProfile } from '../lib/member-types';
 import { voteCreator, fetchVotes, submitCreator } from '../lib/member-api';
 import { CREATORS } from '../lib/creators';
@@ -8,20 +8,26 @@ import { CREATORS } from '../lib/creators';
 export function MembersView() {
   const { user, profile, updateProfile, refreshProfile } = useAuth();
   const [edit, setEdit] = useState(false);
-  const [form, setForm] = useState<MemberProfile | null>(null);
+  const profileStamp = profile ? `${profile.name}|${profile.handle}|${profile.bio}|${JSON.stringify(profile.votes || {})}` : '';
+  const [stamp, setStamp] = useState(profileStamp);
+  const [form, setForm] = useState<MemberProfile | null>(profile);
   const [votes, setVotes] = useState<Record<string, { up: number; down: number; score: number }>>({});
-  const [myVotes, setMyVotes] = useState<Record<string, 'up' | 'down' | null>>({});
+  const [myVotes, setMyVotes] = useState<Record<string, 'up' | 'down' | null>>(profile?.votes || {});
   const [submitOpen, setSubmitOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitOk, setSubmitOk] = useState(false);
 
+  if (stamp !== profileStamp) {
+    setStamp(profileStamp);
+    setForm(profile);
+    setMyVotes(profile?.votes || {});
+  }
+
   useEffect(() => {
-    if (profile) {
-      setForm(profile);
-      setMyVotes(profile.votes || {});
-    }
-    fetchVotes().then(setVotes).catch(() => {});
-  }, [profile]);
+    let cancelled = false;
+    fetchVotes().then((next) => { if (!cancelled) setVotes(next); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [profileStamp]);
 
   if (!user || !form) {
     return (
