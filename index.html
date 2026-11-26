@@ -3,24 +3,75 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#ec4899" />
+    <meta name="theme-color" content="#0a0a0f" />
     <meta name="author" content="Neal Frazier Tech" />
-    <meta name="description" content="CreatorPlaybooks by Neal Frazier Tech. Notes from public builders in the cities they name. Inspired by @buildwithmaya." />
+    <meta name="description" content="CreatorPlaybooks by Neal Frazier Tech. Curated notes and repeatable playbooks from 35 public builders across 20 cities. Inspired by @buildwithmaya." />
     <meta property="og:title" content="CreatorPlaybooks by Neal Frazier Tech" />
-    <meta property="og:description" content="Notes from public builders in the cities they name. Published by Neal Frazier Tech." />
+    <meta property="og:description" content="Curated reading list and 115 repeatable plays from 35 public builders across 20 cities. Engineered by Neal Frazier Tech." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="%SITE_ORIGIN%/" />
     <meta property="og:image" content="%SITE_ORIGIN%/og-card.png" />
     <meta property="og:site_name" content="CreatorPlaybooks" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@NealFrazierTech" />
+    <meta name="twitter:site" content="@1nc0gn30" />
+    <meta name="twitter:creator" content="@1nc0gn30" />
     <meta name="twitter:title" content="CreatorPlaybooks by Neal Frazier Tech" />
-    <meta name="twitter:description" content="Notes from public builders in the cities they name. Published by Neal Frazier Tech." />
+    <meta name="twitter:description" content="Curated reading list and 115 repeatable plays from 35 public builders across 20 cities. Engineered by Neal Frazier Tech." />
     <meta name="twitter:image" content="%SITE_ORIGIN%/og-card.png" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23ec4899'/%3E%3Ctext x='50' y='62' font-size='52' text-anchor='middle' fill='white'%3E🚀%3C/text%3E%3C/svg%3E" />
+    <link rel="icon" type="image/webp" href="/brand-mark.webp" />
     <link rel="apple-touch-icon" href="/maya/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <title>CreatorPlaybooks by Neal Frazier Tech</title>
+    <style>
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 24px;
+        background: #0a0a0f;
+        color: #f4f4f7;
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        z-index: 1;
+      }
+      #boot .boot-card {
+        max-width: 680px;
+        text-align: center;
+      }
+      #boot h1 {
+        font-family: "Iowan Old Style", Palatino, Georgia, serif;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 500;
+        line-height: 1.1;
+        margin: 0 0 14px;
+      }
+      #boot p {
+        margin: 0;
+        line-height: 1.6;
+        color: #c4c4d0;
+      }
+      [data-theme="light"] #boot {
+        background: #faf8f3;
+        color: #101828;
+      }
+      [data-theme="light"] #boot p {
+        color: #475467;
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var q = params.get('theme');
+          var stored = localStorage.getItem('creatorplaybooks_theme');
+          var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+          var theme = (q === 'light' || q === 'dark') ? q : ((stored === 'light' || stored === 'dark') ? stored : (prefersLight ? 'light' : 'dark'));
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme = theme;
+        } catch (e) {}
+      })();
+    </script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -30,18 +81,27 @@
           "name": "CreatorPlaybooks",
           "url": "https://creatorplaybooks.netlify.app",
           "applicationCategory": "EducationalApplication",
-          "operatingSystem": "Web",
+          "operatingSystem": "Web, Linux, macOS, Windows",
+          "softwareVersion": "1.1.0",
           "offers": {
             "@type": "Offer",
             "price": "0.00",
             "priceCurrency": "USD",
             "url": "https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X"
           },
-          "creator": {
-            "@type": "Person",
-            "name": "Neal Frazier",
-            "url": "https://nealfrazier.tech"
-          }
+          "creator": [
+            {
+              "@type": "Person",
+              "name": "Neal Frazier",
+              "url": "https://nealfrazier.tech",
+              "sameAs": "https://github.com/1nc0gn30"
+            },
+            {
+              "@type": "Organization",
+              "name": "Neal Frazier Tech",
+              "url": "https://nullai.tech"
+            }
+          ]
         },
         {
           "@type": "FAQPage",
@@ -51,7 +111,7 @@
               "name": "What is CreatorPlaybooks?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "CreatorPlaybooks is a curated reading list and mentor playbook directory of 35+ public builders across 20 cities, complete with playable JSON APIs and Markdown export."
+                "text": "CreatorPlaybooks is a curated reading list and mentor playbook workstation indexing 35 public builders, 115 repeatable plays, and 20 cities, complete with local JSON APIs, Markdown/JSON export, and a Unicode U+2800 Braille terminal TUI."
               }
             },
             {
@@ -59,7 +119,15 @@
               "name": "Is CreatorPlaybooks free and open access?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. Every mentor playbook, the dashboard, the API docs, and the Markdown export are free."
+                "text": "Yes. Every mentor playbook, the local dashboard, offline member workspace, API endpoints, and exports are 100% free and unlocked with optional voluntary support via Stripe Buy Us a Coffee or Solana tips."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does CreatorPlaybooks work offline on localhost?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Running creatorplaybooks serve or creatorplaybooks desktop starts a zero-dependency loopback server on 127.0.0.1:5185 serving the full UI and JSON API from shared/creators.json with zero external telemetry."
               }
             }
           ]
@@ -70,22 +138,17 @@
   </head>
   <body>
     <div id="boot">
-      <section class="home-hero">
-        <div class="home-hero-content">
-          <h1 class="home-headline">
-            <span class="home-headline-line">Notes from builders</span>
-            <em>who do not all live in one city.</em>
-          </h1>
-          <p class="home-subhead">CreatorPlaybooks is a reading list. The people in it post from Austin, Dubai, Barcelona, Bengaluru, Singapore, Atlanta, and the other places named on their profiles. Each page says what they are doing now, and where that sentence came from.</p>
-        </div>
+      <section class="boot-card">
+        <h1>Notes from builders <em>who do not all live in one city.</em></h1>
+        <p>CreatorPlaybooks is a reading list of 35 public builders across 20 cities with 115 repeatable plays, local JSON APIs, and offline exports.</p>
       </section>
     </div>
     <div id="root"></div>
     <script>
       const boot = document.getElementById('boot');
       const root = document.getElementById('root');
-      const hideBoot = () => { if (root.childElementCount) boot.remove(); };
-      new MutationObserver(hideBoot).observe(root, { childList: true });
+      const hideBoot = () => { if (root && root.childElementCount && boot) boot.remove(); };
+      if (root) new MutationObserver(hideBoot).observe(root, { childList: true });
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

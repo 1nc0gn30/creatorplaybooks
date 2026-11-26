@@ -1,19 +1,16 @@
 import { getStore } from '@netlify/blobs';
+import {
+  buildCorsHeaders,
+  HANDLE_REGEX,
+  isUntrustedOrigin,
+  jsonResponse,
+} from './_security.mjs';
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
+const METHODS = 'GET, POST, OPTIONS';
 
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data, null, 2), { status, headers: { 'Content-Type': 'application/json', ...CORS } });
-}
-
-// No X API key yet — this function uses public proxies where possible and returns draft state.
 async function syncCreator(handle) {
-  // unavatar is a reliable public avatar resolver
-  const avatar = `https://unavatar.io/twitter/${handle}?fallback=false`;
+  const encoded = encodeURIComponent(handle);
+  const avatar = `https://unavatar.io/twitter/${encoded}?fallback=false`;
   return {
     handle,
     syncedAt: new Date().toISOString(),
@@ -27,22 +24,38 @@ async function syncCreator(handle) {
 }
 
 export default async (req, context) => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
+  if (isUntrustedOrigin(req)) {
+    return jsonResponse(req, { error: 'Forbidden origin' }, 403, METHODS);
+  }
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: buildCorsHeaders(req, METHODS) });
+  }
 
   const url = new URL(req.url);
-  const path = url.pathname.replace('/api/', '');
+  const path = url.pathname.replace(/^\/api\//, '').replace(/\/+$/, '');
   const store = getStore({ name: 'creator-sync', consistency: 'strong' });
 
-  // POST /api/sync?handle=buildwithmaya
+  // POST /api/sync?handle=buildwithmaya (requires authenticated identity)
   if (path === 'sync' && req.method === 'POST') {
-    const handle = url.searchParams.get('handle') || url.searchParams.get('id');
-    if (!handle) return json({ error: 'Missing handle query param' }, 400);
+    const user = context?.user;
+    if (!user?.sub) {
+      return jsonResponse(req, { error: 'Unauthorized' }, 401, METHODS);
+    }
+    const rawHandle = (url.searchParams.get('handle') || url.searchParams.get('id') || '').replace(/^@/, '');
+    if (!rawHandle || !HANDLE_REGEX.test(rawHandle)) {
+      return jsonResponse(req, { error: 'Invalid or missing X handle' }, 400, METHODS);
+    }
     try {
-      const data = await syncCreator(handle);
-      await store.set(handle, data, { type: 'json' });
-      return json({ ok: true, handle, syncedAt: data.syncedAt, note: 'Limited public sync. Add X_API_BEARER env var for full posts/media.' });
-    } catch (e) {
-      return json({ error: e.message }, 500);
+      const data = await syncCreator(rawHandle);
+      await store.setJSON(rawHandle, data);
+      return jsonResponse(req, {
+        ok: true,
+        handle: rawHandle,
+        syncedAt: data.syncedAt,
+        note: 'Public avatar sync completed. Configure X_BEARER_TOKEN for live metrics.',
+      }, 200, METHODS);
+    } catch {
+      return jsonResponse(req, { error: 'Sync operation failed' }, 500, METHODS);
     }
   }
 
@@ -53,8 +66,8 @@ export default async (req, context) => {
       const data = await store.get(h, { type: 'json' }).catch(() => null);
       return { handle: h, lastSync: data?.syncedAt || null, source: data?.source || 'never' };
     }));
-    return json({ count: results.length, results });
+    return jsonResponse(req, { count: results.length, results }, 200, METHODS);
   }
 
-  return json({ error: 'Not found', available: ['sync?handle=...', 'sync-status'] }, 404);
+  return jsonResponse(req, { error: 'Not found', available: ['sync?handle=...', 'sync-status'] }, 404, METHODS);
 };

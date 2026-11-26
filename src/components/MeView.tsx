@@ -15,7 +15,7 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
           Builder Profile
         </div>
         <h2 className="page-title">Your details</h2>
-        <p className="page-subtitle">Name, links, and reading preferences. They stay in this browser until you sign in and save them.</p>
+        <p className="page-subtitle">Name, links, and reading preferences saved directly in this browser.</p>
       </div>
 
       <div className="me-grid-layout">
@@ -29,40 +29,40 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
             <div className="me-form">
               <div className="me-form-row">
                 <div className="me-field">
-                  <label>Name</label>
-                  <input value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
+                  <label htmlFor="me-name">Name</label>
+                  <input id="me-name" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
                 </div>
                 <div className="me-field">
-                  <label>Handle</label>
-                  <input value={profile.handle} onChange={(e) => setProfile({ ...profile, handle: e.target.value })} placeholder="@handle" />
+                  <label htmlFor="me-handle">Handle</label>
+                  <input id="me-handle" value={profile.handle} onChange={(e) => setProfile({ ...profile, handle: e.target.value })} placeholder="@handle" />
                 </div>
               </div>
               <div className="me-form-row">
                 <div className="me-field">
-                  <label>
+                  <label htmlFor="me-project">
                     <Target size={11} style={{ display: 'inline', marginRight: '4px' }} />
                     Project Name
                   </label>
-                  <input value={profile.project} onChange={(e) => setProfile({ ...profile, project: e.target.value })} />
+                  <input id="me-project" value={profile.project} onChange={(e) => setProfile({ ...profile, project: e.target.value })} />
                 </div>
                 <div className="me-field">
-                  <label>
+                  <label htmlFor="me-url">
                     <Link2 size={11} style={{ display: 'inline', marginRight: '4px' }} />
                     URL
                   </label>
-                  <input value={profile.url} onChange={(e) => setProfile({ ...profile, url: e.target.value })} placeholder="https://" />
+                  <input id="me-url" value={profile.url} onChange={(e) => setProfile({ ...profile, url: e.target.value })} placeholder="https://" />
                 </div>
               </div>
               <div className="me-field">
-                <label>
+                <label htmlFor="me-bio">
                   <FileText size={11} style={{ display: 'inline', marginRight: '4px' }} />
                   Bio
                 </label>
-                <textarea value={profile.bio} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} rows={3} />
+                <textarea id="me-bio" value={profile.bio} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} rows={3} />
               </div>
               <div className="me-field">
-                <label>Goal</label>
-                <textarea value={profile.goal} onChange={(e) => setProfile({ ...profile, goal: e.target.value })} rows={2} />
+                <label htmlFor="me-goal">Goal</label>
+                <textarea id="me-goal" value={profile.goal} onChange={(e) => setProfile({ ...profile, goal: e.target.value })} rows={2} />
               </div>
             </div>
           </div>
@@ -74,8 +74,9 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
               Accessibility Preferences
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <label className="me-acc-toggle">
+              <label className="me-acc-toggle" htmlFor="me-acc-large">
                 <input
+                  id="me-acc-large"
                   type="checkbox"
                   className="me-acc-toggle-checkbox"
                   checked={!!profile.accessibilityPreferences?.largeText}
@@ -93,8 +94,9 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
                 </div>
               </label>
 
-              <label className="me-acc-toggle">
+              <label className="me-acc-toggle" htmlFor="me-acc-contrast">
                 <input
+                  id="me-acc-contrast"
                   type="checkbox"
                   className="me-acc-toggle-checkbox"
                   checked={!!profile.accessibilityPreferences?.highContrast}
@@ -112,8 +114,9 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
                 </div>
               </label>
 
-              <label className="me-acc-toggle">
+              <label className="me-acc-toggle" htmlFor="me-acc-motion">
                 <input
+                  id="me-acc-motion"
                   type="checkbox"
                   className="me-acc-toggle-checkbox"
                   checked={!!profile.accessibilityPreferences?.reducedMotion}
@@ -134,33 +137,33 @@ export function MeView({ profile, setProfile }: { profile: BuilderProfile; setPr
           </div>
         </div>
 
-        {/* Right Side: Preview Card */}
+        {/* Right Side: Contained Normal-Flow Preview Card */}
         <div className="me-card me-preview-card">
           <div className="me-preview-label">
             <Eye size={11} />
             Live Preview
           </div>
           <h3 style={{ fontSize: '1.25rem', margin: 0 }}>Your Card</h3>
-          <div className="creator-card-clean" style={{ cursor: 'default', pointerEvents: 'none', background: 'rgba(18, 18, 26, 0.7)', '--card-primary': 'var(--primary)', '--card-accent': 'var(--accent)' } as React.CSSProperties}>
-            <div className="creator-card-clean-banner" style={{ height: '80px', background: 'linear-gradient(135deg, var(--primary) 40%, var(--accent) 40%)' }} />
-            <div className="creator-card-clean-avatar avatar-fallback" style={{ top: '42px', width: '64px', height: '64px', fontSize: '1.1rem', background: 'linear-gradient(135deg, var(--primary), var(--accent))' }}>
+          <div className="me-preview-card-inner">
+            <div className="me-preview-banner" />
+            <div className="me-preview-avatar" aria-hidden="true">
               {initials}
             </div>
-            <div className="creator-card-clean-body" style={{ padding: '36px 20px 20px' }}>
-              <div className="creator-card-clean-top" style={{ marginBottom: '8px' }}>
-                <div className="creator-card-clean-title">
-                  <h3 className="creator-card-clean-name" style={{ fontSize: '1.1rem' }}>{profile.name || 'Your name'}</h3>
-                  <span className="creator-card-clean-handle">{profile.handle || '@handle'}</span>
+            <div className="me-preview-body">
+              <div className="me-preview-top">
+                <div className="me-preview-title">
+                  <h4 className="me-preview-name">{profile.name || 'Your name'}</h4>
+                  <span className="me-preview-handle">{profile.handle || '@handle'}</span>
                 </div>
-                <span className="status-badge" style={{ background: 'rgba(236,72,153,0.12)', border: '1px solid rgba(236,72,153,0.2)', color: 'var(--primary)', textTransform: 'uppercase', fontSize: '0.65rem', padding: '3px 8px', borderRadius: '99px', fontWeight: 700 }}>Builder</span>
+                <span className="me-preview-badge">Builder</span>
               </div>
-              <p className="creator-card-clean-bio" style={{ fontSize: '0.84rem', margin: '0 0 12px' }}>{profile.bio || 'Your bio shows here.'}</p>
+              <p className="me-preview-bio">{profile.bio || 'Your bio shows here.'}</p>
               {profile.project && (
-                <div className="tag-chip" style={{ background: 'rgba(34, 211, 238, 0.1)', borderColor: 'rgba(34, 211, 238, 0.2)', color: 'var(--accent)', fontSize: '0.7rem', padding: '4px 10px', borderRadius: '99px', display: 'inline-block', marginBottom: '14px', fontWeight: 600 }}>
+                <div className="me-preview-project-chip">
                   Shipping {profile.project}
                 </div>
               )}
-              <div className="creator-card-clean-stats" style={{ display: 'flex', gap: '16px', fontSize: '0.78rem', color: 'var(--muted)', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '12px' }}>
+              <div className="me-preview-stats">
                 <span><strong>{profile.streak}</strong> streak</span>
                 <span><strong>{profile.xp}</strong> XP</span>
               </div>

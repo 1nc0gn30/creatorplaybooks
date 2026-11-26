@@ -13,10 +13,10 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
         <div className="dashboard-header-left">
           <div className="dashboard-header-badge">
             <span className="pulse-dot" />
-            Log
+            Persistent Local Log
           </div>
           <h2 className="page-title">What you have written down</h2>
-          <p className="page-subtitle">Drafts for the week, posts you marked done, and a streak if the days are consecutive.</p>
+          <p className="page-subtitle">Drafts for the week, posts you marked done, and your streak — saved automatically to browser localStorage.</p>
         </div>
         {hasStreak && (
           <div className="dashboard-streak-banner">
@@ -90,6 +90,7 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
 
       <div className="dashboard-actions">
         <button
+          type="button"
           className="btn btn-hot log-post-btn"
           onClick={() => setProgress({ ...progress, postsThisWeek: progress.postsThisWeek + 1, xp: progress.xp + 12, lastPostDate: new Date().toISOString().slice(0, 10) })}
           data-tooltip="Gain +12 XP!"
@@ -97,6 +98,7 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
           <Plus size={14} /> Log a post
         </button>
         <button
+          type="button"
           className="btn btn-secondary log-reply-btn"
           onClick={() => setProgress({ ...progress, repliesToday: progress.repliesToday + 1, xp: progress.xp + 3 })}
           data-tooltip="Gain +3 XP!"
@@ -104,6 +106,7 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
           <MessageSquare size={14} /> Log reply
         </button>
         <button
+          type="button"
           className="btn btn-secondary extend-streak-btn"
           onClick={() => setProgress({ ...progress, streak: progress.streak + 1, xp: progress.xp + 5 })}
           data-tooltip="Gain +5 XP!"
@@ -118,7 +121,7 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
             <TrendingUp size={18} style={{ color: 'var(--accent)' }} />
             Ideas from {activeCreator.name}
           </h3>
-          <button className="btn btn-sm btn-secondary" onClick={refreshIdeas}>
+          <button type="button" className="btn btn-sm btn-secondary" onClick={refreshIdeas}>
             <RefreshCw size={14} /> Refresh
           </button>
         </div>
@@ -126,7 +129,7 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
           {ideas.map((idea: ContentIdea) => (
             <div key={idea.id} className="idea-card-v2">
               <div className="idea-card-header">
-                <span className="idea-format badge" style={{ background: `${activeCreator.theme.primary}15`, color: activeCreator.theme.primary, borderColor: `${activeCreator.theme.primary}30` }}>
+                <span className="idea-format badge">
                   {idea.format}
                 </span>
               </div>
@@ -151,11 +154,13 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
           )}
         </h3>
         <div className="schedule-input">
-          <select value={newDay} onChange={(e) => setNewDay(e.target.value)}>
+          <label htmlFor="dashboard-day-select" className="sr-only">Day of week</label>
+          <select id="dashboard-day-select" aria-label="Day of week" value={newDay} onChange={(e) => setNewDay(e.target.value)}>
             {days.map((d) => <option key={d} value={d}>{d}</option>)}
           </select>
-          <input type="text" placeholder="Draft your post..." value={newPost} onChange={(e) => setNewPost(e.target.value)} />
-          <button className="btn btn-hot" onClick={addScheduled}>
+          <label htmlFor="dashboard-post-input" className="sr-only">Draft post text</label>
+          <input id="dashboard-post-input" aria-label="Draft post text" type="text" placeholder="Draft your post..." value={newPost} onChange={(e) => setNewPost(e.target.value)} />
+          <button type="button" className="btn btn-hot" onClick={addScheduled}>
             <Plus size={14} /> Add
           </button>
         </div>
@@ -167,8 +172,8 @@ export function DashboardView({ progress, setProgress, score, level, ideas, refr
                 {schedule.filter((s: ScheduledPost) => s.day === d).map((s: ScheduledPost) => (
                   <div key={s.id} className="scheduled-post-v2">
                     <span>{s.content}</span>
-                    <button onClick={() => removeScheduled(s.id)} title="Remove" style={{ opacity: 0.7, background: 'none', border: 'none', cursor: 'pointer' }}>
-                      <Trash2 size={12} />
+                    <button type="button" onClick={() => removeScheduled(s.id)} title="Remove scheduled post" aria-label={`Remove ${s.content}`} style={{ opacity: 0.85, background: 'none', border: 'none', cursor: 'pointer' }}>
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 ))}

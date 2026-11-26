@@ -1,31 +1,26 @@
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PATCH',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+import { getStore } from '@netlify/blobs';
+import {
+  buildCorsHeaders,
+  isUntrustedOrigin,
+  jsonResponse,
+  pickAllowedFields,
+  readBoundedJson,
+} from './_security.mjs';
+
+const METHODS = 'GET, POST, PATCH, OPTIONS';
+const ALLOWED_MEMBER_FIELDS = {
+  name: 'shortString',
+  handle: 'shortString',
+  bio: 'string',
+  building: 'shortString',
+  website: 'shortString',
+  xHandle: 'shortString',
+  github: 'shortString',
+  likedPlaybooks: 'stringArray',
+  admiredCreators: 'stringArray',
 };
 
-import { getStore } from '@netlify/blobs';
-
 const store = () => getStore({ name: 'creatorplaybooks', consistency: 'strong' });
-
-function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...CORS, 'Content-Type': 'application/json' },
-  });
-}
-
-function error(message, status = 400) {
-  return json({ error: message }, status);
-}
-
-async function readBody(req) {
-  try {
-    return await req.json();
-  } catch {
-    return {};
-  }
-}
 
 function text(blob) {
   if (!blob) return null;
@@ -67,14 +62,14 @@ async function getAllVoteSummaries() {
 }
 
 function buildDefaultProfile(user) {
-  const safeName = user.name || user.email.split('@')[0] || 'Builder';
+  const safeName = user.name || (user.email ? user.email.split('@')[0] : '') || 'Builder';
   const handle = safeName.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20) || 'builder';
   return {
     id: user.id,
     email: user.email,
     name: safeName,
     handle,
-    bio: 'Just a builder learning from the best playbooks.',
+    bio: 'Builder working through creator playbooks.',
     avatar: '',
     banner: '',
     building: '',
@@ -96,39 +91,53 @@ async function upsertMember(user) {
 }
 
 export default async (req, context) => {
-  if (req.method === 'OPTIONS') return json({ ok: true });
+  if (isUntrustedOrigin(req)) {
+    return jsonResponse(req, { error: 'Forbidden origin' }, 403, METHODS);
+  }
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: buildCorsHeaders(req, METHODS) });
+  }
 
   const url = new URL(req.url);
   const action = url.searchParams.get('action') || url.pathname.split('/').pop();
 
-  // Public: vote summaries
-  if (action === 'votes') {
+  if (action === 'votes' && req.method === 'GET') {
     const summaries = await getAllVoteSummaries();
-    return json(summaries);
+    return jsonResponse(req, summaries, 200, METHODS);
   }
 
   const user = context?.user;
-  if (!user) return error('Unauthorized', 401);
+  if (!user) return jsonResponse(req, { error: 'Unauthorized' }, 401, METHODS);
 
   if (action === 'me') {
     if (req.method === 'GET') {
       const profile = await upsertMember(user);
-      return json(profile);
+      return jsonResponse(req, profile, 200, METHODS);
     }
     if (req.method === 'POST' || req.method === 'PATCH') {
-      const body = await readBody(req);
+      const parsed = await readBoundedJson(req);
+      if (parsed.error) return jsonResponse(req, { error: parsed.error }, parsed.status, METHODS);
+      const safePatch = pickAllowedFields(parsed.data, ALLOWED_MEMBER_FIELDS);
       const current = await upsertMember(user);
-      const next = { ...current, ...body, id: current.id, email: current.email, role: current.role, updatedAt: new Date().toISOString() };
+      const next = {
+        ...current,
+        ...safePatch,
+        id: current.id,
+        email: current.email,
+        role: current.role,
+        updatedAt: new Date().toISOString(),
+      };
       await store().setJSON(`members:${user.id}`, next);
-      return json(next);
+      return jsonResponse(req, next, 200, METHODS);
     }
   }
 
-  if (action === 'vote') {
-    const body = await readBody(req);
-    const { creatorId, direction } = body;
-    if (!creatorId || !['up', 'down', null].includes(direction)) {
-      return error('Invalid vote payload');
+  if (action === 'vote' && req.method === 'POST') {
+    const parsed = await readBoundedJson(req);
+    if (parsed.error) return jsonResponse(req, { error: parsed.error }, parsed.status, METHODS);
+    const { creatorId, direction } = parsed.data;
+    if (typeof creatorId !== 'string' || !/^[a-z0-9_-]{1,40}$/i.test(creatorId) || !['up', 'down', null].includes(direction)) {
+      return jsonResponse(req, { error: 'Invalid vote payload' }, 400, METHODS);
     }
     const profile = await upsertMember(user);
     const previous = profile.votes[creatorId] || null;
@@ -144,47 +153,57 @@ export default async (req, context) => {
     if (direction === 'down') summary.down += 1;
     summary.score = summary.up - summary.down;
     await store().setJSON(key, summary);
-    return json({ profile, summary });
+    return jsonResponse(req, { profile, summary }, 200, METHODS);
   }
 
-  if (action === 'submit') {
-    const body = await readBody(req);
-    if (!body.handle || !body.name || !body.category || !body.reason) {
-      return error('Missing submission fields');
+  if (action === 'submit' && req.method === 'POST') {
+    const parsed = await readBoundedJson(req);
+    if (parsed.error) return jsonResponse(req, { error: parsed.error }, parsed.status, METHODS);
+    const safeSub = pickAllowedFields(parsed.data, {
+      handle: 'shortString',
+      name: 'shortString',
+      category: 'shortString',
+      reason: 'string',
+    });
+    if (!safeSub.handle || !safeSub.name || !safeSub.category || !safeSub.reason) {
+      return jsonResponse(req, { error: 'Missing submission fields' }, 400, METHODS);
     }
     const payload = {
-      ...body,
+      ...safeSub,
       id: crypto.randomUUID(),
       submittedBy: user.id,
       status: 'pending',
       submittedAt: new Date().toISOString(),
     };
     await store().setJSON(`submissions:${payload.id}`, payload);
-    return json(payload, 201);
+    return jsonResponse(req, payload, 201, METHODS);
   }
 
-  if (action === 'submissions') {
-    if (user.role !== 'admin') return error('Forbidden', 403);
+  if (action === 'submissions' && req.method === 'GET') {
+    if (user.role !== 'admin') return jsonResponse(req, { error: 'Forbidden' }, 403, METHODS);
     const subs = await getSubmissions();
-    return json(subs);
+    return jsonResponse(req, subs, 200, METHODS);
   }
 
-  if (action === 'moderate') {
-    if (user.role !== 'admin') return error('Forbidden', 403);
-    const body = await readBody(req);
-    const { id, status } = body;
-    if (!id || !['approved', 'rejected'].includes(status)) return error('Invalid moderation payload');
+  if (action === 'moderate' && req.method === 'POST') {
+    if (user.role !== 'admin') return jsonResponse(req, { error: 'Forbidden' }, 403, METHODS);
+    const parsed = await readBoundedJson(req);
+    if (parsed.error) return jsonResponse(req, { error: parsed.error }, parsed.status, METHODS);
+    const { id, status } = parsed.data;
+    if (typeof id !== 'string' || !/^[a-z0-9-]{8,64}$/i.test(id) || !['approved', 'rejected'].includes(status)) {
+      return jsonResponse(req, { error: 'Invalid moderation payload' }, 400, METHODS);
+    }
     const key = `submissions:${id}`;
     const blob = await store().get(key);
     const t = text(blob);
-    if (!t) return error('Submission not found', 404);
+    if (!t) return jsonResponse(req, { error: 'Submission not found' }, 404, METHODS);
     const sub = JSON.parse(t);
     sub.status = status;
     await store().setJSON(key, sub);
-    return json(sub);
+    return jsonResponse(req, sub, 200, METHODS);
   }
 
-  return error('Unknown action');
+  return jsonResponse(req, { error: 'Unknown action' }, 400, METHODS);
 };
 
 export const config = { path: '/api/members' };

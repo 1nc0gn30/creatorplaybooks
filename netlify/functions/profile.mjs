@@ -1,37 +1,52 @@
 import { getStore } from '@netlify/blobs';
+import {
+  buildCorsHeaders,
+  isUntrustedOrigin,
+  jsonResponse,
+  pickAllowedFields,
+  readBoundedJson,
+} from './_security.mjs';
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+const METHODS = 'GET, POST, OPTIONS';
+const ALLOWED_PROFILE_FIELDS = {
+  name: 'shortString',
+  handle: 'shortString',
+  project: 'shortString',
+  url: 'shortString',
+  bio: 'string',
+  goal: 'string',
 };
 
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data, null, 2), { status, headers: { 'Content-Type': 'application/json', ...CORS } });
-}
-
 export default async (req, context) => {
-  const store = getStore({ name: 'profiles', consistency: 'strong' });
-  const user = context?.user;
-
-  if (!user?.sub) {
-    return json({ error: 'Unauthorized' }, 401);
+  if (isUntrustedOrigin(req)) {
+    return jsonResponse(req, { error: 'Forbidden origin' }, 403, METHODS);
+  }
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: buildCorsHeaders(req, METHODS) });
   }
 
+  const user = context?.user;
+  if (!user?.sub) {
+    return jsonResponse(req, { error: 'Unauthorized' }, 401, METHODS);
+  }
+
+  const store = getStore({ name: 'profiles', consistency: 'strong' });
   const key = `user:${user.sub}`;
 
   if (req.method === 'GET') {
     const data = await store.get(key, { type: 'json' });
-    return json(data || {});
+    return jsonResponse(req, data || {}, 200, METHODS);
   }
 
   if (req.method === 'POST') {
-    const body = await req.json();
+    const parsed = await readBoundedJson(req);
+    if (parsed.error) return jsonResponse(req, { error: parsed.error }, parsed.status, METHODS);
+    const safePatch = pickAllowedFields(parsed.data, ALLOWED_PROFILE_FIELDS);
     const existing = (await store.get(key, { type: 'json' })) || {};
-    const updated = { ...existing, ...body, updatedAt: new Date().toISOString() };
+    const updated = { ...existing, ...safePatch, updatedAt: new Date().toISOString() };
     await store.setJSON(key, updated);
-    return json(updated);
+    return jsonResponse(req, updated, 200, METHODS);
   }
 
-  return json({ error: 'Method not allowed' }, 405);
+  return jsonResponse(req, { error: 'Method not allowed' }, 405, METHODS);
 };

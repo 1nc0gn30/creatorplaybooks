@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Sparkles, TrendingUp, Users, UserCircle, LogIn, LogOut, BookOpen, Workflow } from 'lucide-react';
+import { Sparkles, TrendingUp, Users, UserCircle, LogIn, LogOut, BookOpen, Workflow, Sun, Moon } from 'lucide-react';
 import type { AuthUser } from '../lib/auth-context';
 import type { MemberProfile } from '../lib/member-types';
 import type { Tab } from '../types';
@@ -9,7 +9,7 @@ const ITEMS: { id: Tab | 'members' | 'flow'; label: string; icon: React.ReactNod
   { id: 'creators', label: 'Mentors', icon: <Sparkles size={14} />, tooltip: 'Browse verified creator playbooks' },
   { id: 'flow', label: 'Flow', icon: <Workflow size={14} />, tooltip: 'Interactive creator playbook flow' },
   { id: 'dashboard', label: 'Dashboard', icon: <TrendingUp size={14} />, tooltip: 'Track consistency & XP' },
-  { id: 'members', label: 'Members', icon: <Users size={14} />, tooltip: 'See leaderboard & vote' },
+  { id: 'members', label: 'Members', icon: <Users size={14} />, tooltip: 'Local builder profile, votes & nominations' },
   { id: 'me', label: 'Me', icon: <UserCircle size={14} />, tooltip: 'Customize details & layouts' },
   { id: 'docs', label: 'Docs', icon: <BookOpen size={14} />, tooltip: 'API & developer reference' },
 ];
@@ -24,9 +24,23 @@ interface NavbarProps {
   profile: MemberProfile | null;
   login: () => void;
   logout: () => void;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
 }
 
-export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, profile, login, logout }: NavbarProps) {
+export function Navbar({
+  tab,
+  setTab,
+  menuOpen,
+  setMenuOpen,
+  scrolled,
+  user,
+  profile,
+  login,
+  logout,
+  theme,
+  toggleTheme,
+}: NavbarProps) {
   const initials = profile?.name
     ? profile.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
     : user?.name
@@ -59,7 +73,7 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
           </div>
           <span className="brand-text">
             <span className="brand-name">CreatorPlaybooks</span>
-            <span className="brand-tag">by Neal Frazier Tech</span>
+            <span className="brand-tag">v1.1.0 · Neal Frazier Tech</span>
           </span>
         </a>
 
@@ -77,12 +91,23 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
         </div>
 
         <div className="nav-actions">
+          <button
+            type="button"
+            className="nav-theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to Editorial Ivory Light Mode' : 'Switch to Obsidian Dark Mode'}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           {user ? (
             <>
               <button
+                type="button"
                 className="nav-avatar"
                 onClick={() => navigate('members')}
                 title="Open member profile"
+                aria-label="Open member profile"
               >
                 {profile?.avatar ? (
                   <img src={profile.avatar} alt={profile.name} />
@@ -90,54 +115,50 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
                   <div className="nav-avatar-fallback">{initials}</div>
                 )}
               </button>
-              <button className="nav-logout" onClick={logout} title="Log out">
+              <button type="button" className="nav-logout" onClick={logout} title="Log out" aria-label="Log out">
                 <LogOut size={16} />
               </button>
             </>
           ) : (
-            <button className="btn btn-hot btn-sm" onClick={login}>
-              <LogIn size={14} /> Sign in
+            <button type="button" className="btn btn-hot btn-sm nav-signin-btn" onClick={() => navigate('members')}>
+              <LogIn size={14} /> Builder Hub
             </button>
           )}
         </div>
       </nav>
 
       {/* Mobile/tablet top bar */}
-      <nav className="nav-mobile-bar" aria-label="Primary">
+      <nav className="nav-mobile-bar" aria-label="Primary mobile">
         <a href="/" className="brand" title="CreatorPlaybooks home">
           <div className="brand-mark" style={{ overflow: 'hidden' }}>
             <img src="/brand-mark.webp" alt="CreatorPlaybooks emblem" width={32} height={32} className="origin-brand-img" />
           </div>
           <span className="brand-text">
             <span className="brand-name">CreatorPlaybooks</span>
-            <span className="brand-tag">by Neal Frazier Tech</span>
+            <span className="brand-tag">v1.1.0 · Neal Frazier Tech</span>
           </span>
         </a>
 
         <div className="nav-actions">
-          {user ? (
-            <button
-              className="nav-avatar"
-              onClick={() => navigate('members')}
-              title="Open member profile"
-            >
-              {profile?.avatar ? (
-                <img src={profile.avatar} alt={profile.name} />
-              ) : (
-                <div className="nav-avatar-fallback">{initials}</div>
-              )}
-            </button>
-          ) : (
-            <button className="btn btn-hot btn-sm" onClick={login}>
-              <LogIn size={14} />
-              <span className="nav-login-text">Sign in</span>
-            </button>
-          )}
+          <button
+            type="button"
+            className="nav-theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to Editorial Ivory Light Mode' : 'Switch to Obsidian Dark Mode'}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <button type="button" className="btn btn-hot btn-sm nav-signin-btn" onClick={() => navigate('members')}>
+            <Users size={15} />
+            <span className="nav-login-text">Hub</span>
+          </button>
         </div>
       </nav>
 
       {/* Mobile FAB hamburger */}
       <button
+        type="button"
         className={`nav-fab ${menuOpen ? 'active' : ''}`}
         onClick={() => setMenuOpen(!menuOpen)}
         aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -155,6 +176,7 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
         <div className="nav-sheet-links">
           {ITEMS.map((item) => (
             <button
+              type="button"
               key={item.id}
               className={`nav-sheet-link ${tab === item.id ? 'active' : ''}`}
               onClick={() => navigate(item.id)}
@@ -167,15 +189,19 @@ export function Navbar({ tab, setTab, menuOpen, setMenuOpen, scrolled, user, pro
         </div>
         <div className="nav-sheet-divider" />
         <div className="nav-sheet-footer">
+          <button type="button" className="nav-sheet-footer-btn" onClick={toggleTheme}>
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            <span>{theme === 'dark' ? 'Editorial Ivory Light Mode' : 'Obsidian Dark Mode'}</span>
+          </button>
           {user ? (
-            <button className="nav-sheet-footer-btn danger" onClick={logout}>
+            <button type="button" className="nav-sheet-footer-btn danger" onClick={logout}>
               <LogOut size={18} />
               <span>Log out</span>
             </button>
           ) : (
-            <button className="nav-sheet-footer-btn primary" onClick={login}>
+            <button type="button" className="nav-sheet-footer-btn primary" onClick={login}>
               <LogIn size={18} />
-              <span>Sign in</span>
+              <span>Optional Cloud Sync</span>
             </button>
           )}
         </div>

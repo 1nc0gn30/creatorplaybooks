@@ -687,7 +687,7 @@
   filter: drop-shadow(0 24px 40px rgba(var(--card-primary-rgb), 0.28));
 }
 
-.creator-card-clean {
+.hexagon-wrapper .creator-card-clean {
   position: absolute;
   inset: 1px;
   background: rgba(10, 10, 15, 0.82) !important;

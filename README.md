@@ -1,112 +1,98 @@
-# 📚 CreatorPlaybooks (`creatorplaybooks` · `:5185`)
+# CreatorPlaybooks (`creatorplaybooks` · `v1.1.0` · `:5185`)
 
-[![Zoth Studio v2](https://img.shields.io/badge/Zoth_Studio_v2-CreatorPlaybooks-D4AF37?style=for-the-badge&logo=compass&logoColor=black)](https://zoth.nullai.tech/tools/creatorplaybooks)
-[![ZothOS Status](https://img.shields.io/badge/ZothOS-Native_CLI_%26_TUI-10B981?style=for-the-badge&logo=gnubash&logoColor=white)](https://github.com/1nc0gn30/zoth-os)
+[![Zoth Studio v2](https://img.shields.io/badge/Zoth_Studio_v2-CreatorPlaybooks-D4AF37?style=for-the-badge)](https://zoth.nullai.tech/tools/creatorplaybooks)
+[![ZothOS CLI & TUI](https://img.shields.io/badge/ZothOS-CLI_%26_Braille_TUI-10B981?style=for-the-badge)](https://github.com/1nc0gn30/zoth-os)
 [![Open Access](https://img.shields.io/badge/Access-100%25_Free_%26_Unlocked-06B6D4?style=for-the-badge)](https://creatorplaybooks.netlify.app)
-[![Support](https://img.shields.io/badge/Support-Buy_Us_a_Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+[![Support](https://img.shields.io/badge/Support-Buy_Us_a_Coffee-FFDD00?style=for-the-badge)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
 
-> **Curated reading lists, tactical playbooks, and mental models from top creators and operators with zero-tracking client-side search.**
-> Published by **Neal Frazier Tech** ([@NealFrazierTech](https://x.com/NealFrazierTech) · [@1nc0gn30](https://github.com/1nc0gn30)) • NullAI Platform. Inspired by [@buildwithmaya](https://x.com/buildwithmaya).
-
----
-
-## ✦ What It Does
-
-CreatorPlaybooks is a high-velocity workstation and reference directory indexing proven frameworks, tactical plays, and reading recommendations from frontier creators and operators. It features:
-- **Interactive Playbook Search**: Zero-latency, client-side filtering across mental models, execution cadences, and swipe files.
-- **Mentor Reading Lists**: Deep-dive dossiers into specific builder journeys, strategy decks, and operational habits.
-- **Repeatable Plays**: Actionable tactics with frequency guidance and battle-tested execution recipes.
-- **Swipe Files**: Copy-ready hooks, writing angles, and audience engagement vectors.
-- **Offline & Zero-Egress Support**: Fully runs offline and client-side on `127.0.0.1:5185` with zero telemetry requirements.
+> Curated reading list, mentor playbook directory, local loopback JSON API, and Unicode U+2800 Braille TUI indexing **35 public builders**, **115 repeatable plays**, and **20 cities**.
+> Engineered by **Neal Frazier Tech** ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech). Inspired by [@buildwithmaya](https://x.com/buildwithmaya).
 
 ---
 
-## ✦ How It Works
+## What It Does
 
-1. **Client-Side Reactive Core**: Built with React 19, TypeScript, and Vite, bundling all playbook metadata locally for instant in-browser utility.
-2. **Deterministic Search Engine**: Fast fuzzy search and tag indexing without backend queries or external tracking cookies.
-3. **Optional Live X Telemetry**: Integrates with X Developer API v2 (`X_BEARER_TOKEN`) on Netlify Functions to hydrate real-time follower counts and latest posts when online, gracefully falling back to offline curated dossiers.
-4. **Zoth Studio v2 & ZothOS Ecosystem Integration**: Pre-wired into Zoth Studio v2 (`/tools/creatorplaybooks`), ZothOS desktop launchers, and terminal CLIs.
+- **35-Mentor Curated Directory (`115` Plays, `20` Cities)**: Client-side search, category/tag filtering, Saved Queue bookmarks, relationship flow graph, and sourced playbooks backed by a single canonical dataset (`shared/creators.json`).
+- **Dual-Theme Workstation**: Full **Editorial Ivory Light Mode (`#FAF8F3`)** and **Obsidian Dark Mode (`#0A0A0F`)** with persistent preference, `?theme=light|dark` sync, and WCAG `>= 4.5:1` contrast.
+- **Persistent Local Dashboard & Offline Builder Hub**: Weekly post scheduler, XP/streak tracker, local builder profile card, creator signal voting, nomination queue, and one-click JSON/Markdown/`.ics`/`.zip` exports stored strictly in browser `localStorage`.
+- **Hardened Loopback Server (`server.mjs` on `127.0.0.1:5185`)**: Zero external dependencies; serves built `dist/` static assets plus live `/health` and `/api/*` endpoints from `shared/creators.json`.
+- **Unicode U+2800 Braille TUI (`creatorplaybooks-tui`)**: Interactive terminal browser and `--once` / `--json` CLI views reading `shared/creators.json` and live `:5185/health`.
 
 ---
 
-## ✦ ZothOS CLI, TUI & Dispatch Commands
+## Verified Loopback API Endpoints (`http://127.0.0.1:5185`)
 
-CreatorPlaybooks is pre-installed across ZothOS and available on any system running the NullAI arsenal:
+| Method | Endpoint | Response |
+| :---: | :--- | :--- |
+| `GET` / `HEAD` | `/health` & `/api/health` | `200 JSON` — version (`1.1.0`), `creators: 35`, `plays: 115`, `places: 20` |
+| `GET` | `/api/creators?q=&category=&tag=` | `200 JSON` — filtered mentor index |
+| `GET` | `/api/creator?id=<slug>&expand=all` | `200 JSON` (or `404 JSON` for unknown slug) — full dossier, plays, hooks, angles, sources |
+| `GET` | `/api/playbook?creator=<slug>` | `200 JSON` — repeatable plays only |
+| `GET` | `/api/ideas?creator=<slug>&count=6` | `200 JSON` — synthesized post ideas from hooks & angles |
+| `GET` | `/api/export?creator=<slug>&format=json\|md` | `200` — downloadable JSON agent-kit bundle or Markdown pack (`Content-Disposition: attachment`) |
+| `GET` / `POST` | `/api/members?action=votes\|vote` | `200 JSON` — local loopback vote tally |
+
+### Security Guarantees (`server.mjs` & Netlify Functions)
+
+- **Loopback-Only Binding & Host Guard**: Binds strictly to `127.0.0.1:5185` and returns `403 JSON` on untrusted `Host` headers (DNS-rebinding protection).
+- **Exact-Port Origin CORS Allowlist**: Validates `new URL(origin)` hostname and exact numeric port (rejecting port-suffix spoofing like `:51850` or external origins with `403 JSON` on `OPTIONS` and `/api/*` routes, emitting `Vary: Origin`).
+- **Path-Traversal Containment**: Blocks `/../`, `/%2e%2e/`, `/@fs/`, and symlink escapes with `403 JSON`.
+- **Security Headers**: Emits `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and loopback-safe `Content-Security-Policy` on every response (and via `netlify.toml` `[[headers]]`).
+- **Bounded JSON Parsing**: Enforces `1 MiB` max request body (`413 JSON`) and strict JSON object parsing (`400 JSON`), with `404 JSON` for unknown `/api/*` routes.
+
+---
+
+## ZothOS CLI, Braille TUI & Hermes Plugin Tools
 
 ```bash
-# Launch interactive workstation on http://127.0.0.1:5185
+# Start hardened production loopback server on http://127.0.0.1:5185
+creatorplaybooks serve
+
+# Launch workstation and open in browser
 creatorplaybooks desktop
 
-# Run 60fps Unicode U+2800 Braille terminal TUI
-creatorplaybooks-tui
-
-# Inspect daemon health & telemetry status as JSON
+# Inspect status and machine-readable JSON telemetry
 creatorplaybooks --status
 creatorplaybooks --json
+creatorplaybooks --version
 
-# Start dev server manually
-creatorplaybooks serve
+# Launch interactive Unicode U+2800 Braille terminal TUI
+creatorplaybooks-tui
+
+# Non-interactive Braille snapshot & filtered JSON output
+creatorplaybooks-tui --once
+creatorplaybooks-tui --search maya --json
 ```
+
+### Hermes Agent Plugin (`hermes-creatorplaybooks`)
+
+The community Hermes plugin (`github.com/1nc0gn30/hermes-creatorplaybooks`) exposes 5 read-only agent tools:
+- `creatorplaybooks_mentors` — list mentors with optional filters
+- `creatorplaybooks_mentor` — inspect one mentor profile & verified sources
+- `creatorplaybooks_playbook` — fetch repeatable plays for a mentor
+- `creatorplaybooks_ideas` — generate post ideas from hooks & angles
+- `creatorplaybooks_goal_plan` — generate a dated 7/14/30/60/90-day goal schedule
 
 ---
 
-## ✦ Local Development & Build
+## Local Build, Lint & Test
 
 ```bash
-# Install dependencies
 npm install
-
-# Run local development server (:5185)
-npm run dev
-
-# Run production build & verify type safety
-npm run build
-
-# Preview production build locally
-npm run preview
+npm run build        # TypeScript build + Vite production bundle -> dist/
+npm test             # Static + live HTTP/API/security + CLI/TUI test suite
+npm run lint         # oxlint src
+npx tsc --noEmit     # Strict typecheck
+npm start            # Run node server.mjs on 127.0.0.1:5185
 ```
 
-### X API Setup (Optional for Live Telemetry)
-
-1. Navigate to the [X Developer Portal](https://developer.x.com/en/portal/dashboard).
-2. Create a Project/App and generate a Bearer Token.
-3. Add to your local `.env` (ignored by `.gitignore`):
-   ```bash
-   X_BEARER_TOKEN="your_bearer_token_here"
-   ```
-4. For Netlify deployments:
-   ```bash
-   netlify env:set X_BEARER_TOKEN "your_bearer_token_here"
-   ```
-
 ---
 
-## ✦ Netlify Serverless Functions
+## 100% Free & Open Access
 
-- `api.mjs` — Creator directory & data query API
-- `x-data.mjs` — Live X API proxy (uses `X_BEARER_TOKEN`)
-- `members.mjs` — Open member state API
-- `export.mjs` — Bundled playbook export utility
-- `profile.mjs` — Creator profile resolution API
-- `sync.mjs` — Telemetry synchronization API
+Every playbook, API endpoint, local dashboard, and export is free and unlocked with zero paywalls. Voluntary support:
 
----
+- **Buy Us a Coffee (Stripe)**: [buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- **Solana Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
 
-## ✦ 100% Free & Open Access — Zero Paywalls
-
-All tools across the NullAI / Neal Frazier Tech ecosystem are **100% free, open, and unlocked by default**. Zero license modals, zero paywalls, zero locked exports.
-
-If CreatorPlaybooks helps your workflow, consider supporting ongoing independent open-source development:
-
-- ☕ **Buy Us a Coffee (Stripe)**: [buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
-- 🪙 **Solana Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` (`solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
-
----
-
-## ✦ Architecture & Attribution
-
-- **Architect**: Neal Frazier ([@1nc0gn30](https://github.com/1nc0gn30))
-- **Organization**: Neal Frazier Tech • [NullAI Platform](https://nullai.tech)
-- **Repository**: [github.com/1nc0gn30/creatorplaybooks](https://github.com/1nc0gn30/creatorplaybooks)
-- **License**: MIT
+Engineered by Neal Frazier Tech ([@1nc0gn30](https://github.com/1nc0gn30)) • [NullAI Platform](https://nullai.tech) · MIT License.

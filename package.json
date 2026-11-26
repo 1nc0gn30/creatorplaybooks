@@ -1,13 +1,16 @@
 {
-  "name": "mayagrowth",
+  "name": "creatorplaybooks",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint src",
     "preview": "vite preview",
+    "start": "node server.mjs",
+    "serve": "node server.mjs",
+    "test": "node --test tests/*.mjs",
     "smoke": "node scripts/smoke-mentors.mjs"
   },
   "dependencies": {

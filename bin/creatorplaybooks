@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+VERSION="1.1.0"
+PORT="${CREATORPLAYBOOKS_PORT:-5185}"
+HOST="${CREATORPLAYBOOKS_HOST:-127.0.0.1}"
+
+resolve_repo_root() {
+  local script_path script_dir candidate
+  script_path="$(readlink -f "$0" 2>/dev/null || realpath "$0" 2>/dev/null || printf '%s' "$0")"
+  script_dir="$(cd "$(dirname "$script_path")" && pwd)"
+  candidate="$(cd "$script_dir/.." && pwd)"
+  if [ -f "$candidate/server.mjs" ] && [ -f "$candidate/shared/creators.json" ]; then
+    printf '%s' "$candidate"
+    return 0
+  fi
+  if [ -f "/opt/creatorplaybooks/server.mjs" ]; then
+    printf '%s' "/opt/creatorplaybooks"
+    return 0
+  fi
+  if [ -n "${HOME:-}" ] && [ -f "$HOME/NullAITech/creatorplaybooks/server.mjs" ]; then
+    printf '%s' "$HOME/NullAITech/creatorplaybooks"
+    return 0
+  fi
+  return 1
+}
+
+redact_path() {
+  local p="$1"
+  if [ -n "${HOME:-}" ] && [[ "$p" == "$HOME"* ]]; then
+    printf '~%s' "${p#"$HOME"}"
+  else
+    printf '%s' "$p"
+  fi
+}
+
+print_help() {
+  cat <<EOF
+CreatorPlaybooks v${VERSION} — Local Playbook Workstation & JSON API (:${PORT})
+
+Usage:
+  creatorplaybooks serve        Start hardened loopback server on http://${HOST}:${PORT}
+  creatorplaybooks desktop      Ensure :${PORT} server is running and open in browser
+  creatorplaybooks --status     Print human-readable status and dataset counts
+  creatorplaybooks --json       Print machine-readable JSON telemetry (zero PII paths)
+  creatorplaybooks --version    Print version (${VERSION})
+  creatorplaybooks --help       Show this help text
+
+Companion TUI:
+  creatorplaybooks-tui          Unicode U+2800 Braille terminal playbook browser
+  creatorplaybooks-tui --once   Render one non-interactive Braille snapshot
+  creatorplaybooks-tui --json   Output dataset & live status JSON
+EOF
+}
+
+probe_health() {
+  curl -sf --max-time 2 "http://${HOST}:${PORT}/health" 2>/dev/null || true
+}
+
+show_status_json() {
+  local root_dir display_root health_json online="false"
+  root_dir="$(resolve_repo_root || true)"
+  display_root="$(redact_path "${root_dir:-unavailable}")"
+  health_json="$(probe_health)"
+  if [ -n "$health_json" ]; then
+    online="true"
+  fi
+  node -e '
+    const fs = require("node:fs");
+    const path = require("node:path");
+    const version = process.argv[1];
+    const host = process.argv[2];
+    const port = Number(process.argv[3]);
+    const online = process.argv[4] === "true";
+    const rootDir = process.argv[5];
+    const displayRoot = process.argv[6];
+    let stats = { creators: 0, plays: 0, places: 0 };
+    try {
+      const ds = JSON.parse(fs.readFileSync(path.join(rootDir, "shared", "creators.json"), "utf8"));
+      stats = ds.stats || { creators: (ds.creators || []).length, plays: 0, places: (ds.places || []).length };
+    } catch {}
+    console.log(JSON.stringify({
+      service: "creatorplaybooks",
+      version,
+      status: online ? "ONLINE" : "IDLE",
+      url: `http://${host}:${port}`,
+      healthUrl: `http://${host}:${port}/health`,
+      installRoot: displayRoot,
+      dataset: stats,
+      tuiCommand: "creatorplaybooks-tui",
+    }, null, 2));
+  ' "$VERSION" "$HOST" "$PORT" "$online" "${root_dir:-}" "$display_root"
+}
+
+CMD="${1:-serve}"
+case "$CMD" in
+  -h|--help|help)
+    print_help
+    exit 0
+    ;;
+  -v|--version|version)
+    printf 'creatorplaybooks %s\n' "$VERSION"
+    exit 0
+    ;;
+  --json)
+    show_status_json
+    exit 0
+    ;;
+  --status|status)
+    root_dir="$(resolve_repo_root || true)"
+    health_json="$(probe_health)"
+    if [ -n "$health_json" ]; then
+      printf 'CreatorPlaybooks v%s: ONLINE at http://%s:%s\n' "$VERSION" "$HOST" "$PORT"
+    else
+      printf 'CreatorPlaybooks v%s: IDLE (start with: creatorplaybooks serve)\n' "$VERSION"
+    fi
+    printf 'Install root: %s\n' "$(redact_path "${root_dir:-unavailable}")"
+    exit 0
+    ;;
+  serve)
+    shift || true
+    root_dir="$(resolve_repo_root)" || { echo "Error: CreatorPlaybooks runtime not found." >&2; exit 1; }
+    cd "$root_dir"
+    exec node server.mjs --host "$HOST" --port "$PORT" "$@"
+    ;;
+  desktop)
+    root_dir="$(resolve_repo_root)" || { echo "Error: CreatorPlaybooks runtime not found." >&2; exit 1; }
+    if [ -z "$(probe_health)" ]; then
+      (cd "$root_dir" && nohup node server.mjs --host "$HOST" --port "$PORT" >/tmp/creatorplaybooks-daemon.log 2>&1 &)
+      for _ in 1 2 3 4 5 6 7 8 9 10; do
+        [ -n "$(probe_health)" ] && break
+        sleep 0.25
+      done
+    fi
+    if command -v xdg-open >/dev/null 2>&1; then
+      xdg-open "http://${HOST}:${PORT}" >/dev/null 2>&1 &
+    fi
+    printf 'CreatorPlaybooks v%s ready at http://%s:%s\n' "$VERSION" "$HOST" "$PORT"
+    exit 0
+    ;;
+  *)
+    echo "Unknown command: $CMD" >&2
+    print_help >&2
+    exit 2
+    ;;
+esac

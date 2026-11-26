@@ -10,6 +10,7 @@ import { HomePage } from './components/HomePage';
 import { OriginStoryModal } from './components/OriginStoryModal';
 import { OnboardingModal } from './components/OnboardingModal';
 import './styles/navbar.css';
+import './styles/theme.css';
 import { fetchMemberMe, saveMemberMe } from './lib/member-api';
 import { site } from './lib/site';
 
@@ -21,6 +22,26 @@ const MeView = lazy(() => import('./components/MeView').then((m) => ({ default: 
 const DocsView = lazy(() => import('./components/DocsView').then((m) => ({ default: m.DocsView })));
 
 const YEAR = new Date().getFullYear();
+const THEME_STORAGE_KEY = 'creatorplaybooks_theme';
+const PROGRESS_STORAGE_KEY = 'creatorplaybooks_progress_v1';
+const SCHEDULE_STORAGE_KEY = 'creatorplaybooks_schedule_v1';
+
+type ThemeMode = 'light' | 'dark';
+
+function resolveInitialTheme(): ThemeMode {
+  try {
+    const q = new URLSearchParams(window.location.search).get('theme');
+    if (q === 'light' || q === 'dark') return q;
+    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    if (saved === 'light' || saved === 'dark') return saved;
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      return 'light';
+    }
+  } catch {
+    /* ignore */
+  }
+  return 'dark';
+}
 
 function readMentor(): CreatorProfile | null {
   const mentorId = new URLSearchParams(window.location.search).get('mentor');
@@ -28,16 +49,71 @@ function readMentor(): CreatorProfile | null {
   return CREATORS.find((c) => c.id === mentorId) ?? null;
 }
 
+function resolveApiOrigin(): string {
+  const host = window.location.hostname;
+  if (host === '127.0.0.1' || host === 'localhost' || host === '[::1]') {
+    return window.location.origin;
+  }
+  return site.origin;
+}
+
 function App() {
   const { user, profile, login, logout } = useAuth();
+  const [theme, setTheme] = useState<ThemeMode>(resolveInitialTheme);
   const [tab, setTab] = useState<Tab | 'members' | 'flow'>('creators');
   const [activeCreator, setActiveCreator] = useState<CreatorProfile>(() => readMentor() ?? CREATORS[0]);
   const [modalCreator, setModalCreator] = useState<CreatorProfile | null>(() => readMentor());
   const [showRemix, setShowRemix] = useState(false);
-  const [progress, setProgress] = useState<UserProgress>(defaultProgress());
+
+  const [progress, setProgressState] = useState<UserProgress>(() => {
+    try {
+      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return { ...defaultProgress(), ...parsed };
+        }
+      }
+    } catch {
+      /* keep default */
+    }
+    return defaultProgress();
+  });
+
+  const setProgress = (next: UserProgress) => {
+    setProgressState(next);
+    try {
+      localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore quota */
+    }
+  };
+
   const [ideas, setIdeas] = useState<ContentIdea[]>(() => generateIdeasForCreator(readMentor() ?? CREATORS[0], 6));
   const [ideaFor, setIdeaFor] = useState(() => (readMentor() ?? CREATORS[0]).id);
-  const [schedule, setSchedule] = useState<ScheduledPost[]>([]);
+
+  const [schedule, setScheduleState] = useState<ScheduledPost[]>(() => {
+    try {
+      const saved = localStorage.getItem(SCHEDULE_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {
+      /* keep empty */
+    }
+    return [];
+  });
+
+  const setSchedule = (next: ScheduledPost[]) => {
+    setScheduleState(next);
+    try {
+      localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore quota */
+    }
+  };
+
   const [newPost, setNewPost] = useState('');
   const [newDay, setNewDay] = useState('Monday');
   const [me, setMe] = useState<BuilderProfile>(() => {
@@ -53,6 +129,44 @@ function App() {
   });
   const [remix, setRemix] = useState<Set<string>>(new Set());
   const [scrolled, setScrolled] = useState(false);
+
+  // Open directly into the active 35-creator workstation; modals are strictly on-demand
+  const [showOriginStory, setShowOriginStory] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const apiOrigin = useMemo(() => resolveApiOrigin(), []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.colorScheme = theme;
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', theme === 'light' ? '#faf8f3' : '#0a0a0f');
+    }
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch {
+      /* ignore */
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      if (!event.data || typeof event.data !== 'object') return;
+      const incoming = (event.data as { type?: string; theme?: string }).theme;
+      const type = (event.data as { type?: string }).type;
+      if ((type === 'zoth-theme-sync' || type === 'theme-change') && (incoming === 'light' || incoming === 'dark')) {
+        setTheme(incoming);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -74,29 +188,15 @@ function App() {
     return () => { cancelled = true; };
   }, [user]);
 
-  const [showOriginStory, setShowOriginStory] = useState(() => !localStorage.getItem('creatorplaybooks_origin_seen'));
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    const seenOrigin = localStorage.getItem('creatorplaybooks_origin_seen');
-    const seenOnboarding = localStorage.getItem('creatorplaybooks_onboarding_seen');
-    return Boolean(seenOrigin) && !seenOnboarding;
-  });
-  const [onboardingStep, setOnboardingStep] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { }
-    };
-    const onClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('.home-dropdown')) { }
+      if (e.key === 'Escape') {
+        setShowOriginStory(false);
+        setShowOnboarding(false);
+      }
     };
     document.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onClick);
-    return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onClick); };
+    return () => { document.removeEventListener('keydown', onKey); };
   }, []);
 
   const filteredCreators = useMemo(() => {
@@ -144,23 +244,35 @@ function App() {
     if (me.accessibilityPreferences?.highContrast) classes.push('remix-highlight');
     if (me.accessibilityPreferences?.reducedMotion) classes.push('reduced-motion');
     document.body.className = classes.join(' ');
-    
-    const t = activeCreator.theme;
-    document.body.style.setProperty('--primary', t.primary);
-    document.body.style.setProperty('--secondary', t.secondary);
-    document.body.style.setProperty('--accent', t.accent);
-    if (t.bg) document.body.style.setProperty('--bg', t.bg);
-    else document.body.style.removeProperty('--bg');
-    if (t.surface) document.body.style.setProperty('--surface', t.surface);
-    else document.body.style.removeProperty('--surface');
-    if (t.surface2) document.body.style.setProperty('--surface-2', t.surface2);
-    else document.body.style.removeProperty('--surface-2');
-  }, [remix, activeCreator, me, menuOpen]);
+
+    if (theme === 'dark') {
+      const t = activeCreator.theme;
+      document.body.style.setProperty('--primary', t.primary);
+      document.body.style.setProperty('--secondary', t.secondary);
+      document.body.style.setProperty('--accent', t.accent);
+      if (t.bg) document.body.style.setProperty('--bg', t.bg);
+      else document.body.style.removeProperty('--bg');
+      if (t.surface) document.body.style.setProperty('--surface', t.surface);
+      else document.body.style.removeProperty('--surface');
+      if (t.surface2) document.body.style.setProperty('--surface-2', t.surface2);
+      else document.body.style.removeProperty('--surface-2');
+    } else {
+      // Preserve Editorial Ivory Light Mode contrast tokens
+      document.body.style.removeProperty('--primary');
+      document.body.style.removeProperty('--secondary');
+      document.body.style.removeProperty('--accent');
+      document.body.style.removeProperty('--bg');
+      document.body.style.removeProperty('--surface');
+      document.body.style.removeProperty('--surface-2');
+    }
+  }, [remix, activeCreator, me, menuOpen, theme]);
 
   if (ideaFor !== activeCreator.id) {
     setIdeaFor(activeCreator.id);
     setIdeas(generateIdeasForCreator(activeCreator, 6));
   }
+
+  const toggleTheme = () => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
 
   const updateMe = (next: BuilderProfile) => {
     setMe(next);
@@ -188,7 +300,7 @@ function App() {
 
   const addScheduled = () => {
     if (!newPost.trim()) return;
-    setSchedule([...schedule, { id: Date.now().toString(), day: newDay, content: newPost, format: 'post' }]);
+    setSchedule([...schedule, { id: Date.now().toString(), day: newDay, content: newPost.trim(), format: 'post' }]);
     setNewPost('');
   };
 
@@ -240,6 +352,8 @@ function App() {
         profile={profile}
         login={login}
         logout={logout}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
 
       <main className="main">
@@ -259,6 +373,7 @@ function App() {
             totalPlays={CREATORS.reduce((a, c) => a + c.plays.length, 0)}
             modalCreatorId={modalCreator?.id || null}
             creatorCount={CREATORS.length}
+            onOpenOriginStory={() => setShowOriginStory(true)}
           />
         )}
         {tab !== 'creators' && (
@@ -274,8 +389,8 @@ function App() {
             {tab === 'members' && <MembersView />}
           </Suspense>
         )}
-        {showOriginStory && <OriginStoryModal close={() => { localStorage.setItem('creatorplaybooks_origin_seen', '1'); setShowOriginStory(false); setShowOnboarding(true); }} />}
-        {showOnboarding && <OnboardingModal step={onboardingStep} setStep={setOnboardingStep} close={() => { localStorage.setItem('creatorplaybooks_onboarding_seen', '1'); setShowOnboarding(false); }} setTab={setTab} />}
+        {showOriginStory && <OriginStoryModal close={() => setShowOriginStory(false)} />}
+        {showOnboarding && <OnboardingModal step={onboardingStep} setStep={setOnboardingStep} close={() => setShowOnboarding(false)} setTab={setTab} />}
         {modalCreator && (
           <Suspense fallback={<p className="goal-empty">Loading the page.</p>}>
             <CreatorModal creator={modalCreator} onClose={closeCreatorModal} onCopyPlaybook={() => copyPlaybookForCreator(modalCreator)} onCopyAgent={() => copyAgentPrompt(modalCreator)} onInstallAgent={() => installAgentFolder(modalCreator)} />
@@ -292,46 +407,52 @@ function App() {
               </div>
               <span className="footer-brand-name">CreatorPlaybooks</span>
             </a>
-            <p className="footer-desc">Playbooks from people who post in public. Published by Neal Frazier Tech. Inspired by @buildwithmaya.</p>
+            <p className="footer-desc">Playbooks from 35 builders who publish in public across 20 cities. Inspired by @buildwithmaya.</p>
             <div className="footer-social">
+              <a href="https://github.com/1nc0gn30/creatorplaybooks" target="_blank" rel="noreferrer">GitHub Repo</a>
+              <a href="https://nullai.tech" target="_blank" rel="noreferrer">NullAI Platform</a>
               <a href="https://nealfrazier.tech" target="_blank" rel="noreferrer">Neal Frazier Tech</a>
-              <a href="https://x.com/NealFrazierTech" target="_blank" rel="noreferrer">@NealFrazierTech</a>
-              <a href="https://x.com/buildwithmaya" target="_blank" rel="noreferrer">inspired by @buildwithmaya</a>
-              <a href={`${site.origin}/api/creators`} target="_blank" rel="noreferrer">API</a>
+              <button type="button" className="footer-social-btn" onClick={() => setShowOriginStory(true)}>Origin story</button>
             </div>
           </div>
           <div className="footer-api-col">
             <strong>Agent-ready API</strong>
-            <p className="footer-hint">Pull any creator playbook as JSON. Use it in agents, n8n, Cursor, or your own apps.</p>
+            <p className="footer-hint">Pull any creator playbook as JSON or Markdown. Use it in Hermes, scripts, or local workflows.</p>
             <div className="footer-api-links">
-              <a href={`${site.origin}/api/creators`} target="_blank" rel="noreferrer">All mentors</a>
-              <a href={`${site.origin}/api/creator?id=${activeCreator.id}`} target="_blank" rel="noreferrer">{activeCreator.name}</a>
+              <a href={`${apiOrigin}/api/creators`} target="_blank" rel="noreferrer">All mentors</a>
+              <a href={`${apiOrigin}/api/creator?id=${activeCreator.id}&expand=all`} target="_blank" rel="noreferrer">{activeCreator.name}</a>
+              <a href={`${apiOrigin}/api/export?creator=${activeCreator.id}`} target="_blank" rel="noreferrer">Export JSON</a>
             </div>
           </div>
           <div className="footer-built">
-            <strong>Built with</strong>
+            <strong>Support &amp; Ecosystem</strong>
             <div className="footer-badges">
               <a href="https://nousresearch.com" target="_blank" rel="noreferrer" className="footer-badge" title="Nous Research — Hermes agent"><span className="footer-badge-dot" style={{ background: '#ec4899' }} /> Nous Hermes</a>
               <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noreferrer" className="footer-badge" title="Support open-access tools"><span className="footer-badge-dot" style={{ background: '#f59e0b' }} /> ☕ Buy Us a Coffee</a>
             </div>
-            <p className="footer-hint" style={{ marginTop: '8px', fontSize: '0.72rem', wordBreak: 'break-all' }}>Solana Tip: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code></p>
+            <p className="footer-hint" style={{ marginTop: '10px', fontSize: '0.74rem', wordBreak: 'break-all' }}>Solana Tip: <code>GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</code></p>
           </div>
         </div>
-        <div className="footer-bottom"><span>© {YEAR} CreatorPlaybooks · published by Neal Frazier Tech</span></div>
+        <div className="footer-bottom">
+          <span>© {YEAR} CreatorPlaybooks · Engineered by Neal Frazier Tech (@1nc0gn30) • NullAI Platform</span>
+          <span className="footer-bottom-links">
+            <a href="https://github.com/1nc0gn30/creatorplaybooks" target="_blank" rel="noreferrer">github.com/1nc0gn30/creatorplaybooks</a>
+            <a href="https://nullai.tech" target="_blank" rel="noreferrer">nullai.tech</a>
+          </span>
+        </div>
       </footer>
       <div className="remix-pad" title="Creative remix controls">
-        <button className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text" data-tooltip="Bold Text"><Bold size={16} /></button>
-        <button className={remix.has('italic') ? 'active' : ''} onClick={() => toggleRemix('italic')} title="Italic text" data-tooltip="Italic Serif Style"><Italic size={16} /></button>
-        <button className={remix.has('underline') ? 'active' : ''} onClick={() => toggleRemix('underline')} title="Underline headings" data-tooltip="Underline Titles"><Underline size={16} /></button>
-        <button className={remix.has('highlight') ? 'active' : ''} onClick={() => toggleRemix('highlight')} title="Highlight paragraphs" data-tooltip="High Contrast Blocks"><Highlighter size={16} /></button>
-        <button className={remix.has('big') ? 'active' : ''} onClick={() => toggleRemix('big')} title="Bigger typography" data-tooltip="Large Text Sizes"><Zap size={16} /></button>
-        <button className={remix.has('spacy') ? 'active' : ''} onClick={() => toggleRemix('spacy')} title="More breathing room" data-tooltip="Relaxed Spacing"><Wand2 size={16} /></button>
-        <button className={remix.has('neon') ? 'active' : ''} onClick={() => toggleRemix('neon')} title="Neon glow" data-tooltip="Neon Glow Borders"><Sparkles size={16} /></button>
+        <button type="button" className={remix.has('bold') ? 'active' : ''} onClick={() => toggleRemix('bold')} title="Bold text" aria-label="Toggle bold headings"><Bold size={16} /></button>
+        <button type="button" className={remix.has('italic') ? 'active' : ''} onClick={() => toggleRemix('italic')} title="Italic text" aria-label="Toggle italic serif"><Italic size={16} /></button>
+        <button type="button" className={remix.has('underline') ? 'active' : ''} onClick={() => toggleRemix('underline')} title="Underline headings" aria-label="Toggle underlined titles"><Underline size={16} /></button>
+        <button type="button" className={remix.has('highlight') ? 'active' : ''} onClick={() => toggleRemix('highlight')} title="Highlight paragraphs" aria-label="Toggle high contrast blocks"><Highlighter size={16} /></button>
+        <button type="button" className={remix.has('big') ? 'active' : ''} onClick={() => toggleRemix('big')} title="Bigger typography" aria-label="Toggle larger typography"><Zap size={16} /></button>
+        <button type="button" className={remix.has('spacy') ? 'active' : ''} onClick={() => toggleRemix('spacy')} title="More breathing room" aria-label="Toggle relaxed spacing"><Wand2 size={16} /></button>
+        <button type="button" className={remix.has('neon') ? 'active' : ''} onClick={() => toggleRemix('neon')} title="Neon glow" aria-label="Toggle accent borders"><Sparkles size={16} /></button>
       </div>
-      <button className={`remix-toggle ${showRemix ? 'active' : ''}`} onClick={() => setShowRemix(!showRemix)} title={showRemix ? 'Hide remix bar' : 'Show remix bar'} data-tooltip={showRemix ? "Hide Panel" : "Remix & Accessibility Options"}><Wand2 size={18} /></button>
+      <button type="button" className={`remix-toggle ${showRemix ? 'active' : ''}`} onClick={() => setShowRemix(!showRemix)} title={showRemix ? 'Hide remix bar' : 'Show remix bar'} aria-label={showRemix ? 'Hide reading remix controls' : 'Open reading remix controls'}><Wand2 size={18} /></button>
     </div>
   );
 }
-
 
 export default App;

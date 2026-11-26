@@ -21,6 +21,7 @@ export function HomePage({
   totalPlays,
   modalCreatorId,
   creatorCount,
+  onOpenOriginStory,
 }: {
   filteredCreators: CreatorProfile[];
   searchQuery: string;
@@ -36,6 +37,7 @@ export function HomePage({
   totalPlays: number;
   modalCreatorId: string | null;
   creatorCount: number;
+  onOpenOriginStory?: () => void;
 }) {
 
 
@@ -110,6 +112,11 @@ export function HomePage({
             <button type="button" className="home-btn home-btn-secondary" onClick={() => document.getElementById('api-section')?.scrollIntoView({ behavior: 'smooth' })}>
               Read the API
             </button>
+            {onOpenOriginStory && (
+              <button type="button" className="home-btn home-btn-secondary" onClick={onOpenOriginStory}>
+                Origin story
+              </button>
+            )}
           </div>
           <div className="home-stats-bar">
             <div className="home-stat">
